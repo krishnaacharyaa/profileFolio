@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/rs/cors"
 	"go.mongodb.org/mongo-driver/bson"
@@ -76,10 +77,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+    adminUsername := os.Getenv("MONGO_ADMIN_USERNAME")
+	adminPassword := os.Getenv("MONGO_ADMIN_PASSWORD")
+    mongoURI := "mongodb://" + adminUsername + ":" + adminPassword + "@mongodb:27017"
     mux := http.NewServeMux()
     mux.HandleFunc("/api/user", handler) 
     var err error
-    clientOptions := options.Client().ApplyURI("mongodb://admin:password@mongodb:27017")
+    clientOptions := options.Client().ApplyURI(mongoURI)
     client, err = mongo.Connect(context.Background(), clientOptions)
     if err != nil {
         log.Fatal(err)

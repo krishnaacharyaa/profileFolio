@@ -18,6 +18,9 @@ services:
     build: ./backend
     ports:
       - '8080:8080'
+    environment:
+      MONGO_ADMIN_USERNAME: admin
+      MONGO_ADMIN_PASSWORD: password
     depends_on:
       - mongodb
 
