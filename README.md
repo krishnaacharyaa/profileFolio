@@ -1,5 +1,8 @@
 # ProfileFolio
 
+ProfileFolio simplifies professional profile management by generating customized resumes, portfolios, and GitHub readmes tailored to user data and job descriptions. Empower your career journey with precision-crafted application materials, all in one place.
+
+
 ## Install using Docker
 
 1.  Fork and Clone the Repository
