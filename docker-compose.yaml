@@ -1,11 +1,25 @@
 version: '3.8'
 
 services:
+  mongodb:
+    image: mongo:latest
+    container_name: db-mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - ./mongodb-init:/docker-entrypoint-initdb.d
+    ports:
+      - '27017:27017'
+
   backend:
     container_name: backend-go
     build: ./backend
     ports:
       - '8080:8080'
+    depends_on:
+      - mongodb
 
   frontend:
     container_name: frontend-next
