@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  backend:
+    container_name: backend-go
+    build: ./backend
+    ports:
+      - '8080:8080'
+
+  frontend:
+    container_name: frontend-next
+    build: ./frontend
+    ports:
+      - '3000:3000'
+    depends_on:
+      - backend
