@@ -2,7 +2,9 @@
 
 ProfileFolio simplifies professional profile management by generating customized resumes, portfolios, and GitHub readmes tailored to user data and job descriptions. Empower your career journey with precision-crafted application materials, all in one place.
 
-## Install using Docker
+## Installation
+<details>
+<summary><h4>Install Using Docker</h4></summary>
 
 1.  Fork and Clone the Repository
 2.  Run Docker Compose
@@ -12,9 +14,9 @@ ProfileFolio simplifies professional profile management by generating customized
 3.  Access the Application
     - Frontend: http://localhost:3000
     - Backend: http://localhost:8080/api/user
-
-## Install Manually
-
+</details>
+<details>
+<summary><h4>Install Manually</h4></summary>
 1.  Open Mongodb atlas in localhost:27017
     Create `profileFolio` db and
     add this sample data in collection `users`
@@ -89,3 +91,4 @@ ProfileFolio simplifies professional profile management by generating customized
 4.  Access the Application
     - Frontend: http://localhost:3000
     - Backend: http://localhost:8080/api/user
+</details>
