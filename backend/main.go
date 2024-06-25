@@ -3,10 +3,12 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/rs/cors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -63,10 +65,17 @@ type User struct {
     } `json:"projects"`
 }
 
+func init() {
+    // loads values from .env into the system
+    if err := godotenv.Load(); err != nil {
+        log.Print("No .env file found")
+    }
+}
+
 var client *mongo.Client
 
 func handler(w http.ResponseWriter, r *http.Request) {
-    collection := client.Database("userdb").Collection("userdb")
+    collection := client.Database("profileFolio").Collection("users")
     var user User
     err := collection.FindOne(context.Background(), bson.M{}).Decode(&user)
     if err != nil {
@@ -77,15 +86,19 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-    adminUsername := os.Getenv("MONGO_ADMIN_USERNAME")
-	adminPassword := os.Getenv("MONGO_ADMIN_PASSWORD")
-    mongoURI := "mongodb://" + adminUsername + ":" + adminPassword + "@mongodb:27017"
+    mongoURI, exists := os.LookupEnv("MONGO_URL")
+
+    if exists {
+	fmt.Println(mongoURI)
+    }
+    
     mux := http.NewServeMux()
     mux.HandleFunc("/api/user", handler) 
     var err error
     clientOptions := options.Client().ApplyURI(mongoURI)
     client, err = mongo.Connect(context.Background(), clientOptions)
     if err != nil {
+        log.Fatal("Error parsing env")
         log.Fatal(err)
     }
    // Use the cors package to allow cross-origin requests
