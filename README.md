@@ -80,27 +80,12 @@ ProfileFolio simplifies professional profile management by generating customized
     }
     ```
 
-2.  Setup Backend (Go)
-    - ```bash
-      cd backend
-      ```
-    - ```bash
-      go mod tidy
-      ```
-    - ```bash
-      go run main.go
-      ```
-3.  Setup Frontend (Nextjs)
-    - ```bash
-      cd frontend
-      ```
-    - ```bash
-      npm install
-      ```
-    - ```bash
-      npm run dev
-      ```
+2.  ```bash
+    npm run installer
+    ```
+3.  ```bash
+    npm start
+    ```
 4.  Access the Application
-
     - Frontend: http://localhost:3000
     - Backend: http://localhost:8080/api/user
