@@ -1,23 +1,22 @@
-# Start with the official Golang image
-FROM golang:1.22.4-alpine3.19
+### Step 1: Build stage
+FROM golang:1.22.4-alpine3.19 as builder
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy go.mod and go.sum files
+# Copy the Go module files and download dependencies
 COPY go.mod go.sum ./
-
-# Download and cache dependencies
 RUN go mod download
 
-# Copy the rest of the application code
+# Copy the application source code and build the binary
 COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -o myapp
 
-# Build the application
-RUN go build -o main .
+### 
+## Step 2: Runtime stage
+FROM scratch
 
-# Expose port 8080
-EXPOSE 8080
+# Copy only the binary from the build stage to the final image
+COPY --from=builder /app/myapp /
 
-# Command to run the application
-CMD ["./main"]
+# Set the entry point for the container
+ENTRYPOINT ["/myapp"]
