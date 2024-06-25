@@ -23,13 +23,16 @@ ProfileFolio simplifies professional profile management by generating customized
 
   ```
   {
+  "_id": {
+    "$oid": "667b0b0ad754763b032be757"
+  },
   "basics": {
     "name": "John Doe",
     "label": "Programmer",
     "image": "",
     "email": "john@gmail.com",
     "phone": "(912) 555-4321",
-    "url": "https://johndoe.com",
+    "url": "https://johndoe.com/",
     "summary": "A summary of John Doe…",
     "location": {
       "address": "2712 Broadway St",
@@ -50,11 +53,13 @@ ProfileFolio simplifies professional profile management by generating customized
     {
       "name": "Company",
       "position": "President",
-      "url": "https://company.com",
+      "url": "https://company.com/",
       "startDate": "2013-01-01",
       "endDate": "2014-01-01",
       "summary": "Description…",
-      "highlights": ["Started the company"]
+      "highlights": [
+        "Started the company"
+      ]
     }
   ],
   "education": [
@@ -66,7 +71,43 @@ ProfileFolio simplifies professional profile management by generating customized
       "startDate": "2011-01-01",
       "endDate": "2013-01-01",
       "score": "4.0",
-      "courses": ["DB1101 - Basic SQL"]
+      "courses": [
+        "DB1101 - Basic SQL"
+      ]
+    }
+  ],
+  "certificates": [
+    {
+      "name": "Certificate",
+      "date": "2021-11-07",
+      "issuer": "Company",
+      "url": "https://certificate.com/"
+    }
+  ],
+  "skills": [
+    {
+      "name": "Web Development",
+      "level": "Master",
+      "keywords": [
+        "HTML",
+        "CSS",
+        "JavaScript"
+      ]
+    }
+  ],
+  "languages": [
+    {
+      "language": "English",
+      "fluency": "Native speaker"
+    }
+  ],
+  "interests": [
+    {
+      "name": "Wildlife",
+      "keywords": [
+        "Ferrets",
+        "Unicorns"
+      ]
     }
   ],
   "projects": [
@@ -75,11 +116,14 @@ ProfileFolio simplifies professional profile management by generating customized
       "startDate": "2019-01-01",
       "endDate": "2021-01-01",
       "description": "Description...",
-      "highlights": ["Won award at AIHacks 2016"],
-      "url": "https://project.com/"
+      "highlights": [
+        "Won award at AIHacks 2016"
+      ],
+      "github-url": "https://github.com/krishnaacharyaa/profileFolio",
+      "deployed-url": "profile-folio-indol.vercel.app"
     }
   ]
-}
+  }
   ```
 
 - ```bash
