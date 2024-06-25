@@ -1,21 +1,17 @@
 // mongodb-init/init.js
-// move to the admin db - always created in Mongo
-db = db.getSiblingDB('admin');
-// log as root admin if you decided to authenticate in your docker-compose file...
-db.auth('admin', 'password')
-
+db = db.getSiblingDB('profileFolio'); // Use the profileFolio database
 db.createUser({
     user: "admin",
     pwd: "password",
     roles: [
         {
             role: "readWrite",
-            db: "userdb"
+            db: "profileFolio"
         }
     ]
 });
 
-db.userdb.insertOne({
+db.users.insertOne({
     basics: {
         name: "John Doe",
         label: "Programmer",

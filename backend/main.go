@@ -86,10 +86,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+    printGoLogo();
     mongoURI, exists := os.LookupEnv("MONGO_URL")
 
     if exists {
-	fmt.Println(mongoURI)
+        fmt.Println("Connecting to mongodb")
+	    fmt.Println(mongoURI)
     }
     
     mux := http.NewServeMux()
@@ -108,3 +110,19 @@ func main() {
     
     log.Fatal(http.ListenAndServe(":8080", handler))
 }
+
+ func printGoLogo() {
+	logo := `
+ ________  ________          ________  ________  ___     
+|\   ____\|\   __  \        |\   __  \|\   __  \|\  \    
+\ \  \___|\ \  \|\  \       \ \  \|\  \ \  \|\  \ \  \   
+ \ \  \  __\ \  \\\  \       \ \   __  \ \   ____\ \  \  
+  \ \  \|\  \ \  \\\  \       \ \  \ \  \ \  \___|\ \  \ 
+   \ \_______\ \_______\       \ \__\ \__\ \__\    \ \__\
+    \|_______|\|_______|        \|__|\|__|\|__|     \|__|
+`
+	fmt.Println(logo)
+	fmt.Println("Starting Go application...")
+}
+                                                                   
+                                                         
