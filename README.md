@@ -5,7 +5,7 @@ ProfileFolio simplifies professional profile management by generating customized
 ## Installation
 
 <details>
-<summary><h4>Install Using Docker</h4></summary>
+<summary><strong>Install Using Docker</strong></summary>
 
 1.  Fork and Clone the Repository
 2.  Run Docker Compose
@@ -15,7 +15,7 @@ ProfileFolio simplifies professional profile management by generating customized
 3.  Access the Application - Frontend: http://localhost:3000 - Backend: http://localhost:8080/api/user
 </details>
 <details>
-<summary><h4>Install Manually</h4></summary>
+<summary><strong>Install Manually</strong></summary>
 
 4.  Open Mongodb atlas in localhost:27017
     Create `profileFolio` db and
