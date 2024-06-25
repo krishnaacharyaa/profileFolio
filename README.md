@@ -92,41 +92,46 @@ ProfileFolio simplifies professional profile management by generating customized
     ```
 8.  Access the Application - Frontend: http://localhost:3000 - Backend: http://localhost:8080/api/user
 </details>
-
 <details>
-<summary><h4>Steps to start contributing</h4></summary>
+<summary><strong>Steps to Start Contributing</strong></summary>
 
-To contribute to this project, you need to create a fork of the repository and then commit your changes to it. Follow these steps:
+To contribute to this project, follow these steps:
 
-1. Fork the repository if haven't done already from [profileFolio](https://github.com/krishnaacharyaa/profileFolio)
-2. Add your fork as a local project:
+1. **Fork the Repository**:
 
-   ```sh
-   git clone https://github.com/<your-username>/profileFolio.git
-   ```
+   - Fork the repository from [profileFolio](https://github.com/krishnaacharyaa/profileFolio) to your GitHub account.
 
-3. Add git remote controls:
+2. **Clone Your Fork**:
 
-   ```sh
-   git remote add fork https://github.com/<your-username>/profileFolio.git
-   git remote add upstream https://github.com/krishnaacharyaa/profileFolio.git
-   ```
-
-4. Verify that you have your two git remotes:
-
-   ```sh
-   git remote -v
-   ```
-
-5. **For every individual PR follow these 2 steps:**
-
-   - To stay up to date with the central repository:
+   - Clone your forked repository locally:
 
      ```sh
-     git pull upstream main
+     git clone https://github.com/<your-username>/profileFolio.git
      ```
 
-   - Checkout a private from your main Branch
+3. **Add Remote Repositories**:
+
+   - Set up remotes for tracking changes from the original repository and pushing your changes:
+
+     ```sh
+     cd profileFolio
+     git remote add upstream https://github.com/krishnaacharyaa/profileFolio.git
+     git remote -v  # Verify remotes
+     ```
+
+   > Steps from 4th point, needs to followed with each new PR
+
+4. **Stay Up-to-Date**:
+
+- Before starting your work or submitting a pull request, sync your fork with the original repository:
+
+  ```sh
+   git pull upstream main
+  ```
+
+5. **Create a New Branch**:
+
+   - Create a new branch for your work, naming it appropriately:
 
      ```sh
      # Switch to the main branch
@@ -139,6 +144,18 @@ To contribute to this project, you need to create a fork of the repository and t
      git switch --create bugfix/1234-name-of-the-issue
      ```
 
-Commit your changes, then push the branch to your fork with `git push -u fork` and open a pull request on [the profileFolio repository](https://github.com/krishnaacharyaa/profileFolio) following the template provided.
+6. **Make Changes**:
+
+   - Make your changes locally. Commit them using clear and concise messages.
+
+7. **Push Changes and Open Pull Request**:
+
+   - Push your branch to your forked repository:
+
+     ```sh
+     git push -u origin feature/1234-short-description
+     ```
+
+   - Open a pull request on the [profileFolio repository](https://github.com/krishnaacharyaa/profileFolio), following the template provided.
 
 </details>
