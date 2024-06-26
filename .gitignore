@@ -5,3 +5,5 @@ backend/.env
 .env
 .env*.local
 *.env
+*package-lock.json
+frontend/package-lock*
