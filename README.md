@@ -19,123 +19,172 @@ ProfileFolio simplifies professional profile management by generating customized
 
 - Open Mongodb atlas in localhost:27017
   Create `profileFolio` db and
-  add this sample data in collection `users`
+ 1. Add this sample data in collection `users`
 
-  ```
+  ```json
   {
-  "_id": {
-    "$oid": "667b0b0ad754763b032be757"
-  },
+  "_id": { "$oid": "667b885950aa1b4215433ff4" },
   "basics": {
-    "name": "John Doe",
-    "label": "Programmer",
-    "image": "",
-    "email": "john@gmail.com",
-    "phone": "(912) 555-4321",
-    "url": "https://johndoe.com/",
-    "summary": "A summary of John Doe…",
+    "name": "Jane Smith",
+    "label": "Software Engineer",
+    "image": "https://janesmith.com/photo.jpg",
+    "email": "jane.smith@gmail.com",
+    "phone": "(123) 456-7890",
+    "url": "https://janesmith.com",
+    "summary": "Experienced software engineer with a passion for developing innovative programs.",
     "location": {
-      "address": "2712 Broadway St",
-      "postalCode": "CA 94115",
-      "city": "San Francisco",
+      "address": "123 Main St",
+      "postalCode": "12345",
+      "city": "Metropolis",
       "countryCode": "US",
-      "region": "California"
+      "region": "NY"
     },
     "profiles": [
       {
-        "network": "Twitter",
-        "username": "john",
-        "url": "https://twitter.com/john"
+        "network": "LinkedIn",
+        "username": "janesmith",
+        "url": "https://linkedin.com/in/janesmith"
+      },
+      {
+        "network": "GitHub",
+        "username": "janesmith",
+        "url": "https://github.com/janesmith"
       }
     ]
   },
   "work": [
     {
-      "name": "Company",
-      "position": "President",
-      "url": "https://company.com/",
-      "startDate": "2013-01-01",
-      "endDate": "2014-01-01",
-      "summary": "Description…",
+      "name": "TechCorp",
+      "position": "Senior Developer",
+      "url": "https://techcorp.com",
+      "startDate": {
+        "$date": "2018-05-01T00:00:00Z"
+      },
+      "endDate": null,
+      "summary": "Developed and maintained various web applications.",
       "highlights": [
-        "Started the company"
+        "Led a team of developers to create a new e-commerce platform.",
+        "Implemented a continuous integration and deployment pipeline."
       ]
     }
   ],
   "education": [
     {
-      "institution": "University",
-      "url": "https://institution.com/",
-      "area": "Software Development",
+      "institution": "State University",
+      "url": "https://stateuniversity.edu",
+      "area": "Computer Science",
       "studyType": "Bachelor",
-      "startDate": "2011-01-01",
-      "endDate": "2013-01-01",
-      "score": "4.0",
+      "startDate": {
+        "$date": "2010-09-01T00:00:00Z"
+      },
+      "endDate": {
+        "$date": "2014-06-01T00:00:00Z"
+      },
+      "score": "3.8",
       "courses": [
-        "DB1101 - Basic SQL"
+        "CS101 - Introduction to Computer Science",
+        "CS202 - Data Structures",
+        "CS303 - Algorithms"
       ]
     }
   ],
   "certificates": [
     {
-      "name": "Certificate",
-      "date": "2021-11-07",
-      "issuer": "Company",
-      "url": "https://certificate.com/"
+      "name": "Certified Kubernetes Administrator",
+      "date": { "$date": "2020-07-15T00:00:00Z" },
+      "issuer": "CNCF",
+      "url": "https://cncf.io/certified-kubernetes-administrator"
     }
   ],
   "skills": [
     {
       "name": "Web Development",
-      "level": "Master",
+      "level": "Expert",
       "keywords": [
-        "HTML",
-        "CSS",
-        "JavaScript"
+        { "$oid": "667b888850aa1b4215433ff8" },
+        { "$oid": "667b888850aa1b4215433ff9" },
+        { "$oid": "667b888850aa1b4215433ffa" }
       ]
     }
   ],
   "languages": [
     {
       "language": "English",
-      "fluency": "Native speaker"
+      "fluency": "Native"
+    },
+    {
+      "language": "Spanish",
+      "fluency": "Intermediate"
     }
   ],
   "interests": [
     {
-      "name": "Wildlife",
+      "name": "Traveling",
       "keywords": [
-        "Ferrets",
-        "Unicorns"
+        "Backpacking",
+        "Cultural Experiences"
       ]
     }
   ],
   "projects": [
     {
-      "name": "Project",
-      "startDate": "2019-01-01",
-      "endDate": "2021-01-01",
-      "description": "Description...",
+      "name": "Personal Portfolio",
+      "startDate": {
+        "$date": "2020-01-01T00:00:00Z"
+      },
+      "endDate": {
+        "$date": "2020-06-01T00:00:00Z"
+      },
+      "description": "Developed a personal portfolio website to showcase my projects and skills.",
       "highlights": [
-        "Won award at AIHacks 2016"
+        "Designed and implemented a responsive user interface.",
+        "Integrated a blog section to share technical articles."
       ],
-      "github-url": "https://github.com/krishnaacharyaa/profileFolio",
-      "deployed-url": "profile-folio-indol.vercel.app"
+      "githubUrl": "https://github.com/janesmith/portfolio",
+      "deployedUrl": "https://janesmith.com",
+      "techStack": [
+        { "$oid": "667b888850aa1b4215433ff8" },
+        { "$oid": "667b888850aa1b4215433ff9" },
+        { "$oid": "667b888850aa1b4215433ffa" }
+      ]
     }
   ]
+}
+  ```
+2. Add this sample data in collection `skills`
+```json
+[
+  {
+    "_id": {
+      "$oid": "667b888850aa1b4215433ff8"
+    },
+    "name": "typescript"
+  },
+  {
+    "_id": {
+      "$oid": "667b888850aa1b4215433ff9"
+    },
+    "name": "javascript"
+  },
+  {
+    "_id": {
+      "$oid": "667b888850aa1b4215433ffa"
+    },
+    "name": "node"
   }
-  ```
+]
+```
 
-- ```bash
-    cp ./backend/.env.sample ./backend/.env
-  ```
+```bash
+cp ./backend/.env.sample ./backend/.env
+```
+```bash
+npm run installer
+```
+```bash
+npm start
+```
 
-- ```bash
-    npm run installer
-  ```
-- ```bash
-   npm start
-  ```
 - Access the Application - Frontend: http://localhost:3000 - Backend: http://localhost:8080/api/user
 </details>
 <hr>
