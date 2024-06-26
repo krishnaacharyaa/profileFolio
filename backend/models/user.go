@@ -94,3 +94,9 @@ type User struct {
     Interests    []Interest         `json:"interests,omitempty"`
     Projects     []Project          `json:"projects,omitempty"`
 }
+
+
+type SkillCollection struct {
+    ID   primitive.ObjectID `bson:"_id" json:"id"`
+    Name string             `bson:"name" json:"name"`
+}
