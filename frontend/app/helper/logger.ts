@@ -1,14 +1,10 @@
-type FetchResponse<T> = {
-  time: string;
-  api: string;
-  method: string;
-  response: T;
-};
+import { z } from 'zod';
 
-export async function fetchWithLogging<T>(
+export async function fetchAndValidate<T>(
   url: string,
-  options: RequestInit
-): Promise<FetchResponse<T>> {
+  options: RequestInit,
+  schema: z.ZodSchema<T>
+): Promise<T> {
   const startTime = new Date().toISOString();
   const response = await fetch(url, options);
 
@@ -24,14 +20,19 @@ export async function fetchWithLogging<T>(
 
   const result = await response.json();
 
-  const logData: FetchResponse<T> = {
+  // Validate the response using zod schema
+  const validation = schema.safeParse(result);
+  if (!validation.success) {
+    console.error('Validation Error:', validation.error);
+    // throw new Error(`Validation failed for response from ${url}`);
+  }
+  console.log({
     time: startTime,
     api: url,
     method: options.method || 'GET',
     response: result,
-  };
+  });
 
-  console.log(logData);
-
-  return logData;
+  // return validation.data;
+  return result;
 }

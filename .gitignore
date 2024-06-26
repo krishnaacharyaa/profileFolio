@@ -7,3 +7,4 @@ backend/.env
 *.env
 *package-lock.json
 frontend/package-lock*
+data/*
