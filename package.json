@@ -14,5 +14,8 @@
 	},
 	"keywords": [],
 	"author": "krishnaacharyaa",
-	"license": "ISC"
+	"license": "ISC",
+	"dependencies": {
+		"mongodb": "^6.7.0"
+	}
 }
