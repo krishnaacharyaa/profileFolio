@@ -1,3 +1,4 @@
+# source: https://medium.com/@elifront/best-next-js-docker-compose-hot-reload-production-ready-docker-setup-28a9125ba1dc
 FROM node:18-alpine AS base
 
 # Install dependencies only when needed
