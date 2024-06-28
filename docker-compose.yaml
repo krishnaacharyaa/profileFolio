@@ -22,11 +22,22 @@ services:
 
   frontend:
     container_name: frontend-next
-    build: ./frontend
-    ports:
-      - '3000:3000'
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: dev
+    restart: always
+    command: yarn dev
+    working_dir: /app
     environment:
-      NEXT_PUBLIC_BACKEND_URL: http://backend:8080
+      - NODE_ENV=development
+      - NEXT_PUBLIC_BACKEND_URL=http://backend:8080
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - 3000:3000
     depends_on:
       - backend
 # docker system prune --all

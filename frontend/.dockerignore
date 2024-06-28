@@ -1,11 +1,9 @@
 node_modules
 npm-debug.log
-Dockerfile
-docker-compose.yml
 .git
 .gitignore
 .next
 .vscode
 README.md
 .dockerignore
-package-lock.json
+next-env.d.ts
