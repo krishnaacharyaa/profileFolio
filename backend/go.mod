@@ -1,6 +1,8 @@
 module backend
 
-go 1.22.4
+go 1.21.4
+
+//go 1.22.4
 
 require go.mongodb.org/mongo-driver v1.15.1 // version should be automatically added
 
@@ -19,3 +21,5 @@ require (
 	golang.org/x/text v0.14.0 // indirect
 
 )
+
+require github.com/sashabaranov/go-openai v1.26.1 // indirect
