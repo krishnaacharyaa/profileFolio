@@ -2,6 +2,31 @@
   @tailwind components;
   @tailwind utilities;
 
+  .photo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    overflow: hidden;
+    width: 80%;
+    height: 80%;
+  }
+  
+  .circle-bg {
+    fill: none;
+    stroke: #eee;
+    stroke-width: 2.8;
+  }
+  
+  .circle {
+    fill: none;
+    stroke: #4c82af;
+    stroke-width: 2.8;
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.6s ease 0s, stroke-dashoffset 0.6s ease 0s;
+  }
+
   @layer base {
     :root {
       --background: 0 0% 100%;
