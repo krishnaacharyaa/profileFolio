@@ -1,3 +1,4 @@
+'use client'
 import { ChevronDown, EditIcon, Share2 } from 'lucide-react'
 import React from 'react'
 import { Button } from '../ui/button'
