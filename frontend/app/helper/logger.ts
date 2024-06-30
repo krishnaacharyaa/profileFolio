@@ -7,6 +7,7 @@ export async function fetchAndValidate<T>(
 ): Promise<T> {
   const startTime = new Date().toISOString();
   const response = await fetch(url, options);
+  console.log(response)
 
   if (!response.ok) {
     console.log({

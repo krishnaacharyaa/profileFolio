@@ -1,11 +1,13 @@
 'use server';
-import { z } from 'zod';
+import { object, z } from 'zod';
 
 import { fetchAndValidate } from '../helper/logger';
 import { SkillRef } from '../types/skillRef';
 import { User } from '../types/user';
 import { SkillRefSchema } from '../zod/skill-zod';
 import { UserSchema } from '../zod/user-zod';
+import { TSignUpSchema, signUpSchema } from '../zod/signup-zod';
+import axios from 'axios';
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
 export async function getUserData(): Promise<User> {
   // This no-store should be removed in future and replaced with revalidateTag,
@@ -22,3 +24,5 @@ export async function getSkillsData(): Promise<SkillRef[]> {
     z.array(SkillRefSchema)
   );
 }
+
+
