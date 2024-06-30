@@ -1,42 +1,42 @@
 package main
 
 import (
+	"backend/api"
+	"backend/config"
+	"backend/handlers"
 	"context"
 	"fmt"
 	"log"
 	"net/http"
 
-	"backend/api"
-	"backend/config"
-	"backend/handlers"
-
 	"github.com/rs/cors"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
 func main() {
-    config.LoadEnv()
-    mongoURI := config.GetMongoURI()
-    printGoLogo()
-    fmt.Println("Connecting to mongodb")
-    fmt.Println(mongoURI)
+	config.LoadEnv()
+	mongoURI := config.GetMongoURI()
+	printGoLogo()
+	fmt.Println("Connecting to mongodb")
+	fmt.Println(mongoURI)
 
-    mux := http.NewServeMux()
-    api.RegisterUserRoutes(mux)
+	mux := http.NewServeMux()
+	api.RegisterUserRoutes(mux)
 
-    clientOptions := options.Client().ApplyURI(mongoURI)
-    client, err := mongo.Connect(context.Background(), clientOptions)
-    if err != nil {
-        log.Fatal("Error connecting to MongoDB")
-        log.Fatal(err)
-    }
-    handlers.SetClient(client)
+	clientOptions := options.Client().ApplyURI(mongoURI)
+	client, err := mongo.Connect(context.Background(), clientOptions)
+	if err != nil {
+		log.Fatal("Error connecting to MongoDB")
+		log.Fatal(err)
+	}
+	handlers.SetClient(client)
 
-    handler := cors.Default().Handler(mux)
-    log.Fatal(http.ListenAndServe(":8080", handler))
+	handler := cors.Default().Handler(mux)
+	log.Fatal(http.ListenAndServe(":8080", handler))
 }
 
- func printGoLogo() {
+func printGoLogo() {
 	logo := `
  ________  ________          ________  ________  ___     
 |\   ____\|\   __  \        |\   __  \|\   __  \|\  \    
@@ -49,5 +49,3 @@ func main() {
 	fmt.Println(logo)
 	fmt.Println("Starting Go application...")
 }
-                                                                   
-                                                         

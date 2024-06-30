@@ -8,11 +8,14 @@ ProfileFolio simplifies professional profile management by generating customized
 <summary><strong>Install Using Docker</strong></summary>
 
 1.  Fork and Clone the Repository
-2.  Run Docker Compose
+2.  Run below commands to sping up docker container
+    ```bash
+    cd frontend && npm i
+    ```
     ```bash
     docker-compose up --build
     ```
-3.  Access the Application - Frontend: http://localhost:3000 - Backend: http://localhost:8080/api/user
+4.  Access the Application - Frontend: http://localhost:3000 - Backend: http://localhost:8080/api/user
 </details>
 <details>
 <summary><strong>Install Manually</strong></summary>

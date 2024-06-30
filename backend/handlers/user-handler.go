@@ -16,7 +16,7 @@ import (
 var client *mongo.Client
 
 func SetClient(mongoClient *mongo.Client) {
-    client = mongoClient
+	client = mongoClient
 }
 
 func SignUpHandler(w http.ResponseWriter, r *http.Request) {
@@ -144,45 +144,46 @@ func SignInHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	collection := client.Database("profileFolio").Collection("users")
-    var user models.User
-    err := collection.FindOne(context.Background(), bson.M{}).Decode(&user)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
-    log.Println("Successfully retrieved user document:", user)
+	var user models.User
+	err := collection.FindOne(context.Background(), bson.M{}).Decode(&user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	log.Println("Successfully retrieved user document:", user)
 
-    json.NewEncoder(w).Encode(user)
+	json.NewEncoder(w).Encode(user)
 }
+
 func GetSkillsHandler(w http.ResponseWriter, r *http.Request) {
 	collection := client.Database("profileFolio").Collection("skills")
-    var skills []models.SkillCollection
+	var skills []models.SkillCollection
 
-    cursor, err := collection.Find(context.Background(), bson.M{})
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
-    defer cursor.Close(context.Background())
+	cursor, err := collection.Find(context.Background(), bson.M{})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer cursor.Close(context.Background())
 
-    for cursor.Next(context.Background()) {
-        var skill models.SkillCollection
-        if err := cursor.Decode(&skill); err != nil {
-            http.Error(w, err.Error(), http.StatusInternalServerError)
-            return
-        }
-        skills = append(skills, skill)
-    }
+	for cursor.Next(context.Background()) {
+		var skill models.SkillCollection
+		if err := cursor.Decode(&skill); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		skills = append(skills, skill)
+	}
 
-    if err := cursor.Err(); err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
+	if err := cursor.Err(); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-    log.Println("Successfully retrieved user document:", skills)
+	log.Println("Successfully retrieved user document:", skills)
 
-    w.Header().Set("Content-Type", "application/json")
-    if err := json.NewEncoder(w).Encode(skills); err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-    }
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(skills); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
