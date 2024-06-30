@@ -62,6 +62,11 @@ type Interest struct {
     Keywords []string `json:"keywords,omitempty"`
 }
 
+type AuthUser struct {
+    Name     string     `bson:"name" json:"name"`        
+    Email    string     `bson:"email" json:"email"`
+    Password string     `bson:"password" json:"password"`
+}
 type Project struct {
     Name        string                `json:"name"`
     StartDate   primitive.DateTime    `json:"startDate"`
@@ -73,26 +78,29 @@ type Project struct {
     TechStack   []primitive.ObjectID  `json:"techStack,omitempty"`
 }
 
+type Basics struct {
+    Name     string          `json:"name,omitempty"`
+    Label    string          `json:"label,omitempty"`
+    Image    string          `json:"image,omitempty"`
+    Email    string          `json:"email"`
+    Phone    string          `json:"phone,omitempty"`
+    URL      string          `json:"url,omitempty"`
+    Summary  string          `json:"summary,omitempty"`
+    Location Location        `json:"location,omitempty"`
+    Profiles []Profile       `json:"profiles,omitempty"`
+}
+
+
 type User struct {
     ID           primitive.ObjectID  `bson:"_id,omitempty" json:"-"`
-    Basics       struct {
-        Name     string     `json:"name"`
-        Label    string     `json:"label"`
-        Image    string     `json:"image,omitempty"`
-        Email    string     `json:"email"`
-        Phone    string     `json:"phone"`
-        URL      string     `json:"url,omitempty"`
-        Summary  string     `json:"summary"`
-        Location Location   `json:"location"`
-        Profiles []Profile  `json:"profiles,omitempty"`
-    } `json:"basics"`
-    Work         []WorkExperience   `json:"work,omitempty"`
-    Education    []EducationDetail  `json:"education,omitempty"`
-    Certificates []Certificate      `json:"certificates,omitempty"`
-    Skills       []Skill            `json:"skills,omitempty"`
-    Languages    []Language         `json:"languages,omitempty"`
-    Interests    []Interest         `json:"interests,omitempty"`
-    Projects     []Project          `json:"projects,omitempty"`
+    Basics       Basics              `json:"basics"`
+    Work         []WorkExperience    `json:"work,omitempty"`
+    Education    []EducationDetail   `json:"education,omitempty"`
+    Certificates []Certificate       `json:"certificates,omitempty"`
+    Skills       []Skill             `json:"skills,omitempty"`
+    Languages    []Language          `json:"languages,omitempty"`
+    Interests    []Interest          `json:"interests,omitempty"`
+    Projects     []Project           `json:"projects,omitempty"`
 }
 
 
