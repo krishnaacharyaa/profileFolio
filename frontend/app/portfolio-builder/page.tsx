@@ -1,34 +1,16 @@
-// app/page.tsx
 
-import Education from "@/components/portfolio-builder/Education";
-import WorkExperience from "@/components/portfolio-builder/Experience";
-import Header from "@/components/portfolio-builder/Header";
-import Profile from "@/components/portfolio-builder/Profile";
-import Projects from "@/components/portfolio-builder/Projects";
-import Skills from "@/components/portfolio-builder/Skills";
-import skillsData from "@/lib/data/skills.json"
+import Sidebar from "@/components/common/Sidebar";
+import PortfolioView from "@/components/portfolio-builder/PortfolioView";
 
-interface Props {
-  data: any; // Define a proper type based on your JSON structure
-  skillsDetails: any[]; // Define a proper type based on your skills JSON structure
-}
 
-const Home: React.FC<Props> = async () => {
-  const res = await fetch('http://localhost:3000/api/data');
-  const data = await res.json();
+const Page = async () => {
 
   return (
-    <div className='flex flex-col items-center'>
-      <div className='w-full max-w-4xl p-4'>
-         <Header {...data.basics} />
-         <Profile {...data.basics} />
-         <WorkExperience work={data.work} />
-         <Education education={data.education} />
-         <Skills skills={data.skills} skillsDetails={skillsData} />
-         <Projects projects={data.projects}/>
-      </div>
+    <div className="flex justify-between p-4 gap-4 px-12">
+      <Sidebar/>
+      <PortfolioView/>
     </div>
   );
 };
 
-export default Home;
+export default Page;
