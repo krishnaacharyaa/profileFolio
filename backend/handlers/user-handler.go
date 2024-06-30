@@ -10,6 +10,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var client *mongo.Client
@@ -31,6 +32,13 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
+    // Hash the password
+    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(authUser.Password), bcrypt.DefaultCost)
+    if err != nil {
+        http.Error(w, "Error hashing password", http.StatusInternalServerError)
+        return
+    }
+    authUser.Password = string(hashedPassword)
 
     userCollection := client.Database("profileFolio").Collection("users")
     authCollection := client.Database("profileFolio").Collection("auth_users")
@@ -78,7 +86,7 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 
     var new_user models.User
     collection := client.Database("profileFolio").Collection("users")
-    err := collection.FindOne(ctx, bson.M{"basics.email": authUser.Email}).Decode(&new_user)
+    err = collection.FindOne(ctx, bson.M{"basics.email": authUser.Email}).Decode(&new_user)
     if err != nil {
         http.Error(w, "User not found", http.StatusNotFound)
         return
@@ -108,7 +116,15 @@ func SignInHandler(w http.ResponseWriter, r *http.Request) {
     ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
     defer cancel()
 
-    err := collection.FindOne(ctx, bson.M{"email": credentials.Email, "password": credentials.Password}).Decode(&authUser)
+     // Find user by email
+    err := collection.FindOne(ctx, bson.M{"email": credentials.Email}).Decode(&authUser)
+    if err != nil {
+        http.Error(w, "Invalid user credentials", http.StatusUnauthorized)
+        return
+    }
+
+    // Check hashed password
+    err = bcrypt.CompareHashAndPassword([]byte(authUser.Password), []byte(credentials.Password))
     if err != nil {
         http.Error(w, "Invalid user credentials", http.StatusUnauthorized)
         return
