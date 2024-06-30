@@ -1,11 +1,11 @@
 node_modules
 npm-debug.log
 Dockerfile
-docker-compose.yml
+.dockerignore
 .git
 .gitignore
+public
+dist
+.cache
 .next
-.vscode
-README.md
-.dockerignore
-package-lock.json
+frontend/node_modules
