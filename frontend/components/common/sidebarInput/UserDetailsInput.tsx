@@ -14,6 +14,7 @@ import {
 import { ChevronDown, Trash2, User } from 'lucide-react'
 import { useState } from 'react'
 import { InputWithLabel } from '../InputWithLabel'
+import { useFormContext } from 'react-hook-form';
 
 interface Link {
     url: string;
@@ -68,8 +69,8 @@ function UserInfoInputs() {
             <div className='grid md:grid-cols-2 gap-3'>
                 <InputWithLabel label='Name' name='name' type='text' placeholder='John Doe' />
                 <InputWithLabel label='Email' name='email' type='email' placeholder='john.doe@example.com' />
-                <InputWithLabel label='Phone' name='number' type='number' placeholder='+91 6264791295' />
-                <InputWithLabel label='Job Title' name='label' type='text' placeholder='Full stack developer' />
+                <InputWithLabel label='Phone' name='phone' type='number' placeholder='+91 6264791295' />
+                <InputWithLabel label='Job Title' name='label' type='text' placeholder='Full-Stack Developer' />
             </div>
             <div className='flex flex-col gap-3'>
                 <Label htmlFor="summary" className="text-base font-normal text-slate-500">Summary</Label>
