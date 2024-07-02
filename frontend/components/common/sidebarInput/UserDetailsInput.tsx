@@ -14,12 +14,7 @@ import {
 import { ChevronDown, Trash2, User } from 'lucide-react'
 import { useState } from 'react'
 import { InputWithLabel } from '../InputWithLabel'
-import { useFormContext } from 'react-hook-form';
-
-interface Link {
-    url: string;
-    type: string;
-};
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 
 export default function UserDetailsInput() {
     const [showInputs, setShowInputs] = useState(false)
@@ -42,54 +37,52 @@ export default function UserDetailsInput() {
 }
 
 function UserInfoInputs() {
-    const [links, setLinks] = useState<Link[]>([]);
-    const [showAddress, setShowAddress] = useState(false);
+    const { register, control, setValue } = useFormContext()
+    const { fields, append, remove } = useFieldArray({
+        name: 'personalInfo.links',
+        control
+    })
+    //useWatch is used to set the default value of the select field
+    const socialHandles = useWatch({
+        control,
+        name: 'personalInfo.links',
+    })
+    const [showAddress, setShowAddress] = useState(false)
 
     const handleAddLink = () => {
-        if (links.length < 5) {
-            setLinks([...links, { url: '', type: '' }]);
+        if (fields.length < 5) {
+            append({ url: '', social: ''})
         }
-    };
-
-    const handleRemoveLink = (index: number) => {
-        setLinks(links.filter((_, i) => i !== index));
-    };
-
-    const handleLinkChange = (index: number, field: keyof Link, value: string) => {
-        const newLinks = [...links];
-        newLinks[index][field] = value;
-        setLinks(newLinks);
     };
 
     const toggleAddress = () => {
         setShowAddress(!showAddress);
     };
+
     return (
         <div className='flex flex-col gap-4 px-2'>
             <div className='grid md:grid-cols-2 gap-3'>
                 <InputWithLabel label='Name' name='name' type='text' placeholder='John Doe' />
                 <InputWithLabel label='Email' name='email' type='email' placeholder='john.doe@example.com' />
-                <InputWithLabel label='Phone' name='phone' type='number' placeholder='+91 6264791295' />
-                <InputWithLabel label='Job Title' name='label' type='text' placeholder='Full-Stack Developer' />
+                <InputWithLabel label='Phone' name='phone' type='number' placeholder='(+1) 123 456 7890' />
+                <InputWithLabel label='Job Title' name='jobTitle' type='text' placeholder='Full-Stack Developer' />
             </div>
             <div className='flex flex-col gap-3'>
                 <Label htmlFor="summary" className="text-base font-normal text-slate-500">Summary</Label>
-                <Textarea placeholder='Enter Summary' name='summary' id='summary' />
+                <Textarea placeholder='Enter Summary' id='summary' {...register('personalInfo.summary')} />
             </div>
             <div className='flex flex-col gap-3'>
-                <h1 className='text-slate-700 font-medium text-base'>Links({links.length}/5)</h1>
-                {links.map((link, index) => (
-                    <div key={index} className='flex items-center justify-between gap-3'>
+                <h1 className='text-slate-700 font-medium text-base'>Links({fields.length}/5)</h1>
+                {fields.map((field, index) => (
+                    <div key={field.id} className='flex items-center justify-between gap-3'>
                         <div className='grid md:grid-cols-2 gap-3'>
                             <Input
                                 placeholder='Your link here'
                                 type='url'
-                                value={link.url}
-                                onChange={(e) => handleLinkChange(index, 'url', e.target.value)}
+                                {...register(`personalInfo.links.${index}.url` as const)}
                             />
                             <Select
-                                value={link.type}
-                                onValueChange={(value) => handleLinkChange(index, 'type', value)}
+                                onValueChange={(value) => setValue(`personalInfo.links.${index}.social`, value)}
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select" />
@@ -104,12 +97,12 @@ function UserInfoInputs() {
                                 </SelectContent>
                             </Select>
                         </div>
-                        <div className='cursor-pointer' onClick={() => handleRemoveLink(index)}>
+                        <div className='cursor-pointer' onClick={() => remove(index)}>
                             <Trash2 size={'15'} />
                         </div>
                     </div>
                 ))}
-                <Button variant={'outline'} onClick={handleAddLink} disabled={links.length >= 5}>
+                <Button variant={'outline'} onClick={handleAddLink} disabled={fields.length >= 5}>
                     + Add Link
                 </Button>
             </div>
