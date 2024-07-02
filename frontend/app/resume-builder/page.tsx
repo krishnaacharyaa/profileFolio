@@ -2,12 +2,20 @@
 import Sidebar from '@/components/common/Sidebar';
 import ResumeHeader from '@/components/resume-builder/ResumeHeader';
 import ResumeView from '@/components/resume-builder/ResumeView';
-
 import { useForm, FormProvider, FieldValues } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { UserInputSchema } from '../zod/user-inputs';
+import defaultUserInputs from '../store/default-user-inputs';
+
 
 export default function Page() {
-  const methods = useForm();
+  const methods = useForm({
+    resolver: zodResolver(UserInputSchema),
+    defaultValues: defaultUserInputs,
+  });
+
   const onSubmit = async (data: FieldValues) => console.log(data, 'userdetails');
+
   return (
     <div className="h-full px-12">
       <ResumeHeader />
