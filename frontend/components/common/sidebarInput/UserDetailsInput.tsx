@@ -47,25 +47,20 @@ function UserInfoInputs() {
         control,
         name: 'personalInfo.links',
     })
-    const [showAddress, setShowAddress] = useState(false)
 
     const handleAddLink = () => {
         if (fields.length < 5) {
             append({ url: '', social: ''})
         }
-    };
-
-    const toggleAddress = () => {
-        setShowAddress(!showAddress);
-    };
+    }
 
     return (
         <div className='flex flex-col gap-4 px-2'>
             <div className='grid md:grid-cols-2 gap-3'>
-                <InputWithLabel label='Name' name='name' type='text' placeholder='John Doe' />
-                <InputWithLabel label='Email' name='email' type='email' placeholder='john.doe@example.com' />
-                <InputWithLabel label='Phone' name='phone' type='number' placeholder='(+1) 123 456 7890' />
-                <InputWithLabel label='Job Title' name='jobTitle' type='text' placeholder='Full-Stack Developer' />
+                <InputWithLabel label='Name' name='name' type='text' placeholder='John Doe' schemaType='personalInfo' />
+                <InputWithLabel label='Email' name='email' type='email' placeholder='john.doe@example.com' schemaType='personalInfo'  />
+                <InputWithLabel label='Phone' name='phone' type='number' placeholder='(+1) 123 456 7890' schemaType='personalInfo'  />
+                <InputWithLabel label='Job Title' name='jobTitle' type='text' placeholder='Full-Stack Developer' schemaType='personalInfo'  />
             </div>
             <div className='flex flex-col gap-3'>
                 <Label htmlFor="summary" className="text-base font-normal text-slate-500">Summary</Label>
@@ -104,20 +99,6 @@ function UserInfoInputs() {
                 ))}
                 <Button variant={'outline'} onClick={handleAddLink} disabled={fields.length >= 5}>
                     + Add Link
-                </Button>
-            </div>
-            <div className='flex flex-col gap-3'>
-                <h1 className='text-slate-700 font-medium text-base'>Address</h1>
-                <div className={`transition-all duration-300 ease-in-out overflow-hidden ${showAddress ? 'block' : 'hidden'}`}>
-                    <div className='grid md:grid-cols-2 gap-3'>
-                        <InputWithLabel label='Address' name='address' type='text' placeholder='2712 Broadway St' />
-                        <InputWithLabel label='City' name='city' type='text' placeholder='San Francisco' />
-                        <InputWithLabel label='Country' name='countryCode' type='text' placeholder='US' />
-                        <InputWithLabel label='Postal Code' name='postalCode' type='number' placeholder='CA 94115' />
-                    </div>
-                </div>
-                <Button variant={'outline'} onClick={toggleAddress}>
-                    {showAddress ? 'Remove Address' : 'Add Address'}
                 </Button>
             </div>
         </div>

@@ -8,6 +8,12 @@ const defaultUserInputs = {
         address: '',
         links: [{url: 'https://github.com/elonmusk', social: 'GitHub'}, {url: 'https://github.com/elonmusk', social: 'LinkedIn'},],
     },
+    skills: {
+        languages: 'JavaScript, TypeScript, Python, Java',
+        libraries: 'React.js, Next.js, Express.js',
+        tools: 'VS Code, Git, Postman',
+        databases: 'MongoDB, SQL, Postgres'
+    }
 }
 
 export default defaultUserInputs

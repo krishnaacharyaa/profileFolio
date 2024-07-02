@@ -15,6 +15,12 @@ const UserInputSchema = z.object({
         address: z.string(),
         links: z.array(Links)        
     }),
+    skills: z.object({
+        languages: z.string(),
+        libraries: z.string(),
+        tools: z.string(),
+        databases: z.string(),
+    }),
 })
 
 export { UserInputSchema };
