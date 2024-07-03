@@ -7,7 +7,7 @@ interface Props {
     name: string
     type: string
     placeholder: string
-    schemaType: string
+    schemaType?: string
 }
 
 export function InputWithLabel({ label, name, type, placeholder, schemaType }: Props) {

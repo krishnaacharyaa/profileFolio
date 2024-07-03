@@ -82,7 +82,7 @@ function InstituteInputs() {
         <div className='grid md:grid-cols-2 gap-3 px-4'>
             <InputWithLabel label='Institution' name='institution' type='text' placeholder='University name' />
             <InputWithLabel label='Website' name='url' type='url' placeholder='Institution website' />
-            <InputWithLabel label='Degree' name='studyType' type='text' placeholder='Bachelors' />
+            <InputWithLabel label='Degree' name='degree' type='text' placeholder='Bachelors' />
             <InputWithLabel label='Field of Study' name='area' type='text' placeholder='Computer science' />
             <Input placeholder='4.5' name='score' id='score' />
             <Select>
