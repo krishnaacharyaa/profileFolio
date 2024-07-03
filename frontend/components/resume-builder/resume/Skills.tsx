@@ -3,6 +3,7 @@ import { Subheading } from "@/components/common/Subheading"
 export const Skills = ()=>{
     return <div className="p-4">
         <Subheading text="SKILLS"/>
+        <div className="py-[1px] bg-black "></div>
         <div className="flex flex-col gap-1">
         <div className="grid grid-cols-3">
             <div className=" col-span-1 text-sm font-medium ">

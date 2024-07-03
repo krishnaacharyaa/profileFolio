@@ -4,6 +4,7 @@ export const Experience = () => {
   return (
     <div className="pt-4 px-4">
       <Subheading text="EXPERIENCE" />
+      <div className="py-[1px] bg-black "></div>
       <ExpItem />
       <ExpItem />
     </div>

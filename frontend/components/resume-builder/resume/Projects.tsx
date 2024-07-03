@@ -6,6 +6,7 @@ export const Projects = () => {
   return (
     <div className="pt-4 px-4">
       <Subheading text="PROJECTS"/>
+      <div className="py-[1px] bg-black "></div>
       <div className="flex flex-col gap-1">
         <ProjectItem />
         <ProjectItem />
