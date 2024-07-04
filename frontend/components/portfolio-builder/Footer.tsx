@@ -21,10 +21,47 @@ interface FooterProps {
     certificates: Certificate[];
   }
 
-const Footer: React.FC<FooterProps> = ({ languages, interests, certificates }) => (
+const Footer = () => (
   <footer className="bg-gray-200 p-8">
     <div className="container mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
+          <h3 className="text-xl font-semibold mb-4">Certifications</h3>
+          <ul className="list-disc list-inside">
+              <li className="text-gray-700">
+                <a href={'www'} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                  {`Certified Kubernetes Administrator - CNCF`}
+                </a> - {`CNCF `} (15/7/2020)
+              </li>
+          </ul>
+        </div>
+        <div>
+          <h3 className="text-xl font-semibold mb-4">Languages</h3>
+          <ul className="list-disc list-inside">
+              <li key={1} className="text-gray-700">
+                {`English`} - {'Fluent'}
+              </li>
+              <li key={1} className="text-gray-700">
+                {`English`} - {'Fluent'}
+              </li>
+              <li key={1} className="text-gray-700">
+                {`English`} - {'Fluent'}
+              </li>
+          </ul>
+        </div>
+        <div>
+          <h3 className="text-xl font-semibold mb-4">Interests</h3>
+          <ul className="list-disc list-inside">
+              <li className="text-gray-700">
+                {'Traveling'}: {`Backpacking, Cultural Experiences`}
+              </li>
+              <li className="text-gray-700">
+                {'Traveling'}: {`Backpacking, Cultural Experiences`}
+              </li>
+          </ul>
+        </div>
+      </div>
+      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
           <h3 className="text-xl font-semibold mb-4">Certifications</h3>
           <ul className="list-disc list-inside">
@@ -57,7 +94,7 @@ const Footer: React.FC<FooterProps> = ({ languages, interests, certificates }) =
             ))}
           </ul>
         </div>
-      </div>
+      </div> */}
     </div>
   </footer>
 );

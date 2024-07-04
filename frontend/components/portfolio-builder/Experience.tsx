@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface WorkExperienceProps {
-  work: {
+  work?: {
     name: string;
     position: string;
     url: string;
@@ -20,14 +20,51 @@ const WorkExperience: React.FC<WorkExperienceProps> = ({ work }) => (
     <div className="relative">
       {/* Vertical line */}
       <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-indigo-300" style={{ left: '15px' }}></div>
+      <div 
+          key={'Senior Developer at TechCorp'}
+          className='mb-12 pl-12 relative animate-fade-in'
+          style={{ animationDelay: `${1 * 100}ms` }}
+        >
+          {/* Circle on the timeline */}
+          <div className="absolute left-0 w-8 h-8 bg-indigo-500 rounded-full border-4 border-white" style={{ left: '1px', top: '0' }}></div>
+          
+          <div className='bg-white rounded-lg shadow-lg overflow-hidden'>
+            <div className='p-6'>
+              <h3 className='text-xl font-semibold mb-2 text-indigo-700'>
+                {`Senior Developer`} at <a href={`www.techcorp.com`} className='text-blue-600 hover:text-blue-800 transition duration-300'>{`TechCorp`}</a>
+              </h3>
+              <p className='text-sm text-gray-600 mb-3'>
+                {`May 2018 - Present`}
+              </p>
+              <p className='text-gray-700 mb-4'>{`Developed and maintained various web applications.  `}</p>
+              <ul className='space-y-2'>
+                  <li 
+                    // key={index}
+                    className='flex items-center text-gray-600 animate-fade-in'
+                    style={{ animationDelay: `${(2+ 1) * 100}ms` }}
+                  >
+                    <span className='mr-2 text-indigo-500'>•</span>
+                    {`Led a team of developers to create a new e-commerce platform.`}
+                  </li>
+                  <li 
+                    // key={index}
+                    className='flex items-center text-gray-600 animate-fade-in'
+                    style={{ animationDelay: `${(2+ 1) * 100}ms` }}
+                  >
+                    <span className='mr-2 text-indigo-500'>•</span>
+                    {`Implemented a continuous integration and deployment pipelinew.`}
+                  </li>
+              </ul>
+            </div>
+          </div>
+        </div>
       
-      {work.map((job, index) => (
+      {/* {work.map((job, index) => (
         <div 
           key={job.name}
           className='mb-12 pl-12 relative animate-fade-in'
           style={{ animationDelay: `${index * 100}ms` }}
         >
-          {/* Circle on the timeline */}
           <div className="absolute left-0 w-8 h-8 bg-indigo-500 rounded-full border-4 border-white" style={{ left: '1px', top: '0' }}></div>
           
           <div className='bg-white rounded-lg shadow-lg overflow-hidden'>
@@ -50,13 +87,12 @@ const WorkExperience: React.FC<WorkExperienceProps> = ({ work }) => (
                     <span className='mr-2 text-indigo-500'>•</span>
                     {highlight}
                   </li>
-                  
                 ))}
               </ul>
             </div>
           </div>
         </div>
-      ))}
+      ))} */}
     </div>
   </section>
 );

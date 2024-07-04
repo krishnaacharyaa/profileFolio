@@ -17,22 +17,22 @@ interface ProfileProps {
   profiles: { network: string; username: string; url: string }[];
 }
 
-const Profile: React.FC<ProfileProps> = ({ summary, location, profiles }) => (
+const Profile = () => (
   <section className='p-8 bg-gradient-to-br from-purple-50 to-pink-100'>
     <h2 className='text-3xl font-bold mb-8 text-purple-800 border-b-2 border-purple-300 pb-2 animate-fade-in'>
       About Me
     </h2>
     <div className='bg-white rounded-lg shadow-lg overflow-hidden animate-fade-in'>
       <div className='p-6'>
-        <p className='text-lg text-gray-700 mb-6 leading-relaxed'>{summary}</p>
+        <p className='text-lg text-gray-700 mb-6 leading-relaxed'>Experienced software engineer with a passion for developing innovative programs.</p>
         <div className='flex items-center text-gray-600 mb-4'>
           <FaMapMarkerAlt className='text-purple-500 mr-2' />
           <p>
-            {location.address}, {location.city}, {location.region}, {location.countryCode}, {location.postalCode}
+          123 Main St, Metropolis, NY, US, 12345
           </p>
         </div>
         <div className='flex flex-wrap gap-4 mt-6'>
-          {profiles.map(profile => (
+          {/* {profiles.map(profile => (
             <a 
               key={profile.network} 
               href={profile.url}
@@ -43,7 +43,7 @@ const Profile: React.FC<ProfileProps> = ({ summary, location, profiles }) => (
               <FaGlobe className='mr-2' />
               {profile.network}
             </a>
-          ))}
+          ))} */}
         </div>
       </div>
     </div>

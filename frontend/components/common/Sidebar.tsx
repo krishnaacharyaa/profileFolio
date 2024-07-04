@@ -16,7 +16,7 @@ export default function Sidebar() {
   return (
     <div className='w-[400px] h-full'>
       <div className='py-4 border border-gray-200 rounded-md h-[530px] overflow-y-auto scrollbar-none scroll-smooth'>
-        <h1 className='font-semibold text-slate-600 text-base mb-4 px-4 flex justify-between'>Resume Details <CircleX className=' cursor-pointer'></CircleX></h1>
+        <h1 className='font-semibold text-slate-600 text-base mb-4 px-4 flex justify-between'>Resume Details</h1>
         <hr />
         <div className='flex flex-col'>
           <UserDetailsInput/>
