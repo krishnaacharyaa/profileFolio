@@ -1,12 +1,11 @@
 const defaultUserInputs = {
     personalInfo: {
         name: 'Elon Musk',
-        email: 'elon@gmail.com',
+        email: 'muskelon@gmail.com',
         phone: '(+1) 123 456 7890',
         jobTitle: 'Full-Stack Engineer',
-        summary: '',
-        address: '',
-        links: [{url: 'https://github.com/elonmusk', social: 'GitHub'}, {url: 'https://github.com/elonmusk', social: 'LinkedIn'},],
+        summary: 'A businessman and investor known for his key roles in space company SpaceX and automotive company Tesla, Inc. Other involvements include ownership of X Corp. formerly Twitter, and his role in the founding of The Boring Company, xAI, Neuralink and OpenAI.',
+        links: [{ url: 'https://github.com/elonmusk', social: 'GitHub' }, { url: 'https://linkedin.com/elonmusk', social: 'LinkedIn' },],
     },
     skills: {
         languages: 'JavaScript, TypeScript, Python, Java',

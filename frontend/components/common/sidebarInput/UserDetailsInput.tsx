@@ -12,9 +12,9 @@ import {
 } from "@/components/ui/select"
 
 import { ChevronDown, Trash2, User } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { InputWithLabel } from '../InputWithLabel'
-import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 
 export default function UserDetailsInput() {
     const [showInputs, setShowInputs] = useState(false)
@@ -37,30 +37,44 @@ export default function UserDetailsInput() {
 }
 
 function UserInfoInputs() {
-    const { register, control, setValue } = useFormContext()
+    const { register, control, setValue, watch } = useFormContext()
     const { fields, append, remove } = useFieldArray({
         name: 'personalInfo.links',
         control
     })
-    //useWatch is used to set the default value of the select field
-    const socialHandles = useWatch({
-        control,
-        name: 'personalInfo.links',
-    })
+
 
     const handleAddLink = () => {
         if (fields.length < 5) {
-            append({ url: '', social: ''})
+            append({ url: '', social: '' })
         }
     }
+    const detectLinkType = (url: string) => {
+        if (url.includes("github.com")) return "github";
+        if (url.includes("linkedin.com")) return "linkedin";
+        if (url.includes("twitter.com") || url.includes("x.com")) return "x";
+        if (url.includes("hackerrank.com")) return "hackerrank";
+        if (url.includes("leetcode.com")) return "leetcode";
+        return "portfolio";
+    };
+
+    useEffect(() => {
+        fields.forEach((link, index) => {
+            const url = watch(`personalInfo.links.${index}.url`);
+            if (url) {
+                const type = detectLinkType(url);
+                setValue(`personalInfo.links.${index}.social`, type);
+            }
+        });
+    }, []);
 
     return (
         <div className='flex flex-col gap-4 px-2'>
             <div className='grid md:grid-cols-2 gap-3'>
                 <InputWithLabel label='Name' name='name' type='text' placeholder='John Doe' schemaType='personalInfo' />
-                <InputWithLabel label='Email' name='email' type='email' placeholder='john.doe@example.com' schemaType='personalInfo'  />
-                <InputWithLabel label='Phone' name='phone' type='number' placeholder='(+1) 123 456 7890' schemaType='personalInfo'  />
-                <InputWithLabel label='Job Title' name='jobTitle' type='text' placeholder='Full-Stack Developer' schemaType='personalInfo'  />
+                <InputWithLabel label='Email' name='email' type='email' placeholder='john.doe@example.com' schemaType='personalInfo' />
+                <InputWithLabel label='Phone' name='phone' type='string' placeholder='(+1) 123 456 7890' schemaType='personalInfo' />
+                <InputWithLabel label='Job Title' name='jobTitle' type='text' placeholder='Full-Stack Developer' schemaType='personalInfo' />
             </div>
             <div className='flex flex-col gap-3'>
                 <Label htmlFor="summary" className="text-base font-normal text-slate-500">Summary</Label>
@@ -74,9 +88,15 @@ function UserInfoInputs() {
                             <Input
                                 placeholder='Your link here'
                                 type='url'
-                                {...register(`personalInfo.links.${index}.url` as const)}
+                                {...register(`personalInfo.links.${index}.url`)}
+                                onChange={(e) => {
+                                    const url = e.target.value;
+                                    const type = detectLinkType(url);
+                                    setValue(`personalInfo.links.${index}.social`, type);
+                                }}
                             />
                             <Select
+                                value={watch(`personalInfo.links.${index}.social`)}
                                 onValueChange={(value) => setValue(`personalInfo.links.${index}.social`, value)}
                             >
                                 <SelectTrigger>

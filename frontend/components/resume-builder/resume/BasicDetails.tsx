@@ -1,50 +1,44 @@
-import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-export const BasicDetails = ()=>{
-    const { watch, getValues } = useFormContext();
-    const [personalInfo, setPersonalInfo] = useState({
-        name: '',
-        jobTitle: '',
-        email: '',
-        phone: '',
-    });
-    // useEffect to reduce the number of re-renders
-    useEffect(() => {
-        setPersonalInfo({
-            name: getValues('personalInfo.name'),
-            jobTitle: getValues('personalInfo.jobTitle'),
-            email: getValues('personalInfo.email'),
-            phone: getValues('personalInfo.phone'),
-        })
-        const subscription = watch((values) => {
-            setPersonalInfo({
-                name: values.personalInfo.name,
-                jobTitle: values.personalInfo.jobTitle,
-                email: values.personalInfo.email,
-                phone: values.personalInfo.phone,
-            });
-        }, ['name', 'jobTitle', 'email', 'phone']);
+interface Link {
+    social: string;
+    url: string;
+}
 
-        return () => subscription.unsubscribe();
-    }, [watch]);
+interface PersonalInfo {
+    name: string;
+    jobTitle: string;
+    email: string;
+    phone: string;
+    links: Link[];
+}
 
-  return <div className="flex flex-col">
-    <div className="text-3xl text-center font-medium">{personalInfo.name}</div>
-    <div className="text-center text-sm font-light">{personalInfo.jobTitle}</div>
-    <div className="flex justify-center text-sm font-light">
-        <div className=" border-r-2 border-gray-500 px-1">{personalInfo.email}</div>
-        <div className="px-1 border-r-2 border-gray-500">{personalInfo.phone}</div>
-        <div  className="border-r-2 border-gray-500 px-1">
-           <a href="http://www.github.com/PatelYash7" target="_blank" rel="noopener noreferrer">
-                {watch('personalInfo.links.0.social')}
-           </a>
+export default function BasicDetails() {
+    const { watch } = useFormContext()
+
+    const personalInfo = watch("personalInfo") as PersonalInfo
+
+    return <div className="flex flex-col gap-1">
+        <h1 className="text-4xl text-center capitalize ">{personalInfo?.name}</h1>
+        <span className="text-center text-sm font-light capitalize">{personalInfo?.jobTitle}</span>
+        <div className="flex justify-center items-center gap-1">
+            <a href={`mailto:${personalInfo?.email}`} className="text-sm">{personalInfo?.email}</a>
+            {
+                personalInfo?.email && personalInfo?.phone && (
+                    <span>|</span>
+                )
+            }
+            <p className="text-sm">{personalInfo?.phone}</p>
         </div>
-        <div  className="px-1">
-            <a href="http://www.linkedin.com/in/yash-patel-86666b1b9" target="_blank" rel="noopener noreferrer">
-                {watch('personalInfo.links.1.social')}
-           </a>
+        <div className="flex justify-center gap-1">
+            {
+                personalInfo?.links?.map((link, index) => (
+                    <div key={index} className='flex items-center gap-1'>
+                        <a href={link?.url} target='_blank' className='capitalize font-semibold text-base'>{link?.social}</a>
+                        {index < personalInfo.links.length - 1 && <span>|</span>}
+                    </div>
+                ))
+            }
         </div>
     </div>
-  </div>
 }

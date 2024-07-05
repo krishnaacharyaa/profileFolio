@@ -10,8 +10,7 @@ import defaultUserInputs from '../store/default-user-inputs';
 
 export default function Page() {
   const methods = useForm({
-    resolver: zodResolver(UserInputSchema),
-    defaultValues: defaultUserInputs,
+    resolver: zodResolver(UserInputSchema)
   });
 
   const onSubmit = async (data: FieldValues) => console.log(data, 'userdetails');
@@ -20,14 +19,12 @@ export default function Page() {
     <div className="h-full px-12">
       <ResumeHeader />
       <hr />
-
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)} className="h-full">
-            <div className="mt-7 flex justify-between h-full">
-              <Sidebar />
-              <ResumeView />
-            </div>
-          <button type="submit" className='border-2 border-black rounded-md p-4'>Submit</button>
+          <div className="mt-7 flex justify-between h-full gap-8">
+            <Sidebar handleSubmit={methods.handleSubmit(onSubmit)} />
+            <ResumeView />
+          </div>
         </form>
       </FormProvider>
     </div>
