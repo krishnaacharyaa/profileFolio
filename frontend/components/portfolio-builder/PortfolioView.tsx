@@ -12,10 +12,10 @@ export default function () {
     <div className="bg-white py-2 px-4 rounded  overflow-y-scroll h-screen">
           <Header/>
           <Profile />
-          <WorkExperience/>
           <Education/>
-          <Skills />
+          <WorkExperience />
           <Projects/>
+          <Skills />
           <Footer/>
       </div>
   );

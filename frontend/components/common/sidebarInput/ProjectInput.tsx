@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@radix-ui/react-label'
 import { Airplay, ChevronDown, Trash2 } from 'lucide-react'
 import React, { useState } from 'react'
-import { InputWithLabel } from '../InputWithLabel'
+import { InputWithLabel, TextAreaWithLabel } from '../InputWithLabel'
 import { DatePickerWithRange } from '@/components/ui/datePicker'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 
@@ -78,20 +78,18 @@ export function ListOfProjects() {
 function ProjectInputs({index}:{index:number}) {
     const { register } = useFormContext();
     return (
-        <div className='flex flex-col gap-3'>
+        <div className='grid md:grid-cols-1 gap-3 px-4'>
             <div className='flex flex-col gap-3 px-4'>
                 <InputWithLabel label='Project name' name='name' type='text' schemaType={`projects.${index}`} placeholder='Project name' />
                 <InputWithLabel label='Technologies Used' name='technologies'schemaType={`projects.${index}`} type='text' placeholder='React.js , Node.js , TypeScript ...' />
-                <InputWithLabel label='Project Link / GitHub Repository' schemaType={`projects.${index}`} name='url' type='text' placeholder='github.com/your-username/repository' />
+                <InputWithLabel label='Project Link / GitHub Repository' schemaType={`projects.${index}`} name='giturl' type='text' placeholder='github.com/your-username/repository' />
+                <InputWithLabel label='Project Link' schemaType={`projects.${index}`} name='liveurl' type='text' placeholder='Hosting link' />
                 <div className='flex flex-col gap-3 w-full'>
                     <Label htmlFor='duration' className="text-base font-normal text-slate-500">Duration</Label>
                     <DatePickerWithRange />
                 </div>
             </div>
-            <div className='flex flex-col gap-3'>
-                <Label htmlFor={`projects.${index}.description`} className="text-base font-normal text-slate-500">Description</Label>
-                <Textarea placeholder='Enter description'  {...register(`projects.${index}.description`)} name='description' id='description' />
-            </div>
+            <TextAreaWithLabel label='Project Link' schemaType={`projects.${index}`} name='description'  placeholder='Summary' />
         </div>
     )
 }

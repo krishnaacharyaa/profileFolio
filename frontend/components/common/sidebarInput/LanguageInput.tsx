@@ -85,7 +85,7 @@ export function ListOfLanguages() {
                 <SelectContent>
                     <SelectItem value="fluent">Fluent</SelectItem>
                     <SelectItem value="intermediate">Intermediate</SelectItem>
-                    <SelectItem value="expart">Expart</SelectItem>
+                    <SelectItem value="expert">Expart</SelectItem>
                 </SelectContent>
             </Select>
         </div>

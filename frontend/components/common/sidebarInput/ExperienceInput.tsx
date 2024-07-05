@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@radix-ui/react-label'
 import { Briefcase, ChevronDown, Trash2 } from 'lucide-react'
 import React, { useState } from 'react'
-import { InputWithLabel } from '../InputWithLabel'
+import { InputWithLabel, TextAreaWithLabel } from '../InputWithLabel'
 import { DatePickerWithRange } from '@/components/ui/datePicker'
 import { Textarea } from '@/components/ui/textarea'
 import { useFieldArray, useFormContext } from 'react-hook-form'
@@ -78,8 +78,8 @@ export function ListOfCompanies() {
  function CompaniesInput({index}:{index:number}) {
     const { register } = useFormContext();
     return (
-        <div className='flex flex-col gap-3'>
-            <div className='flex flex-col gap-3 px-4'>
+        <div className='grid md:grid-cols-1 gap-3 px-4'>
+            <div className='flex flex-col gap-3'>
                 <InputWithLabel label='Company name' name='name' type='text' schemaType={`companies.${index}`} placeholder='Company name' />
                 <InputWithLabel label='Website' name='url' type='url' schemaType={`companies.${index}`} placeholder='Company website' />
                 <InputWithLabel label='Job Title' name='position' type='text' schemaType={`companies.${index}`} placeholder='Software Emgineer' />
@@ -88,10 +88,7 @@ export function ListOfCompanies() {
                     <DatePickerWithRange />
                 </div>
             </div>
-            <div className='flex flex-col gap-3'>
-                <Label htmlFor={`companies.${index}.summary`} className="text-base font-normal text-slate-500">Summary</Label>
-                <Textarea placeholder='Enter Summary' {...register(`companies.${index}.summary`)} name='summary' id='summary' />
-            </div>
+            <TextAreaWithLabel label='Job Title' name='summary' schemaType={`companies.${index}`} placeholder='Summary'/>
         </div>
     )
 }

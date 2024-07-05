@@ -79,7 +79,6 @@ function CertificateInputs({index}:{index:number}) {
             <InputWithLabel label='Certificate name' name='name' type='text' schemaType={`certificates.${index}`} placeholder='Full stack developer' />
             <InputWithLabel label='Certificate link' name='url' type='url' schemaType={`certificates.${index}`} placeholder='Certificate link' />
             <InputWithLabel label='Issued by' name='issuer' type='text' schemaType={`certificates.${index}`} placeholder='Udemy , Coursera' />
-            <DatePickerDemo />
         </div>
     )
 }

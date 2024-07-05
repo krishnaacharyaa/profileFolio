@@ -1,23 +1,28 @@
-import React from 'react';
+'use client'
+import React, { useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { FaLinkedin, FaGithub, FaEnvelope, FaMobile } from 'react-icons/fa';
-
-interface Profile {
-  network: string;
-  username: string;
-  url: string;
-}
 
 interface HeaderProps {
   name: string;
-  label: string;
+  jobTitle: string;
   image: string;
   email: string;
   phone: string;
-  url: string;
-  profiles: Profile[];
+  links: Link[];
+  imgUrl: string;
 }
-
+interface Link {
+  social: string;
+  url: string;
+}
 const Header = () => {
+  const { watch } = useFormContext();
+  const [personalInfo,setpersonalInfo]=useState<HeaderProps>()
+  useEffect(()=>{
+    const data = watch("personalInfo") as HeaderProps
+    setpersonalInfo(data)
+  },[])
   return(
   <header className='flex flex-col items-start p-4 bg-gray-100 rounded-lg shadow-md'>
     <div className="mb-4">
@@ -28,34 +33,34 @@ const Header = () => {
       />
     </div>
     <div className='text-left'>
-      <h1 className='text-2xl font-bold text-gray-900'>Jane Smith</h1>
-      <p className='text-lg text-gray-600'>Software Engineer</p>
+      <h1 className='text-2xl font-bold text-gray-900'>{personalInfo?.name}</h1>
+      <p className='text-lg text-gray-600'>{personalInfo?.jobTitle}</p>
       <div className='flex items-center space-x-4'>
-        <a href={`mailto:jane.smith@gmail.com`} className='text-blue-500 hover:underline flex items-center'>
-          <FaEnvelope className='mr-2' /> jane.smith@gmail.com
+        <a href={`mailto:${personalInfo?.email}`} className='text-blue-500 hover:underline flex items-center'>
+          <FaEnvelope className='mr-2' /> {personalInfo?.email}
         </a>
         <p className='text-blue-500 hover:underline flex items-center'>
-          <FaMobile className='mr-2'/>(123) 456-7890
+          <FaMobile className='mr-2'/>{personalInfo?.phone}
         </p>
-        <a href={'url'} className='text-blue-500 hover:underline'>https://janesmith.com</a>
+        {/* <a href={'url'} className='text-blue-500 hover:underline'>https://janesmith.com</a> */}
       </div>
       <div className='flex items-center space-x-4 mt-2'>
-        {/* {profiles.map(profile => {
-          if (profile.network === 'LinkedIn') {
+        {personalInfo?.links.map(profile => {
+          if (profile?.social === 'linkedin') {
             return (
-              <a key={profile.network} href={profile.url} className='text-blue-700 hover:underline flex items-center'>
+              <a key={profile.social} href={profile?.url} className='text-blue-700 hover:underline flex items-center'>
                 <FaLinkedin className='mr-2' /> LinkedIn
               </a>
             );
-          } else if (profile.network === 'GitHub') {
+          } else if (profile?.social === 'github') {
             return (
-              <a key={profile.network} href={profile.url} className='text-blue-500 hover:underline flex items-center'>
-                <FaGithub className='mr-2' /> GitHub
+              <a key={profile?.social} href={profile?.url} className='text-blue-500 hover:underline flex items-center'>
+                <FaGithub className='mr-2'/> GitHub
               </a>
             );
           }
           return null;
-        })} */}
+        })}
       </div>
     </div>
   </header>
