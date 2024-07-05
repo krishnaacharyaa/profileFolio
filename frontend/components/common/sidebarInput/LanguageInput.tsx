@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ChevronDown, Languages, Trash2 } from 'lucide-react'
 import React, { useState } from 'react'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 
 export default function LanguageInput() {
     const [language, setShowLanguage] = useState(false)
@@ -26,45 +27,44 @@ export default function LanguageInput() {
     )
 }
 
-interface LanguageProps {
-    showInputs: boolean;
-}
+export function ListOfLanguages() {
+    const { control, watch } = useFormContext();
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "languages",
+    });
 
-function ListOfLanguages() {
-    const [languages, setLanguages] = useState<LanguageProps[]>([]);
+    const [showInputs, setShowInputs] = useState<number | null>(null);
 
     const toggleInputs = (index: number) => {
-        const newLanguage = [...languages];
-        newLanguage[index].showInputs = !newLanguage[index].showInputs;
-        setLanguages(newLanguage);
+        setShowInputs(showInputs === index ? null : index);
     };
 
     const addLanguage = () => {
-        setLanguages([...languages, { showInputs: false }]);
+        append({ language: "", fluency: "" })
     };
 
     const deleteLanguage = (index: number) => {
-        const newLanguage = languages.filter((_, i) => i !== index);
-        setLanguages(newLanguage);
+        remove(index)
     };
     return (
         <div className='flex flex-col gap-3 px-2'>
-            {languages.map((language, index) => (
+            {fields.map((language, index) => (
                 <div key={index}>
                     <div
                         className='flex justify-between items-center px-4 py-4 cursor-pointer'
                         onClick={() => toggleInputs(index)}
                     >
-                        <h1 className='text-slate-600 font-semibold text-base'>Language</h1>
+                        <h1 className='text-slate-600 font-semibold text-base'>{watch(`languages.${index}.language`) || "Language"}</h1>
                         <div className='flex gap-3 items-center'>
                             <Trash2 size={20} className='text-slate-400 cursor-pointer' onClick={(e) => {
                                 e.stopPropagation();
                                 deleteLanguage(index);
                             }} />
-                            <ChevronDown size={20} className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${language.showInputs ? 'rotate-180' : ''}`} />
+                            <ChevronDown size={20} className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${showInputs === index ? 'rotate-180' : ''}`} />
                         </div>
                     </div>
-                    {language.showInputs && <LanguageInputs />}
+                    {showInputs === index && <LanguageInputs index={index} />}
                 </div>
             ))}
             <Button variant={'outline'} onClick={addLanguage}>
@@ -73,18 +73,19 @@ function ListOfLanguages() {
         </div>
     )
 }
- function LanguageInputs() {
+ function LanguageInputs({index}:{index:number}) {
+    const { register, setValue } = useFormContext()
     return (
         <div className='grid md:grid-cols-2 gap-3'>
-            <Input name='language' id='language' placeholder='Enter language' />
-            <Select>
+            <Input id='language' placeholder='Enter language' {...register(`languages.${index}.language`)}  />
+            <Select onValueChange={(value) => setValue(`languages.${index}.fluency`, value)}>
                 <SelectTrigger>
                     <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="fluent">Fluent</SelectItem>
                     <SelectItem value="intermediate">Intermediate</SelectItem>
-                    <SelectItem value="expart">Expart</SelectItem>
+                    <SelectItem value="expert">Expart</SelectItem>
                 </SelectContent>
             </Select>
         </div>
