@@ -4,7 +4,7 @@ const LocationSchema = z.object({
   address: z.string({ required_error: 'Address is required' }).min(1, { message: 'Address cannot be empty' }),
   postalCode: z.string({ required_error: 'Postal code is required' }).min(1, { message: 'Postal code cannot be empty' }).max(6, { message: 'Postal code cannot exceed 6 characters' }),
   city: z.string({ required_error: 'City is required' }).min(1, { message: 'City name cannot be empty' }),
-  countryCode: z.string({required_error: 'Input is required'}).regex(/^[A-Z]{2}$/, 'Input must be 2 uppercase letters.'),
+  countryCode: z.string({ required_error: 'Input is required' }).regex(/^[A-Z]{2}$/, 'Input must be 2 uppercase letters.'),
   // region: z.string({ required_error: 'Region is required' }),
 });
 
@@ -60,7 +60,7 @@ const SkillSchema = z.object({
 
 const LanguageSchema = z.object({
   language: z.string({ required_error: 'Language is required' }).min(1, { message: 'Language cannot be empty' }),
-  fluency: z.enum(["Beginner" , "Intermediate" , "Advanced" , "Native"], { required_error: 'fluency is required' }),
+  fluency: z.enum(["Beginner", "Intermediate", "Advanced", "Native"], { required_error: 'fluency is required' }),
 });
 
 // const InterestSchema = z.object({
@@ -88,9 +88,9 @@ const UserSchema = z.object({
     current_role: z.string({ required_error: 'Role is required' }).min(1, { message: 'Role cannot be empty' }),
     image: z.string().url('Invalid URL format'),
     email: z.string({ required_error: 'Email is required' }).email('Invalid email format'),
-    phone: z.string({required_error: 'Phone number is required'}).regex(/^[0-9]{10}$/, 'Invalid phone number. It should be 10 digits.'),
+    phone: z.string({ required_error: 'Phone number is required' }).regex(/^[0-9]{10}$/, 'Invalid phone number. It should be 10 digits.'),
     url: z.string().url('Invalid URL format'),
-    summary: z.string({ required_error: 'Summary is required' }).min(1, { message: 'Summary cannot be empty' }).max(80, {message: `can't exceed 80 characters`}),
+    summary: z.string({ required_error: 'Summary is required' }).min(1, { message: 'Summary cannot be empty' }).max(80, { message: `can't exceed 80 characters` }),
     location: LocationSchema,
     profiles: z.array(ProfileSchema).nullable().optional(),
     languages: z.array(LanguageSchema).nullable().optional(),

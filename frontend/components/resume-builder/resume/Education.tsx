@@ -1,29 +1,42 @@
-import { Subheading } from '@/components/common/Subheading';
+import { ExternalLink } from "lucide-react";
+import { useFormContext } from "react-hook-form"
 
 interface Education {
-  instituition: string;
-  url: string;
-  degree: string;
-  area: string;
-  score: string;
-  duration:string;
+  institution: string;
+  url?: string;
+  area?: string;
+  studyType?: string;
+  score?: string;
+  scoreType?: string;
 }
 
-export const Education = () => {
-  return (
-    <div className="px-4 pt-2">
-      <Subheading text="EDUCATION" />
-      <div className="py-[1px] bg-black"></div>
-      <div className='pt-1'>
-        <div className="flex justify-between font-medium">
-          <div>Government Engineering College,Rajkot</div>
-          <div>June-2020 to June-2024</div>
-        </div>
-        <div className="flex justify-between">
-          <div>Bachelor's in Computer Engineering</div>
-          <div>9.17 CGPA</div>
-        </div>
-      </div>
+export default function Educations() {
+  const { watch } = useFormContext()
+  const educations = watch('educations') as Education[]
+
+  return educations?.length > 0 && (
+    <div className="flex flex-col gap-1 mt-2">
+      <h1 className='text-xl font-semibold border-b border-slate-500'>Education</h1>
+      {
+        educations?.map((education, index) => (
+          <div key={index} className="px-2">
+            <div className="flex items-center justify-between">
+              {education?.url ? (
+                <div className='flex items-center gap-2'>
+                  <a href={education.url} target="_blank" className="font-semibold text-xl">{education.institution}</a>
+                  <ExternalLink size={15} />
+                </div>
+              ) : (
+                <h1 className="font-semibold text-xl">{education.institution}</h1>
+              )}
+              <p className="font-light text-sm">{education?.area} {education?.studyType && education?.area && "|"} {education?.studyType}</p>
+            </div>
+            {education?.score && education?.scoreType && (
+              <span className="uppercase font-light text-sm">{education?.scoreType} - {education?.score}</span>
+            )}
+          </div>
+        ))
+      }
     </div>
-  );
-};
+  )
+}

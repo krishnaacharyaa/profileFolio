@@ -1,50 +1,40 @@
-// import { Subheading } from "";
+import { useFormContext } from 'react-hook-form'
+import { ExternalLink } from 'lucide-react'
 
-import { Subheading } from "@/components/common/Subheading";
+interface Project {
+  name: "",
+  description: "",
+  technologies: "",
+  url?: ""
+}
 
-export const Projects = () => {
-  return (
-    <div className="pt-4 px-4">
-      <Subheading text="PROJECTS"/>
-      <div className="py-[1px] bg-black "></div>
-      <div className="flex flex-col gap-1">
-        <ProjectItem />
-        <ProjectItem />
-        <ProjectItem />
-      </div>
+export default function Projects() {
+  const { watch } = useFormContext()
+
+  const projects = watch("projects") as Project[]
+  return projects?.length > 0 && (
+    <div className="flex flex-col gap-1 mt-2">
+      <h1 className='text-xl font-semibold border-b border-slate-500'>Open source /Personal projects</h1>
+      {
+        projects?.map((project, index) => (
+          <div key={index} className="px-2">
+            <div className="flex items-center justify-between">
+              {project?.url ? (
+                <div className='flex items-center gap-2'>
+                  <a href={project.url} target="_blank" className="font-semibold text-xl">{project.name}</a>
+                  <ExternalLink size={15} />
+                </div>
+              ) : (
+                <h1 className="font-semibold text-xl">{project.name}</h1>
+              )}
+              <p className="font-semibold text-base">{project.technologies}</p>
+            </div>
+            {project?.description && (
+              <p className="font-light text-sm px-1 mt-2">{project.description}</p>
+            )}
+          </div>
+        ))
+      }
     </div>
-  );
-};
-
-const ProjectItem = () => {
-  return (
-    <>
-      <div>
-        <div className="flex items-center justify-between">
-          <div className="text-lg">
-            Airbnb{" "}
-            <a
-              href="http://github.com/PatelYash7"
-              target="_blank"
-              className="text-gray-600 text-sm"
-            >
-              -Link
-            </a>
-          </div>
-          <div className="text-sm font-medium text-gray-500">
-            <span>Reactjs,</span>
-            <span>TailwindCss,</span>
-            <span>Javascript,</span>
-          </div>
-        </div>
-        <div className="px-2 text-gray-700 text-justify">
-          -worked with React hooks like useEffect,UseState.-worked with React
-          hooks like useEffect,UseState.-worked with React hooks like
-          useEffect,UseState. -worked with React hooks like
-          useEffect,UseState.-worked with React hooks like
-          useEffect,UseState.-worked with React hooks like useEffect,UseState.
-        </div>
-      </div>
-    </>
-  );
-};
+  )
+}

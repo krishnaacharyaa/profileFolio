@@ -15,7 +15,7 @@ export default function ProfileCard({ user, skills }: ProfileCardProps) {
 
       <div className="mb-5">
         <h2 className="text-2xl font-semibold">Profiles</h2>
-        {skills.map((skill) => (
+        {skills?.map((skill) => (
           <div>{skill.name}</div>
         ))}
         {user.basics.profiles?.map((profile, index) => (

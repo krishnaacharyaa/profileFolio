@@ -1,24 +1,34 @@
-import { Subheading } from "@/components/common/Subheading"
+import { ExternalLink } from "lucide-react"
+import { useFormContext } from "react-hook-form"
 
-export const Certifications = ()=>{
-    return <div className="p-4 text-sm ">
-        <Subheading text="ACHIEVEMENTS"/>
-        <div className="py-[1px] bg-black "></div>
-        <div className="">
-        - Selected for SIH (Smart India Hackathon) following success at Lakshya 1.0, a college-level internal hackathon.
-        <span className=" font-semibold"><a href="http://"> Link</a></span> 
+interface Certificates {
+    name: ""
+    url?: ""
+    issuer?: ""
+}
+export default function Certifications() {
+    const { watch } = useFormContext()
+    const certificates = watch("certificates") as Certificates[]
+    return certificates?.length > 0 && (
+        <div className="flex flex-col gap-1 mt-2">
+            <h1 className='text-xl font-semibold border-b border-slate-500'>Certificates</h1>
+            {
+                certificates?.map((certificate, index) => (
+                    <div key={index} className="px-2">
+                        <div className="flex items-center justify-between">
+                            {certificate?.url ? (
+                                <div className='flex items-center gap-2'>
+                                    <a href={certificate.url} target="_blank" className="font-semibold text-xl">{certificate.name}</a>
+                                    <ExternalLink size={15} />
+                                </div>
+                            ) : (
+                                <h1 className="font-semibold text-xl">{certificate.name}</h1>
+                            )}
+                            <p className="font-light text-sm">{certificate.issuer}</p>
+                        </div>
+                    </div>
+                ))
+            }
         </div>
-        <div>
-        - Solved 100+ questions of DSA in Java on LeetCode
-        <span className=" font-semibold"><a href="http://"> Link</a></span>
-        </div>
-        <div>
-        - Represented College Cricket team at Zonal level and Inter-Zonal level Twice.
-        <span className=" font-semibold"><a href="http://"> Link</a></span>
-        </div>
-        <div>
-        - Management Team member for Urja Sports Week held in March 2023
-        <span className=" font-semibold"><a href="http://"> Link</a></span>
-        </div>
-    </div>
+    )
 }
