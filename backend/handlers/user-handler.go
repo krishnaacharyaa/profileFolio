@@ -48,29 +48,25 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
     // Check if the user already exists
     filter_email := bson.M{"email": authUser.Email}
     filter_username := bson.M{"username": authUser.Username}
-    filter_user := bson.M{"basics.email": authUser.Email}
 
-    auth_err := authCollection.FindOne(ctx, filter_email).Decode(&authUser)
+    email_err := authCollection.FindOne(ctx, filter_email).Decode(&authUser)
     username_err := authCollection.FindOne(ctx, filter_username).Decode(&authUser)
-    user_err := userCollection.FindOne(ctx, filter_user).Decode(&user)
-    if auth_err == nil {
-        http.Error(w, "User already exists", http.StatusConflict)
-        return
-    } else if user_err == nil {
-        http.Error(w, "User already exists", http.StatusConflict)
+
+    if email_err == nil {
+        http.Error(w, "Email already exists", http.StatusConflict)
         return
     } else if username_err == nil{
         http.Error(w, "Username already exists", http.StatusConflict)
         return
-    } else if auth_err != mongo.ErrNoDocuments {
+    } else if email_err != mongo.ErrNoDocuments {
         http.Error(w, "Error checking user existence", http.StatusInternalServerError)
         return
     }
 
     // Insert into auth_users collection
-    _, auth_err = authCollection.InsertOne(ctx, authUser)
+    _, auth_err := authCollection.InsertOne(ctx, authUser)
     if auth_err != nil {
-        http.Error(w, "Error saving auth user", http.StatusInternalServerError)
+        http.Error(w, "Error saving user credentials", http.StatusInternalServerError)
         return
     }
 
@@ -83,9 +79,9 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
     }
 
     // Insert into users collection
-    _, user_err = userCollection.InsertOne(ctx, user)
+    _, user_err := userCollection.InsertOne(ctx, user)
     if user_err != nil {
-        http.Error(w, "Error saving user", http.StatusInternalServerError)
+        http.Error(w, "Error saving user object", http.StatusInternalServerError)
         return
     }
 
