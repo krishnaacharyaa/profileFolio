@@ -7,10 +7,6 @@ import EducationInput from './sidebarInput/EducationInput'
 import SkillsInput from './sidebarInput/SkillInput'
 import LanguageInput from './sidebarInput/LanguageInput'
 import CertificateInput from './sidebarInput/CertificateInput'
-import { CircleX } from 'lucide-react'
-
-
-
 
 export default function Sidebar() {
   return (

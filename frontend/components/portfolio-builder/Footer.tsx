@@ -38,13 +38,13 @@ const Footer = () => (
         <div>
           <h3 className="text-xl font-semibold mb-4">Languages</h3>
           <ul className="list-disc list-inside">
-              <li key={1} className="text-gray-700">
+              <li className="text-gray-700">
                 {`English`} - {'Fluent'}
               </li>
-              <li key={1} className="text-gray-700">
+              <li  className="text-gray-700">
                 {`English`} - {'Fluent'}
               </li>
-              <li key={1} className="text-gray-700">
+              <li className="text-gray-700">
                 {`English`} - {'Fluent'}
               </li>
           </ul>

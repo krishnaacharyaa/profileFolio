@@ -7,6 +7,7 @@ import React, { useState } from 'react'
 import { InputWithLabel } from '../InputWithLabel'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DatePickerWithRange } from '@/components/ui/datePicker'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 
 export default function EducationInput() {
     const [showEducation, setShowEducation] = useState(false)
@@ -28,63 +29,65 @@ export default function EducationInput() {
         </div>
     )
 }
+export function ListOfInstitution() {
+    const { control, watch } = useFormContext();
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "educations",
+    });
 
-interface Education {
-    showInputs: boolean;
-}
-
-function ListOfInstitution() {
-    const [educations, setEducations] = useState<Education[]>([]);
+    const [showInputs, setShowInputs] = useState<number | null>(null);
 
     const toggleInputs = (index: number) => {
-        const newEducations = [...educations];
-        newEducations[index].showInputs = !newEducations[index].showInputs;
-        setEducations(newEducations);
+        setShowInputs(showInputs === index ? null : index);
     };
 
     const addEducation = () => {
-        setEducations([...educations, { showInputs: false }]);
+        append({ institution: "", url: "", studyType: "", area: "", score: "", scoreType: "", duration: { start: null, end: null } });
     };
 
     const deleteEducation = (index: number) => {
-        const newEducations = educations.filter((_, i) => i !== index);
-        setEducations(newEducations);
+        remove(index);
     };
 
     return (
         <div className='flex flex-col gap-3 px-2'>
-            {educations.map((education, index) => (
-                <div key={index}>
-                    <div
-                        className='flex justify-between items-center px-4 py-4 cursor-pointer'
-                        onClick={() => toggleInputs(index)}
-                    >
-                        <h1 className='text-slate-600 font-semibold text-base'>Institute Name</h1>
-                        <div className='flex gap-3 items-center'>
-                            <Trash2 size={20} className='text-slate-400 cursor-pointer' onClick={(e) => {
-                                e.stopPropagation();
-                                deleteEducation(index);
-                            }} />
-                            <ChevronDown size={20} className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${education.showInputs ? 'rotate-180' : ''}`} />
+            {fields.map((education, index) => {
+                return (
+                    <div key={index}>
+                        <div
+                            className='flex justify-between items-center px-4 py-4 cursor-pointer'
+                            onClick={() => toggleInputs(index)}
+                        >
+                            <h1 className='text-slate-600 font-semibold text-base'>{watch(`educations.${index}.institution`) || "Institution name"}</h1>
+                            <div className='flex gap-3 items-center'>
+                                <Trash2 size={20} className='text-slate-400 cursor-pointer' onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteEducation(index);
+                                }} />
+                                <ChevronDown size={20} className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${showInputs === index ? 'rotate-180' : ''}`} />
+                            </div>
                         </div>
+                        {showInputs === index && <InstituteInputs index={index} />}
                     </div>
-                    {education.showInputs && <InstituteInputs />}
-                </div>
-            ))}
+                )
+            })}
             <Button variant={'outline'} onClick={addEducation}>
                 + Add Education
             </Button>
         </div>
     )
 }
-function InstituteInputs() {
+
+function InstituteInputs({index}:{index:number}) {
+    const { register, control, setValue } = useFormContext();
     return (
         <div className='grid md:grid-cols-2 gap-3 px-4'>
-            <InputWithLabel label='Institution' name='institution' type='text' placeholder='University name' />
-            <InputWithLabel label='Website' name='url' type='url' placeholder='Institution website' />
-            <InputWithLabel label='Degree' name='degree' type='text' placeholder='Bachelors' />
-            <InputWithLabel label='Field of Study' name='area' type='text' placeholder='Computer science' />
-            <Input placeholder='4.5' name='score' id='score' />
+            <InputWithLabel label='Institution' name='institution' type='text' schemaType={`educations.${index}`} placeholder='University name' />
+            <InputWithLabel label='Website' name='url' type='url' schemaType={`educations.${index}`} placeholder='Institution website' />
+            <InputWithLabel label='Degree' name='degree' type='text'  schemaType={`educations.${index}`} placeholder='Bachelors' />
+            <InputWithLabel label='Field of Study' name='area' type='text'  schemaType={`educations.${index}`} placeholder='Computer science' />
+            <Input placeholder='4.5' {...register(`educations.${index}.score`)} name='score' id='score' />
             <Select>
                 <SelectTrigger>
                     <SelectValue placeholder="Select" />
