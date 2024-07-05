@@ -46,9 +46,12 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
     defer cancel()
 
     // Check if the user already exists
-    filter_auth := bson.M{"email": authUser.Email}
+    filter_email := bson.M{"email": authUser.Email}
+    filter_username := bson.M{"username": authUser.Username}
     filter_user := bson.M{"basics.email": authUser.Email}
-    auth_err := authCollection.FindOne(ctx, filter_auth).Decode(&authUser)
+
+    auth_err := authCollection.FindOne(ctx, filter_email).Decode(&authUser)
+    username_err := authCollection.FindOne(ctx, filter_username).Decode(&authUser)
     user_err := userCollection.FindOne(ctx, filter_user).Decode(&user)
     if auth_err == nil {
         http.Error(w, "User already exists", http.StatusConflict)
@@ -56,7 +59,9 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
     } else if user_err == nil {
         http.Error(w, "User already exists", http.StatusConflict)
         return
-
+    } else if username_err == nil{
+        http.Error(w, "Username already exists", http.StatusConflict)
+        return
     } else if auth_err != mongo.ErrNoDocuments {
         http.Error(w, "Error checking user existence", http.StatusInternalServerError)
         return
@@ -72,7 +77,7 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
     // Create a new User object with only email
     user = models.User{
         Basics: models.Basics{
-            Name: authUser.Name,
+            Username: authUser.Username,
             Email: authUser.Email,
         },
     }
