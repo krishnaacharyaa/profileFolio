@@ -22,4 +22,4 @@ require (
 
 )
 
-require github.com/sashabaranov/go-openai v1.26.1 // indirect
+require github.com/sashabaranov/go-openai v1.26.1

@@ -63,7 +63,7 @@ type Interest struct {
 }
 
 type AuthUser struct {
-    Name     string     `bson:"name" json:"name"`        
+    Username     string     `bson:"username" json:"username"`        
     Email    string     `bson:"email" json:"email"`
     Password string     `bson:"password" json:"password"`
 }
@@ -80,6 +80,7 @@ type Project struct {
 
 type Basics struct {
     Name     string          `json:"name,omitempty"`
+    Username string          `json:"username,omitempty"`
     Label    string          `json:"label,omitempty"`
     Image    string          `json:"image,omitempty"`
     Email    string          `json:"email"`
