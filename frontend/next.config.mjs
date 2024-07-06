@@ -6,9 +6,8 @@ const nextConfig = {
   images: {
     domains: ['ap-south-1.graphassets.com'],
   },
-  typescript: {
-  },
-  output: 'standalone'
+  typescript: {},
+  output: 'standalone',
 };
 
 const withNextra = nextra({
@@ -16,4 +15,3 @@ const withNextra = nextra({
   themeConfig: './theme.config.js',
 });
 export default withNextra(nextConfig);
-

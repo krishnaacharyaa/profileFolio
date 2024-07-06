@@ -1,7 +1,7 @@
-import { User } from './types/user';
-import { getSkillsData, getUserData } from './actions/user-actions';
-import ProfileCard from './components/profile-card';
-import { SkillRef } from './types/skillRef';
+import { User } from '../types/user';
+import ProfileCard from '../components/profile-card';
+import { SkillRef } from '../types/skillRef';
+import { getSkillsData, getUserData } from '@/app/actions/user-actions';
 
 export default async function Home() {
   const user: User = await getUserData();

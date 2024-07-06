@@ -24,12 +24,18 @@ const Footer = () => {
             <h3 className="text-xl font-semibold mb-4">Certifications</h3>
             <ul className="list-disc list-inside">
               {Certificates?.map((cert, index) => (
-              <li key={index} className="text-gray-700">
-                <a href={cert.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                  {cert.name}
-                </a> - {cert.issuer} 
-              </li>
-            ))}
+                <li key={index} className="text-gray-700">
+                  <a
+                    href={cert.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline"
+                  >
+                    {cert.name}
+                  </a>{' '}
+                  - {cert.issuer}
+                </li>
+              ))}
             </ul>
           </div>
           <div>
