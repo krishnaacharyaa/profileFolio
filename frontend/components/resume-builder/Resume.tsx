@@ -1,13 +1,12 @@
-'use client'
-import BasicDetails from "./resume/BasicDetails";
-import Projects from "./resume/Projects";
-import Experience from "./resume/Experience";
-import Skills from "./resume/Skills";
-import Certifications from "./resume/Certifications";
-import Education from "./resume/Education";
-import Summary from "./resume/Summary";
-import Languages from "./resume/Languages";
-
+'use client';
+import BasicDetails from './resume/BasicDetails';
+import Projects from './resume/Projects';
+import Experience from './resume/Experience';
+import Skills from './resume/Skills';
+import Certifications from './resume/Certifications';
+import Education from './resume/Education';
+import Summary from './resume/Summary';
+import Languages from './resume/Languages';
 
 export const Resume = () => {
   return (

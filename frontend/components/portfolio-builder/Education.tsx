@@ -1,19 +1,6 @@
 'use client';
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-
-interface EducationProps {
-  education: {
-    institution: string;
-    url: string;
-    area: string;
-    studyType: string;
-    startDate: { $date: string };
-    endDate: { $date: string };
-    score: string;
-    courses: string[];
-  }[];
-}
 interface Education {
   institution: string;
   url?: string;
@@ -22,7 +9,7 @@ interface Education {
   score?: string;
   scoreType?: string;
   duration?: string;
-  courses?:string
+  courses?: string;
 }
 
 const Education = () => {
@@ -65,8 +52,9 @@ const Education = () => {
                 </p>
                 <p className="text-sm text-gray-600 mb-3">{edu.duration}</p>
                 <p className="text-gray-700 mb-4">GPA: {edu.score}</p>
-                <h4 className="text-md font-semibold text-teal-600 mb-2">Relevant Courses:
-                  <span className='text-blue-500'>{edu.courses}</span>
+                <h4 className="text-md font-semibold text-teal-600 mb-2">
+                  Relevant Courses:
+                  <span className="text-blue-500">{edu.courses}</span>
                 </h4>
                 <ul className="grid grid-cols-2 gap-2"></ul>
               </div>

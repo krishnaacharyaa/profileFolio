@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
 
@@ -8,13 +8,13 @@ interface Project {
   technologies: string;
   giturl?: string;
   liveurl?: string;
-  tectStack?:string
+  tectStack?: string;
 }
 
 const Projects = () => {
-  const { watch } = useFormContext()
+  const { watch } = useFormContext();
 
-  const projects = watch("projects") as Project[]
+  const projects = watch('projects') as Project[];
   return (
     <div className="mt-8 p-6">
       <h2 className="text-2xl font-bold mb-4">Projects</h2>
@@ -41,9 +41,7 @@ const Projects = () => {
               Live
             </a>
           </div>
-          <div className="text-gray-500">
-            Tech Stack: {project.technologies}
-          </div>
+          <div className="text-gray-500">Tech Stack: {project.technologies}</div>
         </div>
       ))}
     </div>

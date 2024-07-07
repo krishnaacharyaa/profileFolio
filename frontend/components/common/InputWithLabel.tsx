@@ -32,9 +32,7 @@ export function TextAreaWithLabel({ label, name, type, placeholder, schemaType }
   const { register } = useFormContext();
   return (
     <div className="flex flex-col gap-3">
-      <Label
-        htmlFor={name} className="text-base font-normal text-slate-500"
-      >
+      <Label htmlFor={name} className="text-base font-normal text-slate-500">
         {label}
       </Label>
       <Textarea
