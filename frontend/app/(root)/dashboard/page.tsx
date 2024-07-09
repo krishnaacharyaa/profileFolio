@@ -20,9 +20,11 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import CoverLetter from '../../../components/dashboard/CoverLetter';
+import Image from 'next/image';
 
 const cards = [
   {
+    icon: '/svg/github.png',
     name: 'Generate AI Cover',
     description:
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime at aliquid quisquam velit ducimus eos.',
@@ -30,6 +32,7 @@ const cards = [
     dialogTrigger: 'Open Cover Letter',
   },
   {
+    icon: '/svg/github.png',
     name: 'Generate AI Resume',
     description:
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime at aliquid quisquam velit ducimus eos.',
@@ -37,6 +40,7 @@ const cards = [
     dialogTrigger: 'Open Resume',
   },
   {
+    icon: '/svg/stars.png',
     name: 'Analyze Profile',
     description:
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime at aliquid quisquam velit ducimus eos.',
@@ -44,6 +48,7 @@ const cards = [
     dialogTrigger: 'Open Profile Analysis',
   },
   {
+    icon: '/svg/stars.png',
     name: 'Generate AI Job Description',
     description:
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime at aliquid quisquam velit ducimus eos.',
@@ -54,14 +59,14 @@ const cards = [
 
 const Dashboard = () => {
   return (
-    <div className="flex flex-col h-full px-8 py-4 ">
+    <div className="flex flex-col h-full px-8 py-4">
       <div className="flex">
         <RadialProfileCard />
         <div className="w-9/12 mx-2 flex flex-col">
           <Card>
-            <CardHeader>
-              <CardTitle>Fun fact from your Profile</CardTitle>
-              <CardContent>You Are 5% Likely To Be Replaced By AI</CardContent>
+            <CardHeader className='py-3'>
+              <CardTitle className='p-0'>Fun fact from your Profile</CardTitle>
+              <CardContent className='p-0'>You Are 5% Likely To Be Replaced By AI</CardContent>
             </CardHeader>
           </Card>
           <div className="grid grid-cols-2 gap-1 my-2">
@@ -69,11 +74,12 @@ const Dashboard = () => {
               <>
                 <div key={index} className="rounded-lg py-1 px-1">
                   <Card>
-                    <CardHeader>
+                    <CardHeader className='px-4 pt-3 pb-1'>
+                    <span><Image alt='Github' height={100} width={100} className='w-6 mb-[2px]' src={card.icon} /></span>
                       <CardTitle>{card.name}</CardTitle>
                       <CardDescription>{card.description}</CardDescription>
                     </CardHeader>
-                    <CardFooter>
+                    <CardFooter className='pb-3 px-4'>
                       <Dialog>
                         <DialogTrigger>{card.dialogTrigger}</DialogTrigger>
 
