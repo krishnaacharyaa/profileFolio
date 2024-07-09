@@ -5,12 +5,59 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 
 	openai "github.com/sashabaranov/go-openai"
+
+	"github.com/google/generative-ai-go/genai"
+	"google.golang.org/api/option"
 )
 
-func ChatHandler(w http.ResponseWriter, r *http.Request) {
+func GeminiCoverLetterHandler(w http.ResponseWriter, r *http.Request) {
+	var userInput struct {
+		Message string          `json:"message"`
+		Profile json.RawMessage `json:"profile"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&userInput); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	var profile map[string]interface{}
+	if err := json.Unmarshal(userInput.Profile, &profile); err != nil {
+		http.Error(w, "Invalid profile format", http.StatusBadRequest)
+		return
+	}
+
+	ctx := context.Background()
+
+	client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("GEMINI_API_KEY")))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer client.Close()
+	context := "write a cover letter based on this Job Description, you are truthful and doesn't lie about your skills. The user's information is given, autofill prefill all the details from Profile Information in the letter, no  []."
+	model := client.GenerativeModel("gemini-1.0-pro")
+	prompt := []genai.Part{
+		genai.Text(userInput.Message),
+		genai.Text(fmt.Sprintf("Profile %s", userInput.Profile)),
+		genai.Text(context),
+	}
+	resp, err := model.GenerateContent(ctx, prompt...)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Generated text content:")
+	fmt.Println(resp.Candidates[0].Content.Parts[0])
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(resp.Candidates[0].Content.Parts[0])
+}
+
+func OpenAICoverLetterHandler(w http.ResponseWriter, r *http.Request) {
 	aiKey := config.GetOpenAIAPIKey()
 	client := openai.NewClient(aiKey)
 	var userInput struct {
