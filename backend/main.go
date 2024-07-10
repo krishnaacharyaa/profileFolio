@@ -9,7 +9,9 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/rs/cors"
+
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -21,8 +23,9 @@ func main() {
 	fmt.Println("Connecting to mongodb")
 	fmt.Println(mongoURI)
 
-	mux := http.NewServeMux()
-	api.RegisterUserRoutes(mux)
+	router := mux.NewRouter()
+    api.RegisterUserRoutes(router)
+
 
 	clientOptions := options.Client().ApplyURI(mongoURI)
 	client, err := mongo.Connect(context.Background(), clientOptions)
@@ -32,7 +35,7 @@ func main() {
 	}
 	handlers.SetClient(client)
 
-	handler := cors.Default().Handler(mux)
+	handler := cors.Default().Handler(router)
 	log.Fatal(http.ListenAndServe(":8080", handler))
 }
 
