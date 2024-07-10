@@ -63,14 +63,14 @@ const RadialProfileCard = () => {
 
   return (
     <div className="flex flex-col w-2/12 mx-3 mr-3">
-      <Card>
+      <Card className="h-full ">
         <CardHeader className='px-4 py-5'>
           <CardTitle>Hey Suyash</CardTitle>
-          <CardDescription>Card Description</CardDescription>
+          {/* <CardDescription>Card Description</CardDescription> */}
         </CardHeader>
         <CardContent className='px-3'>
           <div className="flex flex-col outline-1 w-full">
-            <div className="h-fit w-full relative flex mx-auto flex-col py-5 items-center bg-slate-100 rounded-xl">
+            <div className="h-fit w-full relative flex mx-auto flex-col py-5 items-center rounded-xl">
               <div className="relative w-32 h-36 flex justify-center items-center">
                 <div className="photo flex justify-center items-center">
                   <img

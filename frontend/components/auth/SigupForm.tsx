@@ -31,7 +31,7 @@ function Signup() {
         position: 'top-center',
       });
 
-      router.push('/signin');
+      router.push('/form');
 
       //signIn();
     } catch (error) {

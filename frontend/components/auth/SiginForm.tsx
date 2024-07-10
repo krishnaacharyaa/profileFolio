@@ -37,7 +37,7 @@ export default function Signin() {
         position: 'top-center',
       });
     } else {
-      router.push('/home');
+      router.push('/dashboard');
     }
   };
   const handleSignInWithGoogle = async () => {

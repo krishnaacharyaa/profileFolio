@@ -24,15 +24,15 @@ import Image from 'next/image';
 
 const cards = [
   {
-    icon: '/svg/github.png',
-    name: 'Generate AI Cover',
+    icon: '/svg/ai-sparkle.svg',
+    name: 'Generate AI Cover Letter',
     description:
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime at aliquid quisquam velit ducimus eos.',
     dialogContent: <CoverLetter />,
     dialogTrigger: 'Open Cover Letter',
   },
   {
-    icon: '/svg/github.png',
+    icon: '/svg/ai-sparkle.svg',
     name: 'Generate AI Resume',
     description:
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime at aliquid quisquam velit ducimus eos.',
@@ -40,16 +40,16 @@ const cards = [
     dialogTrigger: 'Open Resume',
   },
   {
-    icon: '/svg/stars.png',
-    name: 'Analyze Profile',
+    icon: '/svg/github.png',
+    name: 'Generate Github Profile Readme',
     description:
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime at aliquid quisquam velit ducimus eos.',
     dialogContent: '',
     dialogTrigger: 'Open Profile Analysis',
   },
   {
-    icon: '/svg/stars.png',
-    name: 'Generate AI Job Description',
+    icon: '/svg/github.png',
+    name: 'Generate Github Repo Readme',
     description:
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime at aliquid quisquam velit ducimus eos.',
     dialogContent: '',
@@ -59,27 +59,39 @@ const cards = [
 
 const Dashboard = () => {
   return (
-    <div className="flex flex-col h-full px-8 py-4">
-      <div className="flex">
+    <div className="flex flex-col h-full ">
+      <div className="flex bg-[#DFDFDF33] px-8 py-4">
         <RadialProfileCard />
-        <div className="w-9/12 mx-2 flex flex-col">
-          <Card>
-            <CardHeader className='py-3'>
-              <CardTitle className='p-0'>Fun fact from your Profile</CardTitle>
-              <CardContent className='p-0'>You Are 5% Likely To Be Replaced By AI</CardContent>
+        <div className="w-9/12 mx-2 flex flex-col h-full">
+          <Card className="bg-[#3987FB1A]">
+            <CardHeader className="py-3">
+              <CardTitle className="p-0 text-lg font-normal text-[#717171]">
+                Fun fact from your Profile !!
+              </CardTitle>
+              <CardContent className="p-0 font-bold text-2xl">
+                You Are 5% Likely To Be Replaced By AI 😟
+              </CardContent>
             </CardHeader>
           </Card>
           <div className="grid grid-cols-2 gap-1 my-2">
             {cards.map((card, index) => (
               <>
                 <div key={index} className="rounded-lg py-1 px-1">
-                  <Card>
-                    <CardHeader className='px-4 pt-3 pb-1'>
-                    <span><Image alt='Github' height={100} width={100} className='w-6 mb-[2px]' src={card.icon} /></span>
+                  <Card className="border-2 hover:border-[#3987FB] ">
+                    <CardHeader className="px-4 pt-3 pb-1">
+                      <span>
+                        <Image
+                          alt="Github"
+                          height={100}
+                          width={100}
+                          className="w-6 mb-[2px]"
+                          src={card.icon}
+                        />
+                      </span>
                       <CardTitle>{card.name}</CardTitle>
                       <CardDescription>{card.description}</CardDescription>
                     </CardHeader>
-                    <CardFooter className='pb-3 px-4'>
+                    <CardFooter className="pb-3 px-4">
                       <Dialog>
                         <DialogTrigger>{card.dialogTrigger}</DialogTrigger>
 
@@ -95,7 +107,9 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      <UserResume />
+      <div className="px-8 py-2">
+        <UserResume />
+      </div>
     </div>
   );
 };
