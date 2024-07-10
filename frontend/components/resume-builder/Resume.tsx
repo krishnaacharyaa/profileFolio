@@ -11,7 +11,7 @@ import Languages from './resume/Languages';
 export const Resume = () => {
   return (
     <div className=" bg-white shadow-md text-sm mx-16 h-[297mm] w-[220mm]  my-2 ">
-      <div className="h-full w-full overflow-hidden flex flex-col px-8 py-6">
+      <div id='user-resume-download' className="h-full w-full overflow-hidden flex flex-col px-8 py-6">
         <BasicDetails />
         <Summary />
         <Education />
