@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import StepIndicator from '@/components/stepper/StepIndicator';
 import Step1Form from '@/components/stepper/Step1Form';
 import {UserSchema} from '@/app/zod/user-zod';
-import {FormProvider, useForm, useWatch } from 'react-hook-form';
+import {FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Step2Form from '@/components/stepper/Step2Form';
 import Step3Form from '@/components/stepper/Step3Form';
@@ -43,10 +43,11 @@ export default function Home() {
   // Log the watched values to the console
   useEffect(() => {
     console.log("Watched values:", watchedValues);
+    console.log(methods.formState.errors)
   }, [watchedValues]);
 
   const onSubmit = async (data: FormData) => {
-    console.log(data)
+    console.log(data);
   };
 
   return (

@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
+import { FormMessage } from '../ui/form';
 
 interface FormNavigationProps {
   currentStep: number;
@@ -56,16 +57,16 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
     console.log(isStepValid);
 
     const isWorkFilled = workFields && Object.values(workFields).some(field => field);
-
-    if (currentStep === 2 && notExp) {
-      setNotExp(!notExp);
+    if(currentStep != 2 && isStepValid){
       setCurrentStep(currentStep + 1);
-    } else if (isStepValid && currentStep === 2 && isWorkFilled.length != 0) {
-      setCurrentStep(currentStep + 1);
-    }else if(currentStep != 2 && isStepValid){
-      setCurrentStep(currentStep + 1);
-    }
-     else {
+    }else if(currentStep == 2){
+      if(notExp){
+        setNotExp(!notExp)
+        setCurrentStep(currentStep + 1);
+      }else{
+        console.log(`Step ${currentStep} validation failed. Cannot proceed. ${JSON.stringify(errors)}`);
+      }
+    }else{
       console.log(`Step ${currentStep} validation failed. Cannot proceed. ${JSON.stringify(errors)}`);
     }
   };

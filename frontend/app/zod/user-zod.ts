@@ -96,7 +96,7 @@ const UserSchema = z.object({
     languages: z.array(LanguageSchema).nullable().optional(),
     interests: z.array(InterestSchema).nullable().optional()
   }),
-  work: z.array(WorkSchema).nonempty(),
+  work: z.array(WorkSchema),
   education: z.object({
     educationArr: z.array(EducationSchema).nonempty(),
     certificates: z.array(CertificateSchema).nullable()
