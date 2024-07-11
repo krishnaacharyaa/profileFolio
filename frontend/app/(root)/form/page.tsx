@@ -10,7 +10,6 @@ import Step3Form from '@/components/stepper/Step3Form';
 import Step4Form from '@/components/stepper/Step4Form';
 import { Button } from '@/components/ui/button';
 import FormNavigation from '@/components/stepper/FormNavigation';
-import { UserSchema } from '@/app/zod/user-zod';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {

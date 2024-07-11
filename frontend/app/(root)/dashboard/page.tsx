@@ -27,7 +27,7 @@ const cards = [
     icon: '/svg/ai-sparkle.svg',
     name: 'Generate AI Cover Letter',
     description:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime at aliquid quisquam velit ducimus eos.',
+      'Craft personalized cover letters tailored to job descriptions using smart data extraction and customizable templates.',
     dialogContent: <CoverLetter />,
     dialogTrigger: 'Open Cover Letter',
   },
@@ -35,7 +35,7 @@ const cards = [
     icon: '/svg/ai-sparkle.svg',
     name: 'Generate AI Resume',
     description:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime at aliquid quisquam velit ducimus eos.',
+      'Create professional, tailored resumes effortlessly using smart data extraction and customizable templates.',
     dialogContent: '',
     dialogTrigger: 'Open Resume',
   },
@@ -43,7 +43,7 @@ const cards = [
     icon: '/svg/github.png',
     name: 'Generate Github Profile Readme',
     description:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime at aliquid quisquam velit ducimus eos.',
+      'Create a compelling, personalized README to showcase your GitHub profile and projects',
     dialogContent: '',
     dialogTrigger: 'Open Profile Analysis',
   },
@@ -51,7 +51,7 @@ const cards = [
     icon: '/svg/github.png',
     name: 'Generate Github Repo Readme',
     description:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime at aliquid quisquam velit ducimus eos.',
+      'Create a compelling, personalized README to showcase your GitHub profile and projects',
     dialogContent: '',
     dialogTrigger: 'Open Job Description',
   },

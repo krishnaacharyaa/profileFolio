@@ -25,9 +25,9 @@ export default function UserResume() {
   }
 
   return (
-    <div className="w-full mx-3 py-4 md:py-4 lg:py-4">
+    <div className="w-full mx-3 px-6 py-4 md:py-4 lg:py-4">
       <h2 className="text-3xl font-bold tracking-tight mb-8 md:mb-10 lg:mb-12">My Collections</h2>
-      <div className="grid w-full border-2 border-red-600 grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 lg:gap-12">
+      <div className="grid w-full grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 lg:gap-12">
         <div>
           <h3 className="text-xl font-semibold mb-4 md:mb-6">Resume</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
@@ -73,10 +73,10 @@ export default function UserResume() {
             </div>
           </div>
         </div>
-        <div className=' border-2 border-blue-700' onClick={handlePortfolio}>
+        <div className='justify-self-end' onClick={handlePortfolio}>
           <h3 className="text-xl font-semibold mb-4 md:mb-6">Portfolio</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
-            <div className="relative border-yellow-500 justify-self-end overflow-hidden rounded-lg border p-2 shadow-lg group hover:shadow-xl ">
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-4 md:gap-6 lg:gap-8">
+            <div className="relative w-[14vw] justify-self-end overflow-hidden rounded-lg p-2 shadow-lg group hover:shadow-xl ">
               <Link href="#" className="absolute z-10" prefetch={false}>
                 <span className="sr-only">View</span>
               </Link>
