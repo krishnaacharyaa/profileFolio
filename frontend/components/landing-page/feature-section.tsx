@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Check } from 'lucide-react';
-import GitHub_Icon from '@/assets/svg/github-icon.svg';
-import Image from 'next/image';
+
 export default function Home() {
   return (
     <div className="bg-gradient-to-b from-gray-50 to-white min-h-screen">
@@ -32,34 +31,23 @@ export default function Home() {
             <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">Easy as 1-2-3</h2>
           </div>
           <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
-            {[
-              {
-                title: 'Enter Your Details',
-                description:
-                  'Fill in your professional information, skills, and experiences in our user-friendly form.',
-              },
-              {
-                title: 'Choose Top Templates',
-                description:
-                  'Select from our curated collection of modern, ATS-friendly templates for your portfolio and resume.',
-              },
-              {
-                title: 'Showcase and Shine',
-                description:
-                  'Generate your polished profile, download your resume, and update your GitHub README with a single click.',
-              },
-            ].map((step, index) => (
-              <div
-                key={index}
-                className="relative p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
-              >
-                <div className="absolute -top-4 -left-4 w-12 h-12 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xl font-bold">
-                  {index + 1}
+            {['Enter Your Details', 'Choose Top Templates', 'Showcase and Shine'].map(
+              (step, index) => (
+                <div
+                  key={index}
+                  className="relative p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
+                >
+                  <div className="absolute -top-4 -left-4 w-12 h-12 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xl font-bold">
+                    {index + 1}
+                  </div>
+                  <h3 className="mt-4 mb-4 text-xl font-semibold text-gray-900">{step}</h3>
+                  <p className="text-gray-600">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+                    incididunt ut labore et dolore magna aliqua.
+                  </p>
                 </div>
-                <h3 className="mt-4 mb-4 text-xl font-semibold text-gray-900">{step.title}</h3>
-                <p className="text-gray-600">{step.description}</p>
-              </div>
-            ))}
+              )
+            )}
           </div>
         </section>
 
@@ -112,37 +100,23 @@ export default function Home() {
     </div>
   );
 }
+
 function FeatureSection() {
   const features = [
     {
       title: 'Beautiful Resumes',
       icon: '📄',
       description: 'Create stunning resumes that stand out to employers.',
-      subFeatures: [
-        'ATS-friendly templates',
-        'Custom sections and layouts',
-        'One-click formatting',
-      ],
     },
     {
       title: 'Comprehensive Portfolios',
       icon: '💼',
       description: 'Showcase your work and projects in a professional manner.',
-      subFeatures: [
-        'Customizable project showcases',
-        'Integrated blog functionality',
-        'SEO optimization tools',
-      ],
     },
     {
       title: 'GitHub READMEs',
       icon: '📘',
       description: 'Generate detailed and attractive GitHub README files.',
-      subFeatures: [
-        'Dynamic stats integration',
-        'Custom badge creation',
-        'Automatic project highlighting',
-      ],
     },
   ];
 
@@ -164,7 +138,7 @@ function FeatureSection() {
             <h3 className="text-xl font-semibold text-gray-900 mb-4">{feature.title}</h3>
             <p className="text-gray-600">{feature.description}</p>
             <ul className="mt-4 space-y-2">
-              {feature.subFeatures.map((item, i) => (
+              {['Feature 1', 'Feature 2', 'Feature 3'].map((item, i) => (
                 <li key={i} className="flex items-center text-gray-600">
                   <Check className="h-5 w-5 text-green-500 mr-2" /> {item}
                 </li>

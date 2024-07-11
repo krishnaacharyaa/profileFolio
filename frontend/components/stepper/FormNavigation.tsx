@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
+import { FormMessage } from '../ui/form';
 
 interface FormNavigationProps {
   currentStep: number;
@@ -23,14 +24,10 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
   steps,
 }) => {
   const [notExp, setNotExp] = useState(false);
-  const {
-    control,
-    formState: { errors },
-    trigger,
-  } = useFormContext();
+  const { control, formState: { errors }, trigger } = useFormContext();
   const workFields = useWatch({
     control,
-    name: 'work', // Assuming "work" is the name of the work experience section
+    name: "work", // Assuming "work" is the name of the work experience section
   });
 
   const handleBack = () => {
@@ -42,13 +39,13 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
   const validateStepFields = async (stepNumber: number) => {
     switch (stepNumber) {
       case 1:
-        return await trigger('basics');
+        return await trigger("basics");
       case 2:
-        return await trigger('work');
+        return await trigger("work");
       case 3:
-        return await trigger('education');
+        return await trigger("education");
       case 4:
-        return await trigger('projects');
+        return await trigger("projects");
       default:
         return false;
     }
@@ -59,35 +56,33 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
     console.log(notExp);
     console.log(isStepValid);
 
-    const isWorkFilled = workFields && Object.values(workFields).some((field) => field);
-
-    if (currentStep === 2 && notExp) {
-      setNotExp(!notExp);
+    const isWorkFilled = workFields && Object.values(workFields).some(field => field);
+    if(currentStep != 2 && isStepValid){
       setCurrentStep(currentStep + 1);
-    } else if (isStepValid && currentStep === 2 && isWorkFilled.length != 0) {
-      setCurrentStep(currentStep + 1);
-    } else if (currentStep != 2 && isStepValid) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      console.log(`Step ${currentStep} validation failed. Cannot proceed.`);
+    }else if(currentStep == 2){
+      if(notExp){
+        setNotExp(!notExp)
+        setCurrentStep(currentStep + 1);
+      }else{
+        console.log(`Step ${currentStep} validation failed. Cannot proceed. ${JSON.stringify(errors)}`);
+      }
+    }else{
+      console.log(`Step ${currentStep} validation failed. Cannot proceed. ${JSON.stringify(errors)}`);
     }
   };
 
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className='flex flex-col items-center w-full'>
       {currentStep === 2 && (
         <div className="flex justify-center items-center w-full m-4">
           <Checkbox
             id="terms"
             onCheckedChange={(checked) => {
-              console.log('Checkbox changed: ', checked);
+              console.log("Checkbox changed: ", checked);
               setNotExp(checked === true);
             }}
           />
-          <Label
-            htmlFor="terms"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
+          <Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
             {"I've no Experience yet"}
           </Label>
         </div>
