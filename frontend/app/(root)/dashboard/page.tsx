@@ -60,7 +60,7 @@ const cards = [
 const Dashboard = () => {
   return (
     <div className="flex flex-col h-full ">
-      <div className="flex bg-[#DFDFDF33] px-8 py-4">
+      <div className="flex bg-[#DFDFDF33] w-full px-8 py-4">
         <RadialProfileCard />
         <div className="w-9/12 mx-2 flex flex-col h-full">
           <Card className="bg-[#3987FB1A]">
@@ -77,37 +77,36 @@ const Dashboard = () => {
             {cards.map((card, index) => (
               <>
                 <div key={index} className="rounded-lg py-1 px-1">
-                  <Card className="border-2 hover:border-[#3987FB] ">
-                    <CardHeader className="px-4 pt-3 pb-1">
-                      <span>
-                        <Image
-                          alt="Github"
-                          height={100}
-                          width={100}
-                          className="w-6 mb-[2px]"
-                          src={card.icon}
-                        />
-                      </span>
-                      <CardTitle>{card.name}</CardTitle>
-                      <CardDescription>{card.description}</CardDescription>
-                    </CardHeader>
-                    <CardFooter className="pb-3 px-4">
-                      <Dialog>
-                        <DialogTrigger>{card.dialogTrigger}</DialogTrigger>
-
-                        <DialogContent className="min-w-[75%] min-h-[75%]">
-                          {card.dialogContent}
-                        </DialogContent>
-                      </Dialog>
-                    </CardFooter>
-                  </Card>
+                  <Dialog>
+                    <Card className="border-2 flex h-[20vh] hover:border-[#3987FB] ">
+                      <DialogTrigger>
+                        <CardHeader className="px-4 text-left pt-3 pb-1">
+                          <span>
+                            <Image
+                              alt="Github"
+                              height={100}
+                              width={100}
+                              className="w-6 mb-[2px]"
+                              src={card.icon}
+                            />
+                          </span>
+                          <CardTitle>{card.name}</CardTitle>
+                          <CardDescription>{card.description}</CardDescription>
+                        </CardHeader>
+                        <CardFooter className="pb-3 px-4"></CardFooter>
+                      </DialogTrigger>
+                    </Card>
+                    <DialogContent className="min-w-[75%] min-h-[75%]">
+                      {card.dialogContent}
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </>
             ))}
           </div>
         </div>
       </div>
-      <div className="px-8 py-2">
+      <div className="px-8 py-2 w-[93vw]">
         <UserResume />
       </div>
     </div>
