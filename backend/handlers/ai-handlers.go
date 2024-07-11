@@ -9,9 +9,8 @@ import (
 	"net/http"
 	"os"
 
-	openai "github.com/sashabaranov/go-openai"
-
 	"github.com/google/generative-ai-go/genai"
+	openai "github.com/sashabaranov/go-openai"
 	"google.golang.org/api/option"
 )
 
