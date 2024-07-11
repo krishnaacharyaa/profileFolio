@@ -44,6 +44,7 @@ export default function Home() {
   useEffect(() => {
     console.log("Watched values:", watchedValues);
     console.log(methods.formState.errors)
+    console.log(methods.formState.errors)
   }, [watchedValues]);
 
   const onSubmit = async (data: FormData) => {
