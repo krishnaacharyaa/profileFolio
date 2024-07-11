@@ -9,7 +9,7 @@ const SigninPage = async () => {
   const session = await getServerSession(authOptions);
 
   if (session?.user) {
-    redirect('/home');
+    redirect('/dashboard');
   } else {
     return <Signin />;
   }

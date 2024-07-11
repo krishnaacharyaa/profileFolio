@@ -10,6 +10,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { signUpSchema, TSignUpSchema } from '@/app/zod/signup-zod';
+import { signIn } from 'next-auth/react';
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
 
 function Signup() {
@@ -31,7 +32,13 @@ function Signup() {
         position: 'top-center',
       });
 
-      router.push('/signin');
+      await signIn("credentials", {
+        username: data.email,
+        password: data.password,
+        redirect: false
+      })
+
+      router.push('/form');
 
       //signIn();
     } catch (error) {
