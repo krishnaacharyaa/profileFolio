@@ -3,13 +3,16 @@ package api
 
 import (
 	"backend/handlers"
-	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
-func RegisterUserRoutes(mux *http.ServeMux) {
+func RegisterUserRoutes(mux *mux.Router) {
 	mux.HandleFunc("/api/signup", handlers.SignUpHandler)
 	mux.HandleFunc("/api/signin", handlers.SignInHandler)
-	mux.HandleFunc("/api/user", handlers.GetUserHandler)
+	mux.HandleFunc("/api/user", handlers.GetUserHandler).Methods("GET")
+	mux.HandleFunc("/api/user/{id}", handlers.UpdateUserHandler).Methods("PATCH")
+	mux.HandleFunc("/api/user", handlers.AddUserHandler).Methods("POST")
 	mux.HandleFunc("/api/skills", handlers.GetSkillsHandler)
 	mux.HandleFunc("/api/cover-letter", handlers.GeminiCoverLetterHandler)
 	mux.HandleFunc("/api/calc-chance", handlers.CalculateReplacementChance)

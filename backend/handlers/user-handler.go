@@ -8,7 +8,9 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -187,4 +189,86 @@ func GetSkillsHandler(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(skills); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func AddUserHandler(w http.ResponseWriter, r *http.Request) {
+    var newUser models.User
+    err := json.NewDecoder(r.Body).Decode(&newUser)
+    if err != nil {
+        http.Error(w, "Invalid request body", http.StatusBadRequest)
+        return
+    }
+
+    collection := client.Database("profileFolio").Collection("users")
+
+    // Check if user already exists
+    existingUser := models.User{}
+    err = collection.FindOne(context.Background(), bson.M{"basics.email": newUser.Basics.Email}).Decode(&existingUser)
+    if err == nil {
+        http.Error(w, "User with this email already exists", http.StatusConflict)
+        return
+    } else if err != mongo.ErrNoDocuments {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    // Insert new user without specifying ID
+    result, err := collection.InsertOne(context.Background(), newUser)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    // Get the auto-generated ID
+    insertedID := result.InsertedID.(primitive.ObjectID)
+
+    w.WriteHeader(http.StatusCreated)
+    json.NewEncoder(w).Encode(map[string]string{
+        "message": "User added successfully",
+        "id":      insertedID.Hex(),
+    })
+}
+func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
+    // Get the user ID from the URL parameter
+    vars := mux.Vars(r)
+    userID, err := primitive.ObjectIDFromHex(vars["id"])
+    if err != nil {
+        http.Error(w, "Invalid user ID", http.StatusBadRequest)
+        return
+    }
+
+    // Parse the request body
+    var updates map[string]interface{}
+    err = json.NewDecoder(r.Body).Decode(&updates)
+    if err != nil {
+        http.Error(w, "Invalid request body", http.StatusBadRequest)
+        return
+    }
+
+    // Prepare the update document
+    update := bson.M{}
+    for key, value := range updates {
+        update[key] = value
+    }
+
+    collection := client.Database("profileFolio").Collection("users")
+
+    // Perform the update
+    result, err := collection.UpdateOne(
+        context.Background(),
+        bson.M{"_id": userID},
+        bson.M{"$set": update},
+    )
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    if result.MatchedCount == 0 {
+        http.Error(w, "User not found", http.StatusNotFound)
+        return
+    }
+
+    w.WriteHeader(http.StatusOK)
+    json.NewEncoder(w).Encode(map[string]string{"message": "User updated successfully"})
 }
