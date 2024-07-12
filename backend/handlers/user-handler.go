@@ -4,6 +4,7 @@ import (
 	"backend/models"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -19,6 +20,177 @@ var client *mongo.Client
 
 func SetClient(mongoClient *mongo.Client) {
 	client = mongoClient
+}
+
+func GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
+	// Get the user ID from the URL parameter
+	vars := mux.Vars(r)
+	userID, err := primitive.ObjectIDFromHex(vars["id"])
+	if err != nil {
+		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+		return
+	}
+
+	collection := client.Database("profileFolio").Collection("users")
+	var user models.User
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Find user by ID
+	err = collection.FindOne(ctx, bson.M{"_id": userID}).Decode(&user)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			http.Error(w, "User not found", http.StatusNotFound)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	log.Println("Successfully retrieved user document:", user)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(user)
+}
+
+func GetUserByEmailHandler(w http.ResponseWriter, r *http.Request) {
+	// Get the email from the URL parameter
+	vars := mux.Vars(r)
+	email := vars["email"]
+
+	collection := client.Database("profileFolio").Collection("users")
+	var user models.User
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Find user by email
+	err := collection.FindOne(ctx, bson.M{"basics.email": email}).Decode(&user)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			http.Error(w, "User not found", http.StatusNotFound)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	log.Println("Successfully retrieved user document:", user)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(user)
+}
+
+func GetUserByUsernameHandler(w http.ResponseWriter, r *http.Request) {
+	// Get the username from the URL parameter
+	vars := mux.Vars(r)
+	username := vars["username"]
+
+	collection := client.Database("profileFolio").Collection("users")
+	var user models.User
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Find user by username
+	err := collection.FindOne(ctx, bson.M{"basics.username": username}).Decode(&user)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			http.Error(w, "User not found", http.StatusNotFound)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	log.Println("Successfully retrieved user document:", user)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(user)
+}
+
+func UpdateUserByEmailHandler(w http.ResponseWriter, r *http.Request) {
+	// Get the email from the URL parameter
+	vars := mux.Vars(r)
+	email := vars["email"]
+
+	// Parse the request body
+	var updates map[string]interface{}
+	err := json.NewDecoder(r.Body).Decode(&updates)
+	if err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Prepare the update document
+	update := bson.M{}
+	for key, value := range updates {
+		update[key] = value
+	}
+
+	collection := client.Database("profileFolio").Collection("users")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Perform the update
+	result, err := collection.UpdateOne(
+		ctx,
+		bson.M{"basics.email": email},
+		bson.M{"$set": update},
+	)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if result.MatchedCount == 0 {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "User updated successfully"})
+}
+
+func UpdateUserByUsernameHandler(w http.ResponseWriter, r *http.Request) {
+	// Get the username from the URL parameter
+	vars := mux.Vars(r)
+	username := vars["username"]
+
+	// Parse the request body
+	var updates map[string]interface{}
+	err := json.NewDecoder(r.Body).Decode(&updates)
+	if err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Prepare the update document
+	update := bson.M{}
+	for key, value := range updates {
+		update[key] = value
+	}
+
+	collection := client.Database("profileFolio").Collection("users")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Perform the update
+	result, err := collection.UpdateOne(
+		ctx,
+		bson.M{"basics.username": username},
+		bson.M{"$set": update},
+	)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if result.MatchedCount == 0 {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "User updated successfully"})
 }
 
 func SignUpHandler(w http.ResponseWriter, r *http.Request) {
@@ -199,11 +371,13 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Printf("New User: %+v\n", newUser) // Log new user data
+
 	collection := client.Database("profileFolio").Collection("users")
 
 	// Check if user already exists
 	existingUser := models.User{}
-	err = collection.FindOne(context.Background(), bson.M{"basics.email": newUser.Basics.Email}).Decode(&existingUser)
+	err = collection.FindOne(context.Background(), bson.M{"email": bson.M{"$regex": primitive.Regex{Pattern: "^" + newUser.Basics.Email + "$", Options: "i"}}}).Decode(&existingUser)
 	if err == nil {
 		http.Error(w, "User with this email already exists", http.StatusConflict)
 		return

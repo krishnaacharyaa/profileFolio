@@ -1,3 +1,5 @@
+import { authOptions } from '@/lib/auth';
+import { getServerSession } from 'next-auth';
 import { z } from 'zod';
 
 export async function fetchAndValidate<T>(
@@ -6,7 +8,20 @@ export async function fetchAndValidate<T>(
   schema: z.ZodSchema<T>
 ): Promise<T> {
   const startTime = new Date().toISOString();
-  const response = await fetch(url, options);
+
+  // Get the session to extract the token
+  const session: any = await getServerSession(authOptions);
+  console.log(session);
+  if (!session || !session.token) {
+    throw new Error('No session or token found');
+  }
+
+  // Include the token in the headers
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${session.token}`,
+    },
+  });
   console.log(response);
 
   if (!response.ok) {
