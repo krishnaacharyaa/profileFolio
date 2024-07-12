@@ -24,34 +24,34 @@ import Image from 'next/image';
 
 const cards = [
   {
-    icon: '/svg/github.png',
-    name: 'Generate AI Cover',
+    icon: '/svg/ai-sparkle.svg',
+    name: 'Generate AI Cover Letter',
     description:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime at aliquid quisquam velit ducimus eos.',
+      'Craft personalized cover letters tailored to job descriptions using smart data extraction and customizable templates.',
     dialogContent: <CoverLetter />,
     dialogTrigger: 'Open Cover Letter',
   },
   {
-    icon: '/svg/github.png',
+    icon: '/svg/ai-sparkle.svg',
     name: 'Generate AI Resume',
     description:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime at aliquid quisquam velit ducimus eos.',
+      'Create professional, tailored resumes effortlessly using smart data extraction and customizable templates.',
     dialogContent: '',
     dialogTrigger: 'Open Resume',
   },
   {
-    icon: '/svg/stars.png',
-    name: 'Analyze Profile',
+    icon: '/svg/github.png',
+    name: 'Generate Github Profile Readme',
     description:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime at aliquid quisquam velit ducimus eos.',
+      'Create a compelling, personalized README to showcase your GitHub profile and projects',
     dialogContent: '',
     dialogTrigger: 'Open Profile Analysis',
   },
   {
-    icon: '/svg/stars.png',
-    name: 'Generate AI Job Description',
+    icon: '/svg/github.png',
+    name: 'Generate Github Repo Readme',
     description:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime at aliquid quisquam velit ducimus eos.',
+      'Create a compelling, personalized README to showcase your GitHub profile and projects',
     dialogContent: '',
     dialogTrigger: 'Open Job Description',
   },
@@ -59,43 +59,56 @@ const cards = [
 
 const Dashboard = () => {
   return (
-    <div className="flex flex-col h-full px-8 py-4">
-      <div className="flex">
+    <div className="flex flex-col h-full ">
+      <div className="flex bg-[#DFDFDF33] w-full px-8 py-4">
         <RadialProfileCard />
-        <div className="w-9/12 mx-2 flex flex-col">
-          <Card>
-            <CardHeader className='py-3'>
-              <CardTitle className='p-0'>Fun fact from your Profile</CardTitle>
-              <CardContent className='p-0'>You Are 5% Likely To Be Replaced By AI</CardContent>
+        <div className="w-9/12 mx-2 flex flex-col h-full">
+          <Card className="bg-[#3987FB1A]">
+            <CardHeader className="py-3">
+              <CardTitle className="p-0 text-lg font-normal text-[#717171]">
+                Fun fact from your Profile !!
+              </CardTitle>
+              <CardContent className="p-0 font-bold text-2xl">
+                You Are 5% Likely To Be Replaced By AI 😟
+              </CardContent>
             </CardHeader>
           </Card>
           <div className="grid grid-cols-2 gap-1 my-2">
             {cards.map((card, index) => (
               <>
                 <div key={index} className="rounded-lg py-1 px-1">
-                  <Card>
-                    <CardHeader className='px-4 pt-3 pb-1'>
-                    <span><Image alt='Github' height={100} width={100} className='w-6 mb-[2px]' src={card.icon} /></span>
-                      <CardTitle>{card.name}</CardTitle>
-                      <CardDescription>{card.description}</CardDescription>
-                    </CardHeader>
-                    <CardFooter className='pb-3 px-4'>
-                      <Dialog>
-                        <DialogTrigger>{card.dialogTrigger}</DialogTrigger>
-
-                        <DialogContent className="min-w-[75%] min-h-[75%]">
-                          {card.dialogContent}
-                        </DialogContent>
-                      </Dialog>
-                    </CardFooter>
-                  </Card>
+                  <Dialog>
+                    <Card className="border-2 flex h-[20vh] hover:border-[#3987FB] ">
+                      <DialogTrigger>
+                        <CardHeader className="px-4 text-left pt-3 pb-1">
+                          <span>
+                            <Image
+                              alt="Github"
+                              height={100}
+                              width={100}
+                              className="w-6 mb-[2px]"
+                              src={card.icon}
+                            />
+                          </span>
+                          <CardTitle>{card.name}</CardTitle>
+                          <CardDescription>{card.description}</CardDescription>
+                        </CardHeader>
+                        <CardFooter className="pb-3 px-4"></CardFooter>
+                      </DialogTrigger>
+                    </Card>
+                    <DialogContent className="min-w-[75%] min-h-[75%]">
+                      {card.dialogContent}
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </>
             ))}
           </div>
         </div>
       </div>
-      <UserResume />
+      <div className="px-8 py-2 w-[93vw]">
+        <UserResume />
+      </div>
     </div>
   );
 };
