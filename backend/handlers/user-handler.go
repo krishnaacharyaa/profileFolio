@@ -268,7 +268,11 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(new_user)
+	response := map[string]interface{}{
+		"message": "User created successfully",
+		"user":    new_user,
+	}
+	json.NewEncoder(w).Encode(response)
 }
 
 func SignInHandler(w http.ResponseWriter, r *http.Request) {
