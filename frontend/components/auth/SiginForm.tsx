@@ -9,23 +9,24 @@ import * as z from 'zod';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { loginSchema } from '@/app/zod/login-zod';
+import { Button } from '@/components/ui/button';
+import { Label } from '../ui/label';
+
 type FormData = z.infer<typeof loginSchema>;
 
 export default function Signin() {
   const router = useRouter();
-
   const params = useSearchParams();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const {
     handleSubmit,
     register,
-    formState: { errors, isSubmitting, isDirty, isValid },
+    formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(loginSchema),
   });
-  const handleonSubmit = async (data: FormData) => {
-    console.log(data);
 
+  const handleonSubmit = async (data: FormData) => {
     const res = await signIn('credentials', {
       username: data?.email,
       password: data?.password,
@@ -33,13 +34,14 @@ export default function Signin() {
     });
 
     if (res?.error) {
-      toast.error('invalid credentials', {
+      toast.error('Invalid credentials', {
         position: 'top-center',
       });
     } else {
       router.push('/dashboard');
     }
   };
+
   const handleSignInWithGoogle = async () => {
     try {
       await signIn(
@@ -47,99 +49,161 @@ export default function Signin() {
         { callbackUrl: `${window.location.origin}/home` },
         { prompt: 'login' }
       );
-      // Optionally handle success or redirection after sign-in
     } catch (error) {
       console.error('Failed to sign in with Google:', error);
-      // Handle error as needed
     }
   };
-  const handlegithub = async () => {
+
+  const handleSignInWithGithub = async () => {
     try {
       await signIn(
         'github',
         { callbackUrl: `${window.location.origin}/home` },
         { prompt: 'login' }
       );
-      // Optionally handle success or redirection after sign-in
     } catch (error) {
-      console.error('Failed to sign in with Google:', error);
-      // Handle error as needed
+      console.error('Failed to sign in with Github:', error);
     }
   };
 
-  return (
-    <div className="flex-grow cursor-default bg-white py-4 dark:bg-dark-card">
-      <p>{params?.get('error')}</p>
-      <div className="m-4 mb-4 flex justify-center">
-        <div className="flex w-full items-center justify-center">
-          <h2 className="text-center text-lg font-bold text-black dark:text-dark-primary w-2/4 pl-2 sm:text-xl md:w-3/4 md:pl-48">
-            Sign in
-          </h2>
-          <div className="flex items-center justify-end px-4 sm:px-20"></div>
-        </div>
-      </div>
-      <div className="m-2 mt-8 flex flex-col items-center justify-center gap-2">
-        <form onSubmit={handleSubmit(handleonSubmit)} className="w-full md:w-3/4 lg:w-2/5">
-          <div className="mb-2">
-            <Input {...register('email', { required: true })} type="text" placeholder="Email" />
-          </div>
-          {errors?.email && <p className="text-red-600 text-sm">{errors?.email?.message}</p>}
-          <div className="mb-4 flex flex-col">
-            <div className="relative">
-              <Input
-                {...register('password', { required: true })}
-                type={passwordVisible ? 'text' : 'password'}
-                placeholder="Password"
-              />
-              <button
-                type="button"
-                onClick={() => setPasswordVisible(!passwordVisible)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 h-12  text-sm leading-5"
-              >
-                <img
-                  src={passwordVisible ? '/svg/eye-off.svg' : '/svg/eye.svg'}
-                  alt="Toggle Password Visibility"
-                  className="h-5 w-5"
-                />
-              </button>
-            </div>
-            {errors?.password && (
-              <p className="text-red-600 text-sm">{errors?.password?.message}</p>
-            )}
-          </div>
+  const EyeIcon = (props: any) => (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
 
-          <button
-            type="submit"
-            className="flex w-full items-center text-white justify-center rounded-lg bg-neutral-800 p-3 text-base font-medium text-light disabled:bg-neutral-600  dark:bg-light dark:text-dark dark:hover:bg-dark-secondary/80 sm:text-lg sm:font-semibold"
-          >
-            Log In
-          </button>
-        </form>
-        <div className="mt-2 flex w-5/6 flex-col items-center justify-center gap-4 text-center text-sm font-normal dark:text-dark-primary sm:text-base">
-          <p>
-            Don't have an account?
-            <Link href={'/signup'} className="text-blue-600 hover:text-blue-500">
-              {' '}
+  function ChromeIcon(props: any) {
+    return (
+      <svg
+        {...props}
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <circle cx="12" cy="12" r="4" />
+        <line x1="21.17" x2="12" y1="8" y2="8" />
+        <line x1="3.95" x2="8.54" y1="6.06" y2="14" />
+        <line x1="10.88" x2="15.46" y1="21.94" y2="14" />
+      </svg>
+    );
+  }
+
+  function GithubIcon(props: any) {
+    return (
+      <svg
+        {...props}
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+        <path d="M9 18c-4.51 2-5-2-7-2" />
+      </svg>
+    );
+  }
+
+  return (
+    <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
+      <p>{params?.get('error')}</p>
+      <div className="mx-auto flex w-full max-w-[1200px] flex-col items-center justify-between gap-12 lg:flex-row">
+        <div className="flex flex-col items-start justify-center space-y-6 lg:max-w-[500px]">
+          <div className="space-y-3">
+            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
+              Welcome Back
+            </h1>
+            <p className="text-muted-foreground md:text-xl">
+              Sign in to access your ProfileFolio account. Manage your portfolios, resumes, and
+              GitHub READMEs with ease.
+            </p>
+          </div>
+        </div>
+        <div className="w-full max-w-md rounded-lg border bg-card p-6 shadow-lg">
+          <h2 className="mb-4 text-2xl font-bold">Sign In</h2>
+          <form onSubmit={handleSubmit(handleonSubmit)} className="space-y-4">
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                {...register('email', { required: true })}
+                id="email"
+                type="email"
+                placeholder="john@example.com"
+                className="mb-2"
+              />
+              {errors?.email && <p className="text-red-600 text-sm">{errors?.email?.message}</p>}
+            </div>
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <div className="relative mb-2">
+                <Input
+                  {...register('password', { required: true })}
+                  id="password"
+                  type={passwordVisible ? 'text' : 'password'}
+                  placeholder="Password"
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  type="button"
+                  className="absolute right-2 top-1/2 -translate-y-1/2"
+                  onClick={() => setPasswordVisible(!passwordVisible)}
+                >
+                  <EyeIcon className="h-5 w-5" />
+                </Button>
+              </div>
+              {errors?.password && (
+                <p className="text-red-600 text-sm">{errors?.password?.message}</p>
+              )}
+            </div>
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              Log In
+            </Button>
+          </form>
+          <div className="mt-4 text-center text-sm text-muted-foreground">
+            Don't have an account?{' '}
+            <Link
+              href="/signup"
+              className="font-medium underline underline-offset-4"
+              prefetch={false}
+            >
               Sign up now
             </Link>
-          </p>
-
-          {/* <span>OR</span> */}
+          </div>
+          <div className="flex flex-col gap-2">
+            <Button variant="outline" onClick={handleSignInWithGoogle} className="flex gap-2">
+              <ChromeIcon className="h-5 w-5" />
+              Continue with Google
+            </Button>
+            <Button variant="outline" onClick={handleSignInWithGithub} className="flex gap-2">
+              <GithubIcon className="h-5 w-5" />
+              Continue with Github
+            </Button>
+          </div>
         </div>
-
-        <button
-          onClick={handleSignInWithGoogle}
-          className="flex w-full items-center justify-center space-x-2 rounded-lg border-2 border-b-4  border-gray-300 p-3 text-center hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700 md:w-3/4 lg:w-2/5"
-        >
-          <span className="text-sm dark:text-dark-primary sm:text-base">Continue with Google</span>
-        </button>
-
-        <button
-          onClick={handlegithub}
-          className="flex w-full items-center justify-center space-x-2 rounded-lg border-2 border-b-4 border-gray-300 p-3 text-center hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700 md:w-3/4 lg:w-2/5"
-        >
-          <span className="text-sm dark:text-dark-primary sm:text-base">Continue with Github</span>
-        </button>
       </div>
     </div>
   );
