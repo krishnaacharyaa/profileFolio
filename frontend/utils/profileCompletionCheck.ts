@@ -1,12 +1,17 @@
-
-
 //export type UserData = z.infer<typeof UserSchema>;
+
+import { authOptions } from '@/lib/auth';
+import { getServerSession } from 'next-auth';
 
 // get API endpoint BE
 export const fetchUserData = async () => {
+  const session: any = await getServerSession(authOptions);
   try {
-    const response = await fetch('http://localhost:8080/api/user');
-
+    const response = await fetch('http://localhost:8080/api/user', {
+      headers: {
+        Authorization: `Bearer ${session.token}`,
+      },
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
