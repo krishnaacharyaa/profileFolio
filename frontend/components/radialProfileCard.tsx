@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import {
@@ -16,14 +16,53 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { calculateProfileCompletion, fetchUserData } from '@/utils/profileCompletionCheck';
+import { calculateProfileCompletion } from '@/utils/profileCompletionCheck';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
+export async function getServerSideProps(context: any) {
+  const session = await getServerSession(context.req, context.res, authOptions);
 
-const RadialProfileCard = () => {
-  const [userData, setUserData] = useState(null);
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+
+  try {
+    const response = await fetch('http://localhost:8080/api/user', {
+      headers: {
+        Authorization: `Bearer ${session.token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const userData = await response.json();
+    return {
+      props: {
+        userData,
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    return {
+      props: {
+        userData: null,
+      },
+    };
+  }
+}
+
+const RadialProfileCard = ({ userData }: any) => {
   const [completionPercentage, setCompletionPercentage] = useState(0);
   const [message, setMessage] = useState({ percentage: 0, msg: '' });
   const [completionStatus, setCompletionStatus] = useState({
@@ -44,16 +83,13 @@ const RadialProfileCard = () => {
   const offset = circumference - (completionPercentage / 100) * circumference;
 
   useEffect(() => {
-    const getUserData = async () => {
-      const data = await fetchUserData();
-      setUserData(data);
-      const percentage = calculateProfileCompletion(data);
+    if (userData) {
+      const percentage = calculateProfileCompletion(userData);
       setCompletionPercentage(percentage);
       updateStatusMessage(percentage);
-      updateCompletionStatus(data);
-    };
-    getUserData();
-  }, []);
+      updateCompletionStatus(userData);
+    }
+  }, [userData]);
 
   const updateStatusMessage = (percentage: number) => {
     let msg = '';
@@ -89,11 +125,11 @@ const RadialProfileCard = () => {
   return (
     <div className="flex flex-col w-2/12 mx-3 mr-3">
       <Card>
-        <CardHeader className='px-4 py-5'>
+        <CardHeader className="px-4 py-5">
           <CardTitle>Hey Suyash</CardTitle>
           <CardDescription>Card Description</CardDescription>
         </CardHeader>
-        <CardContent className='px-3'>
+        <CardContent className="px-3">
           <div className="flex flex-col outline-1 w-full">
             <div className="h-fit w-full relative flex mx-auto flex-col py-5 items-center bg-slate-100 rounded-xl">
               <div className="relative w-32 h-36 flex justify-center items-center">
@@ -133,7 +169,8 @@ const RadialProfileCard = () => {
                 </span>
                 <span className="flex-1 flex items-center justify-between">
                   <span>
-                    <strong>{message.percentage}%</strong>&nbsp;<span className="text-sm font-medium">{message.msg}</span>
+                    <strong>{message.percentage}%</strong>&nbsp;
+                    <span className="text-sm font-medium">{message.msg}</span>
                   </span>
                   <img src="/svg/RightArrow.png" alt="arrow" className="w-4 h-4 ml-2" />
                 </span>
@@ -145,7 +182,8 @@ const RadialProfileCard = () => {
                 </span>
                 <span className="flex-1 flex items-center justify-between">
                   <span>
-                    <strong>{message.percentage}%</strong>&nbsp;<span className="text-sm font-medium">{message.msg}</span>
+                    <strong>{message.percentage}%</strong>&nbsp;
+                    <span className="text-sm font-medium">{message.msg}</span>
                   </span>
                   <img src="/svg/RightArrow.png" alt="arrow" className="w-4 h-4 ml-2" />
                 </span>
@@ -153,28 +191,147 @@ const RadialProfileCard = () => {
             )}
             <DialogContent>
               <DialogHeader>
-                <DialogTitle className='pl-1'>Good to have in Resume</DialogTitle>
+                <DialogTitle className="pl-1">Good to have in Resume</DialogTitle>
                 <DialogDescription>
-                  <div className='flex flex-col px-3'>
-                    <ul className='text-start'>
-                      <li className='flex items-center'><span><Image className='w-6 h-6 mr-1' src={completionStatus.name ? '/svg/tick.svg' : '/svg/cross.svg'} width={100} alt={completionStatus.name ? 'tick' : 'cross'} height={100} /></span>Name included</li>
-                      <li className='flex items-center'><span><Image className='w-6 h-6 mr-1' src={completionStatus.label ? '/svg/tick.svg' : '/svg/cross.svg'} width={100} alt={completionStatus.label ? 'tick' : 'cross'} height={100} /></span>Position specified</li>
-                      <li className='flex items-center'><span><Image className='w-6 h-6 mr-1' src={completionStatus.skills ? '/svg/tick.svg' : '/svg/cross.svg'} width={100} alt={completionStatus.skills ? 'tick' : 'cross'} height={100} /></span>At least 2 skills</li>
-                      <li className='flex items-center'><span><Image className='w-6 h-6 mr-1' src={completionStatus.image ? '/svg/tick.svg' : '/svg/cross.svg'} width={100} alt={completionStatus.image ? 'tick' : 'cross'} height={100} /></span>Photo uploaded</li>
-                      <li className='flex items-center'><span><Image className='w-6 h-6 mr-1' src={completionStatus.education ? '/svg/tick.svg' : '/svg/cross.svg'} width={100} alt={completionStatus.education ? 'tick' : 'cross'} height={100} /></span>Educational Details</li>
-                      <li className='flex items-center'><span><Image className='w-6 h-6 mr-1' src={completionStatus.email ? '/svg/tick.svg' : '/svg/cross.svg'} width={100} alt={completionStatus.email ? 'tick' : 'cross'} height={100} /></span>Email verified</li>
-                      <li className='flex items-center'><span><Image className='w-6 h-6 mr-1' src={completionStatus.githubUrl ? '/svg/tick.svg' : '/svg/cross.svg'} width={100} alt={completionStatus.githubUrl ? 'tick' : 'cross'} height={100} /></span>Github link</li>
-                      <li className='flex items-center'><span><Image className='w-6 h-6 mr-1' src={completionStatus.url ? '/svg/tick.svg' : '/svg/cross.svg'} width={100} alt={completionStatus.url ? 'tick' : 'cross'} height={100} /></span>Url included</li>
-                      <li className='flex items-center'><span><Image className='w-6 h-6 mr-1' src={completionStatus.certificates ? '/svg/tick.svg' : '/svg/cross.svg'} width={100} alt={completionStatus.certificates ? 'tick' : 'cross'} height={100} /></span>Certifications</li>
-                      <li className='flex items-center'><span><Image className='w-6 h-6 mr-1' src={completionStatus.phone ? '/svg/tick.svg' : '/svg/cross.svg'} width={100} alt={completionStatus.phone ? 'tick' : 'cross'} height={100} /></span>PhoneNo</li>
+                  <div className="flex flex-col px-3">
+                    <ul className="text-start">
+                      <li className="flex items-center">
+                        <span>
+                          <Image
+                            className="w-6 h-6 mr-1"
+                            src={completionStatus.name ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            width={100}
+                            alt={completionStatus.name ? 'tick' : 'cross'}
+                            height={100}
+                          />
+                        </span>
+                        Name included
+                      </li>
+                      <li className="flex items-center">
+                        <span>
+                          <Image
+                            className="w-6 h-6 mr-1"
+                            src={completionStatus.label ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            width={100}
+                            alt={completionStatus.label ? 'tick' : 'cross'}
+                            height={100}
+                          />
+                        </span>
+                        Position specified
+                      </li>
+                      <li className="flex items-center">
+                        <span>
+                          <Image
+                            className="w-6 h-6 mr-1"
+                            src={completionStatus.skills ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            width={100}
+                            alt={completionStatus.skills ? 'tick' : 'cross'}
+                            height={100}
+                          />
+                        </span>
+                        At least 2 skills
+                      </li>
+                      <li className="flex items-center">
+                        <span>
+                          <Image
+                            className="w-6 h-6 mr-1"
+                            src={completionStatus.image ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            width={100}
+                            alt={completionStatus.image ? 'tick' : 'cross'}
+                            height={100}
+                          />
+                        </span>
+                        Photo uploaded
+                      </li>
+                      <li className="flex items-center">
+                        <span>
+                          <Image
+                            className="w-6 h-6 mr-1"
+                            src={completionStatus.education ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            width={100}
+                            alt={completionStatus.education ? 'tick' : 'cross'}
+                            height={100}
+                          />
+                        </span>
+                        Educational Details
+                      </li>
+                      <li className="flex items-center">
+                        <span>
+                          <Image
+                            className="w-6 h-6 mr-1"
+                            src={completionStatus.email ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            width={100}
+                            alt={completionStatus.email ? 'tick' : 'cross'}
+                            height={100}
+                          />
+                        </span>
+                        Email verified
+                      </li>
+                      <li className="flex items-center">
+                        <span>
+                          <Image
+                            className="w-6 h-6 mr-1"
+                            src={completionStatus.githubUrl ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            width={100}
+                            alt={completionStatus.githubUrl ? 'tick' : 'cross'}
+                            height={100}
+                          />
+                        </span>
+                        Github link
+                      </li>
+                      <li className="flex items-center">
+                        <span>
+                          <Image
+                            className="w-6 h-6 mr-1"
+                            src={completionStatus.url ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            width={100}
+                            alt={completionStatus.url ? 'tick' : 'cross'}
+                            height={100}
+                          />
+                        </span>
+                        Url included
+                      </li>
+                      <li className="flex items-center">
+                        <span>
+                          <Image
+                            className="w-6 h-6 mr-1"
+                            src={completionStatus.certificates ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            width={100}
+                            alt={completionStatus.certificates ? 'tick' : 'cross'}
+                            height={100}
+                          />
+                        </span>
+                        Certifications
+                      </li>
+                      <li className="flex items-center">
+                        <span>
+                          <Image
+                            className="w-6 h-6 mr-1"
+                            src={completionStatus.phone ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            width={100}
+                            alt={completionStatus.phone ? 'tick' : 'cross'}
+                            height={100}
+                          />
+                        </span>
+                        PhoneNo
+                      </li>
                     </ul>
                   </div>
                 </DialogDescription>
               </DialogHeader>
             </DialogContent>
           </Dialog>
-          <Button className='px-4 py-8 w-full bg-blue-600 hover:bg-blue-800'>
-            <span><Image width={100} height={100} alt='link' className='w-[22px] mr-2 -ml-2' src={'/svg/link.png'} /></span>Get Profile Link
+          <Button className="px-4 py-8 w-full bg-blue-600 hover:bg-blue-800">
+            <span>
+              <Image
+                width={100}
+                height={100}
+                alt="link"
+                className="w-[22px] mr-2 -ml-2"
+                src={'/svg/link.png'}
+              />
+            </span>
+            Get Profile Link
           </Button>
         </CardFooter>
       </Card>
