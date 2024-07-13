@@ -120,7 +120,7 @@ function FeatureSection() {
       description: 'Elevate your job applications with ATS-friendly resumes and cover letters.',
       subFeatures: [
         'Tailored cover letters with AI',
-        'Customizable templates and sections',
+        'Custom templates and sections',
         'One-click formatting',
       ],
     },
@@ -131,7 +131,7 @@ function FeatureSection() {
       subFeatures: [
         'Quick setup with stylish templates',
         'SEO Optimization',
-        '- Dynamic links for easy sharing',
+        'Dynamic links for easy sharing',
       ],
     },
     {
@@ -139,9 +139,9 @@ function FeatureSection() {
       icon: '📘',
       description: 'Elevate your GitHub presence in minutes.',
       subFeatures: [
-        'Generate eye-catching profile READMEs',
-        'Simplify project documentation with quick template',
-        'Sleek, consistent designs with easy customization',
+        'Eye-catching profile READMEs',
+        'Quick project documentation',
+        'Sleek, customizable designs',
       ],
     },
   ];

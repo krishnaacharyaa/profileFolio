@@ -6,6 +6,7 @@ import { generateMarkdown, downloadMarkdown, copyMarkdown } from '@/utils/markdo
 import Skills from '../../../components/readme-builder/Skills';
 import SocialLinks, { SocialLinksData } from '../../../components/readme-builder/SocialLinks';
 import { Button } from '@/components/ui/button'
+import { Toaster } from 'react-hot-toast';
 
 interface AboutData {
   working: string;
@@ -55,6 +56,7 @@ export default function Home() {
 
   return (
     <div className="container mx-auto p-4 h-screen">
+      <Toaster />
       <div className="grid grid-cols-12 gap-4 h-full">
         {/* Section 1: Input Forms */}
         <div className="col-span-3 bg-white shadow-md rounded-lg p-4 overflow-auto">

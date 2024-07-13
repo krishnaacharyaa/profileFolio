@@ -114,33 +114,33 @@ export default async function Home() {
 function FeatureSection() {
   const features = [
     {
-      title: 'Beautiful Resumes',
+      title: 'AI-Powered Resumes ',
       icon: '📄',
-      description: 'Create stunning resumes that stand out to employers.',
+      description: 'Elevate your job applications with ATS-friendly resumes and cover letters.',
       subFeatures: [
-        'ATS-friendly templates',
-        'Custom sections and layouts',
+        'Tailored cover letters with AI',
+        'Custom templates and sections',
         'One-click formatting',
       ],
     },
     {
       title: 'Comprehensive Portfolios',
       icon: '💼',
-      description: 'Showcase your work and projects in a professional manner.',
+      description: 'Showcase your talent with stunning and interactive portfolio.',
       subFeatures: [
-        'Customizable project showcases',
-        'Integrated blog functionality',
-        'SEO optimization tools',
+        'Quick setup with stylish templates',
+        'SEO Optimization',
+        'Dynamic links for easy sharing',
       ],
     },
     {
       title: 'GitHub READMEs',
       icon: '📘',
-      description: 'Generate detailed and attractive GitHub README files.',
+      description: 'Elevate your GitHub presence in minutes.',
       subFeatures: [
-        'Dynamic stats integration',
-        'Custom badge creation',
-        'Automatic project highlighting',
+        'Eye-catching profile READMEs',
+        'Quick project documentation',
+        'Sleek, customizable designs',
       ],
     },
   ];
