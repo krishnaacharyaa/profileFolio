@@ -1,6 +1,6 @@
 import React from 'react';
 import RadialProfileCard from '../../../components/radialProfileCard';
-import UserResume from '../../../components/dashboard/UserResume';
+import UserResume from '@/components/dashboard/UserResume';
 
 import {
   Card,

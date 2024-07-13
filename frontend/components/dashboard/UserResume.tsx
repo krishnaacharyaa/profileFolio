@@ -1,11 +1,9 @@
 'use client';
 
-import Link from 'next/link';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
@@ -15,10 +13,6 @@ import { useRouter } from 'next/navigation';
 
 export default function UserResume() {
   const router = useRouter();
-
-  const handleNewResume = () => {
-    router.push('/resume-builder');
-  };
 
   const handlePortfolio = () => {
     router.push("/portfolio-builder")
@@ -31,10 +25,7 @@ export default function UserResume() {
         <div>
           <h3 className="text-xl font-semibold mb-4 md:mb-6">Resume</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
-            <div className="relative overflow-hidden rounded-lg border p-2 shadow-lg group hover:shadow-xl ">
-              <Link href="#" className="absolute z-10" prefetch={false}>
-                <span className="sr-only">View</span>
-              </Link>
+            <div className="relative overflow-hidden rounded-lg border p-2 shadow-lg group hover:shadow-xl cursor-pointer hover:scale-105 transition-transform duration-300" onClick={() => router.push('/resume-builder')}>
               <img
                 src="/svg/portfolio.jpeg"
                 alt="Resume Image 1"
@@ -55,6 +46,8 @@ export default function UserResume() {
                     />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
+                    <DropdownMenuItem>Make default</DropdownMenuItem>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem>Edit</DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>Delete</DropdownMenuItem>
@@ -63,10 +56,7 @@ export default function UserResume() {
               </div>
             </div>
 
-            <div
-              onClick={handleNewResume}
-              className="relative overflow-hidden cursor-pointer rounded-lg border p-2 shadow-lg group hover:shadow-xl flex justify-between items-center"
-            >
+            <div className="relative overflow-hidden cursor-pointer rounded-lg border p-2 shadow-lg group hover:shadow-xl flex justify-between items-center">
               <p className="mx-auto">
                 <IoMdAdd className="text-2xl" />
               </p>
@@ -77,9 +67,6 @@ export default function UserResume() {
           <h3 className="text-xl font-semibold mb-4 md:mb-6">Portfolio</h3>
           <div className="grid grid-cols-1 md:grid-cols-1 gap-4 md:gap-6 lg:gap-8">
             <div className="relative w-[12vw] justify-self-end overflow-hidden rounded-lg p-2 shadow-lg group hover:shadow-xl ">
-              <Link href="#" className="absolute z-10" prefetch={false}>
-                <span className="sr-only">View</span>
-              </Link>
               <img
                 src="/svg/portfolio.jpeg"
                 alt="Portfolio Image 1"
