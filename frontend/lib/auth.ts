@@ -1,38 +1,32 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
-import jwt from 'jsonwebtoken';
 import GitHubProvider from 'next-auth/providers/github';
 import axios from 'axios';
+import { NextAuthOptions } from 'next-auth';
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
-export const authOptions = {
-  pages: {
-    signIn: '/signin',
-  },
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        username: { label: 'email', type: 'text', placeholder: 'email' },
-        password: { label: 'password', type: 'password', placeholder: 'password' },
+        email: { label: 'email', type: 'email', placeholder: 'Enter email' },
+        password: { label: 'password', type: 'password', placeholder: 'Enter password' },
       },
-      async authorize(credentials: any) {
+      async authorize(credentials: any): Promise<any> {
         try {
-          //console.log(credentials)
+          const { email, password } = credentials;
 
-          const { username, password } = credentials;
+          if (!email || !password) {
+            throw new Error("Email and Password is required");
+          }
 
           const response = await axios.post(`${backendUrl}/api/signin`, {
-            email: username,
+            email,
             password,
           });
-
-          if (response.status === 200) {
-            return response.data.basics;
-          } else {
-            return null;
-          }
-        } catch (error) {
-          //console.log(error)
+          return response.data.basics;
+        } catch (error: any) {
+          throw new Error(error.message);
         }
       },
     }),
@@ -46,7 +40,7 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }: any) {
+    async jwt({ token, user }) {
       // Include user information in the token
       if (user) {
         token.id = user.id;
@@ -54,16 +48,20 @@ export const authOptions = {
       }
       return token;
     },
-    async session({ session, token }: any) {
+    async session({ session, token }) {
       // Include token information in the session
-      session.user.id = token.id;
-      session.user.email = token.email; // Ensure session includes necessary user info
-      session.token = jwt.sign(token, process.env.NEXTAUTH_SECRET);
-
-      console.log("NEXTAUTH_SECRET in Next.js:", process.env.NEXTAUTH_SECRET);
-      console.log("the token is", session.token)
+      if (token) {
+        session.user.id = token.id;
+        session.user.email = token.email; // Ensure session includes necessary user info
+      }
       return session;
     },
+  },
+  pages: {
+    signIn: '/signin'
+  },
+  session: {
+    strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

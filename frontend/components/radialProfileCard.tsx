@@ -82,15 +82,6 @@ const RadialProfileCard = ({ userData }: any) => {
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (completionPercentage / 100) * circumference;
 
-  useEffect(() => {
-    if (userData) {
-      const percentage = calculateProfileCompletion(userData);
-      setCompletionPercentage(percentage);
-      updateStatusMessage(percentage);
-      updateCompletionStatus(userData);
-    }
-  }, [userData]);
-
   const updateStatusMessage = (percentage: number) => {
     let msg = '';
     if (percentage === 100) {
@@ -109,18 +100,27 @@ const RadialProfileCard = ({ userData }: any) => {
 
   const updateCompletionStatus = (data: any) => {
     setCompletionStatus({
-      name: !!data.basics?.name,
-      label: !!data.basics?.label,
-      image: !!data.basics?.image,
-      email: !!data.basics?.email,
-      phone: !!data.basics?.phone,
-      url: !!data.basics?.url,
-      githubUrl: !!data.projects[0]?.githubUrl,
-      education: !!data.education[0]?.institution,
-      certificates: !!data.certificates[0]?.name,
-      skills: data.projects[0]?.techStack.length > 2,
+      name: !!data?.basics?.name,
+      label: !!data?.basics?.label,
+      image: !!data?.basics?.image,
+      email: !!data?.basics?.email,
+      phone: !!data?.basics?.phone,
+      url: !!data?.basics?.url,
+      githubUrl: !!data?.projects[0]?.githubUrl,
+      education: !!data?.education[0]?.institution,
+      certificates: !!data?.certificates[0]?.name,
+      skills: data?.projects[0]?.techStack.length > 2,
     });
   };
+
+   useEffect(() => {
+    if (userData) {
+      const percentage = calculateProfileCompletion(userData);
+      setCompletionPercentage(percentage);
+      updateStatusMessage(percentage);
+      updateCompletionStatus(userData);
+    }
+  }, [userData]);
 
   return (
     <div className="flex flex-col w-2/12 mx-3 mr-3">

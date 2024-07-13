@@ -69,7 +69,7 @@ export default function Component() {
   );
 }
 
-function EyeIcon(props) {
+function EyeIcon(props: any) {
   return (
     <svg
       {...props}
@@ -89,7 +89,7 @@ function EyeIcon(props) {
   );
 }
 
-function XIcon(props) {
+function XIcon(props: any) {
   return (
     <svg
       {...props}
