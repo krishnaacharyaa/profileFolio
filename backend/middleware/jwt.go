@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -20,6 +21,26 @@ func KeyFunc(token *jwt.Token) (interface{}, error) {
 	}
 	// Return the secret signing key
 	return []byte(os.Getenv("NEXTAUTH_SECRET")), nil
+}
+
+func GenerateJWT(email string) (string, error) {
+	// Define the token claims
+	claims := jwt.MapClaims{
+		"email": email,
+		"exp":   time.Now().Add(time.Hour * 24).Unix(), // Token expiration time: 24 hours
+		"iat":   time.Now().Unix(),                     // Token issuance time
+	}
+
+	// Create the token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	// Sign the token with the secret key
+	tokenString, err := token.SignedString(jwtSecret)
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
 }
 
 func JwtVerify(next http.Handler) http.Handler {

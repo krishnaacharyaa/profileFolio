@@ -10,15 +10,17 @@ export async function fetchAndValidate<T>(
   const startTime = new Date().toISOString();
 
   // Get the session to extract the token
-  const session: any = await getServerSession(authOptions);
-  if (!session || !session.token) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user.accessToken) {
+
     throw new Error('No session or token found');
   }
 
   // Include the token in the headers
   const response = await fetch(url, {
     headers: {
-      Authorization: `Bearer ${session.token}`,
+      Authorization: `Bearer ${session.user.accessToken}`,
     },
   });
   console.log(response);
