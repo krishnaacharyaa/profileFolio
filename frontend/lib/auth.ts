@@ -2,7 +2,6 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 import GitHubProvider from 'next-auth/providers/github';
 
-import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import { NextAuthOptions } from 'next-auth';
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
