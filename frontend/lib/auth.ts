@@ -1,6 +1,8 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 import GitHubProvider from 'next-auth/providers/github';
+
+import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import { NextAuthOptions } from 'next-auth';
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
@@ -17,7 +19,7 @@ export const authOptions: NextAuthOptions = {
           const { email, password } = credentials;
 
           if (!email || !password) {
-            throw new Error("Email and Password is required");
+            throw new Error('Email and Password is required');
           }
 
           const response = await axios.post(`${backendUrl}/api/signin`, {
@@ -46,22 +48,22 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.email = user.email; // Include any other user details you need
       }
+
       return token;
     },
     async session({ session, token }) {
-      // Include token information in the session
-      if (token) {
-        session.user.id = token.id;
-        session.user.email = token.email; // Ensure session includes necessary user info
-      }
+      session.user.id = token.id;
+      session.user.email = token.email; // Ensure session includes necessary user info
+
+      session.token = jwt.sign(token, process.env.NEXTAUTH_SECRET);
       return session;
     },
   },
   pages: {
-    signIn: '/signin'
+    signIn: '/signin',
   },
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

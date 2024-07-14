@@ -1,29 +1,38 @@
-'use client';
+import { authOptions } from '@/lib/auth';
+import { getServerSession } from 'next-auth';
 
-import { useEffect, useState } from 'react';
-
-export default function TestPage() {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const username = 'jojosan2@gmail.com'; // Replace with the actual email you want to query
-      const response = await fetch(`/api/email?email=${username}`);
-      if (response.ok) {
-        const userData = await response.json();
-        setData(userData);
-      } else {
-        console.error('Failed to fetch user data');
+const Page = async () => {
+  const session: any = await getServerSession(authOptions);
+  console.log(session.token);
+  try {
+    const response = await fetch(
+      'http://localhost:8080/api/user/email/prathmeshdupare2501@gmail.com',
+      {
+        headers: {
+          Authorization: `Bearer ${session.token}`,
+        },
       }
-    };
+    );
 
-    fetchData();
-  }, []);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-  return (
-    <div>
-      <h1>Test Page</h1>
-      {data ? <pre>{JSON.stringify(data, null, 2)}</pre> : <p>Loading...</p>}
-    </div>
-  );
-}
+    const data = await response.json();
+    console.log(data);
+    return (
+      <>
+        <div>hello</div>
+      </>
+    );
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    return (
+      <>
+        <div>hello</div>
+      </>
+    );
+  }
+};
+
+export default Page;

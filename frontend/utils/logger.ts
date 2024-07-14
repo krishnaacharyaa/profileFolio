@@ -11,7 +11,6 @@ export async function fetchAndValidate<T>(
 
   // Get the session to extract the token
   const session: any = await getServerSession(authOptions);
-  console.log(session);
   if (!session || !session.token) {
     throw new Error('No session or token found');
   }

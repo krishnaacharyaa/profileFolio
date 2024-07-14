@@ -367,6 +367,182 @@ func GetSkillsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func GetSkillsByUserIDHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userID, err := primitive.ObjectIDFromHex(vars["id"])
+	if err != nil {
+		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	collection := client.Database("profileFolio").Collection("users")
+	var user models.User
+
+	err = collection.FindOne(ctx, bson.M{"_id": userID}).Decode(&user)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			http.Error(w, "User not found", http.StatusNotFound)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	if len(user.Skills) == 0 {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode([]models.SkillCollection{})
+		return
+	}
+
+	// Collect skill IDs from user skills
+	var skillIDs []primitive.ObjectID
+	for _, skill := range user.Skills {
+		skillIDs = append(skillIDs, skill.Keywords...)
+	}
+
+	if len(skillIDs) == 0 {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode([]models.SkillCollection{})
+		return
+	}
+
+	skillCollection := client.Database("profileFolio").Collection("skills")
+	filter := bson.M{"_id": bson.M{"$in": skillIDs}}
+
+	cursor, err := skillCollection.Find(ctx, filter)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer cursor.Close(ctx)
+
+	var skills []models.SkillCollection
+	if err = cursor.All(ctx, &skills); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(skills)
+}
+
+func GetSkillsByUsernameHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	username := vars["username"]
+
+	collection := client.Database("profileFolio").Collection("users")
+	var user models.User
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	err := collection.FindOne(ctx, bson.M{"basics.username": username}).Decode(&user)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			http.Error(w, "User not found", http.StatusNotFound)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	if len(user.Skills) == 0 {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode([]models.SkillCollection{})
+		return
+	}
+
+	// Collect skill IDs from user skills
+	var skillIDs []primitive.ObjectID
+	for _, skill := range user.Skills {
+		skillIDs = append(skillIDs, skill.Keywords...)
+	}
+
+	if len(skillIDs) == 0 {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode([]models.SkillCollection{})
+		return
+	}
+
+	skillCollection := client.Database("profileFolio").Collection("skills")
+	filter := bson.M{"_id": bson.M{"$in": skillIDs}}
+
+	cursor, err := skillCollection.Find(ctx, filter)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer cursor.Close(ctx)
+
+	var skills []models.SkillCollection
+	if err = cursor.All(ctx, &skills); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(skills)
+}
+
+func GetSkillsByEmailHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	email := vars["email"]
+
+	collection := client.Database("profileFolio").Collection("users")
+	var user models.User
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	err := collection.FindOne(ctx, bson.M{"basics.email": email}).Decode(&user)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			http.Error(w, "User not found", http.StatusNotFound)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	if len(user.Skills) == 0 {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode([]models.SkillCollection{})
+		return
+	}
+
+	// Collect skill IDs from user skills
+	var skillIDs []primitive.ObjectID
+	for _, skill := range user.Skills {
+		skillIDs = append(skillIDs, skill.Keywords...)
+	}
+
+	if len(skillIDs) == 0 {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode([]models.SkillCollection{})
+		return
+	}
+
+	skillCollection := client.Database("profileFolio").Collection("skills")
+	filter := bson.M{"_id": bson.M{"$in": skillIDs}}
+
+	cursor, err := skillCollection.Find(ctx, filter)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer cursor.Close(ctx)
+
+	var skills []models.SkillCollection
+	if err = cursor.All(ctx, &skills); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(skills)
+}
+
 func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	var newUser models.User
 	err := json.NewDecoder(r.Body).Decode(&newUser)
