@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Input } from '@/components/ui/input';
 
 interface AboutData {
   working: string;
@@ -30,7 +31,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ onUpdate }) => {
         <label className="block text-sm font-medium text-gray-700">
           🔭 I'm currently working on
         </label>
-        <input
+        <Input
           type="text"
           name="working"
           value={about.working}
@@ -40,7 +41,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ onUpdate }) => {
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700">🌱 I'm currently learning</label>
-        <input
+        <Input
           type="text"
           name="learning"
           value={about.learning}
@@ -50,7 +51,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ onUpdate }) => {
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700">⚡ Fun fact</label>
-        <input
+        <Input
           type="text"
           name="funFact"
           value={about.funFact}

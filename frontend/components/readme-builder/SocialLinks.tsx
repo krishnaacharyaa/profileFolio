@@ -1,3 +1,4 @@
+import { Input } from '@/components/ui/input';
 import React, { useState } from 'react';
 
 interface SocialLinksProps {
@@ -36,7 +37,7 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ onSocialLinksChange }) => {
           <label className="block text-sm font-medium text-gray-700 mb-1">
             {platform.charAt(0).toUpperCase() + platform.slice(1)}
           </label>
-          <input
+          <Input
             type="url"
             name={platform}
             value={links[platform as keyof SocialLinksData]}
