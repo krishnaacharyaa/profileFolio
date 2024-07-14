@@ -17,6 +17,9 @@ func RegisterUserRoutes(router *mux.Router) {
 	authenticated := router.PathPrefix("/api").Subrouter()
 	authenticated.Use(middleware.JwtVerify)
 
+	// Add User
+	authenticated.HandleFunc("/user", handlers.AddUserHandler).Methods("POST")
+
 	// Get User
 	authenticated.HandleFunc("/user", handlers.GetUserHandler).Methods("GET")                               // Route for getting a user
 	authenticated.HandleFunc("/user/{id}", handlers.GetUserByIDHandler).Methods("GET")                      // Route for getting a user by ID
