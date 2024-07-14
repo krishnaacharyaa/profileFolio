@@ -13,13 +13,18 @@ import (
 // Load the JWT secret from the environment
 var jwtSecret = []byte(os.Getenv("NEXTAUTH_SECRET"))
 
+// Define a custom type for the context key
+type contextKey string
+
+const userContextKey contextKey = "user"
+
 func KeyFunc(token *jwt.Token) (interface{}, error) {
 	// Validate the algorithm - ES256 is the default
 	if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 		return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 	}
 	// Return the secret signing key
-	return []byte(os.Getenv("NEXTAUTH_SECRET")), nil
+	return jwtSecret, nil
 }
 
 func JwtVerify(next http.Handler) http.Handler {
@@ -45,7 +50,7 @@ func JwtVerify(next http.Handler) http.Handler {
 
 		// Token is valid, add user information to the request context
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			ctx := context.WithValue(r.Context(), "user", claims)
+			ctx := context.WithValue(r.Context(), userContextKey, claims)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		} else {
 			http.Error(w, "invalid token claims", http.StatusUnauthorized)
