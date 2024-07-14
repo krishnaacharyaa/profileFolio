@@ -1,8 +1,8 @@
 module backend
 
-go 1.21.4
+//go 1.21.4
 
-//go 1.22.4
+go 1.22.4
 
 require go.mongodb.org/mongo-driver v1.16.0 // version should be automatically added
 
