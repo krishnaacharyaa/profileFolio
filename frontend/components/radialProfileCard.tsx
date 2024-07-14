@@ -24,7 +24,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
 export async function getServerSideProps(context: any) {
-  const session = await getServerSession(context.req, context.res, authOptions);
+  const session: any = await getServerSession(context.req, context.res, authOptions);
 
   if (!session) {
     return {
@@ -113,7 +113,7 @@ const RadialProfileCard = ({ userData }: any) => {
     });
   };
 
-   useEffect(() => {
+  useEffect(() => {
     if (userData) {
       const percentage = calculateProfileCompletion(userData);
       setCompletionPercentage(percentage);
