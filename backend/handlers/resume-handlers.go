@@ -10,7 +10,6 @@ import (
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -48,50 +47,6 @@ func AddResumeHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]string{"message": "Resume added successfully"})
-}
-
-func GetResumeHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	userID, err := primitive.ObjectIDFromHex(vars["userID"])
-	if err != nil {
-		http.Error(w, "Invalid user ID", http.StatusBadRequest)
-		return
-	}
-
-	resumeID := vars["resumeID"]
-
-	collection := client.Database("profileFolio").Collection("users")
-	var user models.User
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	// Find user by ID
-	err = collection.FindOne(ctx, bson.M{"_id": userID}).Decode(&user)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			http.Error(w, "User not found", http.StatusNotFound)
-		} else {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		return
-	}
-
-	// Find the specific resume
-	var foundResume *models.Resume
-	for _, resume := range user.Resumes {
-		if resume.UID == resumeID {
-			foundResume = &resume
-			break
-		}
-	}
-
-	if foundResume == nil {
-		http.Error(w, "Resume not found", http.StatusNotFound)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(foundResume)
 }
 
 func UpdateResumeHandler(w http.ResponseWriter, r *http.Request) {

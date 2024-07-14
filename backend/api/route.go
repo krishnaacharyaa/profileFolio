@@ -45,8 +45,7 @@ func RegisterUserRoutes(router *mux.Router) {
 
 	// Resume CRUD
 
-	authenticated.HandleFunc("/user/{userID}/resumes", handlers.AddResumeHandler).Methods("POST")           // Route for updating a user by email
-	authenticated.HandleFunc("/user/{userID}/resumes/{resumeID}", handlers.GetResumeHandler).Methods("GET") // Route for updating a user by email
+	authenticated.HandleFunc("/user/{userID}/resumes", handlers.AddResumeHandler).Methods("POST")
 	authenticated.HandleFunc("/user/{userID}/resumes/{resumeID}", handlers.UpdateResumeHandler).Methods("PUT")
 	authenticated.HandleFunc("/user/{userID}/resumes/{resumeID}", handlers.DeleteResumeHandler).Methods("DELETE")
 
