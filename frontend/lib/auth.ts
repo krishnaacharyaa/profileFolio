@@ -2,7 +2,6 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 import GitHubProvider from 'next-auth/providers/github';
 
-import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import { NextAuthOptions } from 'next-auth';
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
@@ -26,7 +25,7 @@ export const authOptions: NextAuthOptions = {
             email,
             password,
           });
-          return response.data.basics;
+          return response.data
         } catch (error: any) {
           throw new Error(error.message);
         }
@@ -46,16 +45,19 @@ export const authOptions: NextAuthOptions = {
       // Include user information in the token
       if (user) {
         token.id = user.id;
-        token.email = user.email; // Include any other user details you need
+        token.email = user.user.email; // Include any other user details you need
+        token.accessToken = user.accessToken;
       }
 
       return token;
     },
     async session({ session, token }) {
-      session.user.id = token.id;
-      session.user.email = token.email; // Ensure session includes necessary user info
-
-      session.token = jwt.sign(token, process.env.NEXTAUTH_SECRET);
+      // Include token information in the session
+      if (token) {
+        session.user.id = token.id;
+        session.user.email = token.email; // Ensure session includes necessary user info
+        session.user.accessToken = token.accessToken;
+      }
       return session;
     },
   },
@@ -63,7 +65,8 @@ export const authOptions: NextAuthOptions = {
     signIn: '/signin',
   },
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
+    maxAge: 24 * 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

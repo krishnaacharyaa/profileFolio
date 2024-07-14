@@ -12,7 +12,7 @@ export async function getUserData(): Promise<User> {
 
   console.log(backendUrl);
   return fetchAndValidate<User | any>(
-    `http://localhost:8080/api/user/`,
+    `http://localhost:8080/api/user`,
     { cache: 'no-store' },
     UserSchema
   );
