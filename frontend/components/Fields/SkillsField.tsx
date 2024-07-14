@@ -59,18 +59,6 @@ const SkillsField = () => {
         removeSkill(index);
     };
 
-    const handleAddKeyword = (index: number) => {
-      const currentKeywords = getValues(`projects.skills.${index}.keywords`) || [];
-      const newKeyword = keyword[index];
-      if (newKeyword) {
-          setValue(`projects.skills.${index}.keywords`, [...currentKeywords, newKeyword]);
-          // Clear the keyword input after adding
-          let updatedKeywords = [...keyword];
-          updatedKeywords[index] = ""; // Clear input after adding
-          setKeyword(updatedKeywords);
-      }
-  };
-
     const SkillOptions: { value: LevelType, label: string }[] = [
         { value: "Novice", label: "Novice" },
         { value: "Proficient", label: "Proficient" },

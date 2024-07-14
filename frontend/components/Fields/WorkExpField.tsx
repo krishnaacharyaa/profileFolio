@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { z } from 'zod';
 import {UserSchema} from '@/app/zod/user-zod';
-import { parseISO, format } from "date-fns";
+import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import {
@@ -15,13 +15,12 @@ import {
 import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { cn } from "@/lib/utils";
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 
 type FormData = z.infer<typeof UserSchema>;
 
 const WorkExp = () => {
-    const { control, formState: { errors }, setValue, getValues } = useFormContext<FormData>();
+    const { control, formState: { errors }, setValue, getValues, trigger } = useFormContext<FormData>();
     const [noEnd, setNoEnd] = useState(true);
     const [highlight, setHighlight] = useState<string[]>([]);
     const { fields, append, remove } = useFieldArray({
@@ -37,6 +36,7 @@ const WorkExp = () => {
         remove(index);
     };
     const handleAddHighlight = (index: number) => {
+        trigger(`work.${index}.highlights`)
         const currentHighlights = getValues(`work.${index}.highlights`) || [];
         setValue(`work.${index}.highlights`, [...currentHighlights, highlight[index]]);
         let updatedHighlights = [...highlight];
@@ -120,7 +120,7 @@ const WorkExp = () => {
                                 selected={field.value}
                                 onSelect={(date) => {
                                     date && setValue(`work.${index}.startDate`, new Date(date));
-                                    setNoEnd(false);
+                                    trigger(`work.${index}.endDate`)
                                 }}
                                 disabled={(date) =>
                                     date > new Date() || date < new Date("1900-01-01")
@@ -164,7 +164,10 @@ const WorkExp = () => {
                                 <Calendar
                             mode="single"
                             selected={field.value}
-                            onSelect={(date) => {date && setValue(`work.${index}.endDate`, new Date(date))}}
+                            onSelect={(date) => {
+                                date && setValue(`work.${index}.endDate`, new Date(date))
+                                setNoEnd(false);
+                            }}
                             disabled={(date) =>
                             date > new Date() || date < new Date("1900-01-01")
                             }
@@ -233,7 +236,7 @@ const WorkExp = () => {
                 </FormItem>
                 </div>
                 <div className="flex items-center space-x-2">
-                    <Checkbox id="noEnd" checked={noEnd} onClick={() => {
+                    <Checkbox id="noEnd" checked={noEnd} onCheckedChange={() => {
                         setValue(`work.${index}.endDate`, noEnd ? new Date() : undefined);
                         setNoEnd(!noEnd);
                     }}/>

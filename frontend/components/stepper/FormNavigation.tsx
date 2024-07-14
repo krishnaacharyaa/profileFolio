@@ -4,6 +4,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
 import { FormMessage } from '../ui/form';
+import { Divide } from 'lucide-react';
 
 interface FormNavigationProps {
   currentStep: number;
@@ -23,8 +24,9 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
   setCurrentStep,
   steps,
 }) => {
-  const [notExp, setNotExp] = useState(false);
-  const { control, formState: { errors }, trigger } = useFormContext();
+  const [notExp, setNotExp] = useState<boolean>();
+  const [errValidation, setErrValidation] = useState<boolean>();
+  const { control, formState: { errors }, trigger, setValue, getValues, clearErrors } = useFormContext();
   const workFields = useWatch({
     control,
     name: "work", // Assuming "work" is the name of the work experience section
@@ -61,12 +63,21 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
       setCurrentStep(currentStep + 1);
     }else if(currentStep == 2){
       if(notExp){
-        setNotExp(!notExp)
         setCurrentStep(currentStep + 1);
-      }else{
+        setValue('work', [])
+        setNotExp(!notExp);
+        clearErrors('work')
+        setErrValidation(false);
+      }else if(isStepValid && !notExp && getValues('work').length != 0){
+        setCurrentStep(currentStep + 1);
+        setErrValidation(false);
+      }
+      else{
+        setErrValidation(true);
         console.log(`Step ${currentStep} validation failed. Cannot proceed. ${JSON.stringify(errors)}`);
       }
     }else{
+      setErrValidation(true);
       console.log(`Step ${currentStep} validation failed. Cannot proceed. ${JSON.stringify(errors)}`);
     }
   };
@@ -87,6 +98,7 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
           </Label>
         </div>
       )}
+      {getValues('work') && currentStep == 2 && errValidation && getValues('work').length == 0 && !notExp && <div className='text-sm'>Either check that you have no work experience or add fields for your work experience</div>}
       <div className="flex justify-between items-center w-full">
         <Button
           type="button"

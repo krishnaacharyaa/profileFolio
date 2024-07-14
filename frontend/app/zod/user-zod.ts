@@ -4,7 +4,6 @@ const LocationSchema = z.object({
   address: z.string({ required_error: 'Address is required' }).min(1, { message: 'Address cannot be empty' }),
   postalCode: z.string({ required_error: 'Postal code is required' }).min(1, { message: 'Postal code cannot be empty' }).max(6, { message: 'Postal code cannot exceed 6 characters' }),
   city: z.string({ required_error: 'City is required' }).min(1, { message: 'City name cannot be empty' }),
-  countryCode: z.string({required_error: 'Input is required'}).regex(/^[A-Z]{2}$/, 'Input must be 2 uppercase letters.'),
   region: z.string({ required_error: 'Region is required' }).min(1, { message: 'Region cannot be empty' }),
 });
 
@@ -20,8 +19,8 @@ const WorkSchema = z.object({
   url: z.string().url('Invalid URL format'),
   startDate: z.date({ required_error: 'Start date is required' }),
   endDate: z.union([z.date(), z.undefined()]),
-  summary: z.string({ required_error: 'Summary is required' }),
-  highlights: z.array(z.string()).optional(),
+  summary: z.string({ required_error: 'Summary is required' }).min(1, { message: 'Summary cannot be empty' }),
+  highlights: z.array(z.string()),
 }).refine(data => data.endDate == undefined ? true : data.endDate.getDate() > data.startDate.getDate(), {
   message: "End date must be after the start date",
   path: ["endDate"],
@@ -35,10 +34,10 @@ const EducationSchema = z.object({
     required_error: 'Study type must be either "Remote" or "In-premise"',
   }),
   startDate: z.date({ required_error: 'Start date is required' }),
-  endDate: z.date({ required_error: 'Start date is required' }),
+  endDate: z.union([z.date(), z.undefined()]),
   score: z.string().nullable().default(""),
   courses: z.array(z.string()).optional(),
-}).refine(data => data.endDate > data.startDate, {
+}).refine(data => data.endDate == undefined ? true : data.endDate.getDate() > data.startDate.getDate(), {
   message: "End date must be after the start date",
   path: ["endDate"],
 });
@@ -88,7 +87,20 @@ const UserSchema = z.object({
     current_role: z.string({ required_error: 'Role is required' }).min(1, { message: 'Role cannot be empty' }),
     image: z.string().url('Invalid URL format'),
     email: z.string({ required_error: 'Email is required' }).email('Invalid email format'),
-    phone: z.string({required_error: 'Phone number is required'}).regex(/^[0-9]{10}$/, 'Invalid phone number. It should be 10 digits.'),
+    phone: z.string()
+    .min(1, { message: 'Phone number cannot be empty' })
+    .refine((value) => {
+      // Remove any non-digit characters
+      const digitsOnly = value.replace(/\D/g, '');
+      
+      // Check if the number of digits is between 7 and 15
+      return digitsOnly.length >= 7 && digitsOnly.length <= 15;
+    }, { message: 'Phone number must have between 7 and 15 digits' })
+    .refine((value) => {
+      // Use a more comprehensive regex for international numbers
+      const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+      return phoneRegex.test(value.replace(/[\s()-]/g, ''));
+    }, { message: 'Invalid phone number format' }),
     url: z.string().url('Invalid URL format'),
     summary: z.string({ required_error: 'Summary is required' }).min(1, { message: 'Summary cannot be empty' }).max(80, {message: `can't exceed 80 characters`}),
     location: LocationSchema,

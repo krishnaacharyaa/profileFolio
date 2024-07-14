@@ -12,17 +12,19 @@ import z from "zod";
 import {format } from "date-fns";
 import { cn } from '@/lib/utils';
 import { Calendar } from '@/components/ui/calendar';
+import { Checkbox } from '../ui/checkbox';
 
 type FormData = z.infer<typeof UserSchema>;
 
 type StudyType = 'Remote' | 'In-premise';
 
 const EducationField = () => {
-    const { control, formState: { errors }, setValue, getValues, clearErrors } = useFormContext<FormData>();
+    const { control, formState: { errors }, setValue, getValues, clearErrors, trigger } = useFormContext<FormData>();
     const { fields: educationFields, append: appendEducation, remove: removeEducation } = useFieldArray({
         control,
         name: "education.educationArr",
     });
+    const [noEnd, setNoEnd] = useState(true);
     const [course, setCourse] = useState<string[]>([]);
     const StudyOptions: { value: StudyType, label: string }[] = [
         { value: "Remote", label: "Remote" },
@@ -30,7 +32,7 @@ const EducationField = () => {
     ];
     
     const handleAddEducation = () => {
-        appendEducation({institution: "", url: "", area: "", studyType: "In-premise", startDate: new Date(), endDate: new Date(), score: "", courses: []});
+        appendEducation({institution: "", url: "", area: "", studyType: "In-premise", startDate: new Date(), score: "", courses: []});
         clearErrors('education.educationArr')
     };
     
@@ -39,6 +41,7 @@ const EducationField = () => {
     };
 
     const handleAddCourse = (index: number) => {
+        trigger(`education.educationArr.${index}.courses`);
         const currentCourses = getValues(`education.educationArr.${index}.courses`) || [];
         setValue(`education.educationArr.${index}.courses`, [...currentCourses, course[index]]);
         let updatedCourses = [...course];
@@ -182,7 +185,10 @@ const EducationField = () => {
                                 <Calendar
                                 mode="single"
                                 selected={field.value}
-                                onSelect={(date) => {date && setValue(`education.educationArr.${index}.startDate`, new Date(date))}}
+                                onSelect={(date) => {
+                                    date && setValue(`education.educationArr.${index}.startDate`, new Date(date))
+                                    trigger(`education.educationArr.${index}.endDate`)
+                                }}
                                 disabled={(date) =>
                                     date > new Date() || date < new Date("1900-01-01")
                                 }
@@ -224,8 +230,11 @@ const EducationField = () => {
                             <PopoverContent className="w-auto p-0" align="start">
                                 <Calendar
                             mode="single"
-                            selected={field.value || undefined}
-                            onSelect={(date) => {date && setValue(`education.educationArr.${index}.endDate`, new Date(date))}}
+                            selected={field.value}
+                            onSelect={(date) => {
+                                date && setValue(`education.educationArr.${index}.endDate`, new Date(date))
+                                setNoEnd(false);
+                            }}
                             disabled={(date) =>
                             date > new Date() || date < new Date("1900-01-01")
                             }
@@ -292,6 +301,19 @@ const EducationField = () => {
                     </FormControl>
                   <FormMessage className='text-red-500'>{errors?.education?.educationArr?.[index]?.courses?.message}</FormMessage>
                 </FormItem>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <Checkbox id="noEnd" checked={noEnd} onCheckedChange={() => {
+                        console.log(noEnd);
+                        setValue(`education.educationArr.${index}.endDate`, noEnd ? new Date() : undefined);
+                        setNoEnd(!noEnd);
+                    }}/>
+                    <label
+                        htmlFor="noEnd"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                        Enrolled till present
+                    </label>
                 </div>
                 <Button type="button" onClick={() => handleRemoveEducation(index)} className="mt-2">Remove</Button>
                 </div>

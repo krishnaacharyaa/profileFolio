@@ -29,6 +29,7 @@ const InterestsField = () => {
         const currentKeywords = getValues(`basics.interests.${index}.keywords`) || [];
         setValue(`basics.interests.${index}.keywords`, [...currentKeywords, keyword[index]]);
         let updatedKeywords = [...keyword];
+        trigger(`basics.interests.${index}.keywords`)
         updatedKeywords[index] = ""; // Clear input after adding
         setKeyword(updatedKeywords);
     };

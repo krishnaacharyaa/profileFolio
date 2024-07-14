@@ -5,11 +5,11 @@ import Profiles from '@/components/Fields/ProfilesField';
 import LanguagesField from '@/components/Fields/LanguagesField';
 import InterestsField from '@/components/Fields/InterestsField';
 
-const Step1Form = () => {
+const Step1Form= () => {
   return (
     <div className='flex flex-col w-full my-6'>
         <UserDetails /> 
-        <AddressField />     
+        <AddressField/>     
         <Profiles />
         <LanguagesField />
         <InterestsField />

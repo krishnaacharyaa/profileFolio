@@ -53,19 +53,6 @@ const AddressField = () => {
             <FormMessage className='text-red-500'>{errors.basics?.location?.city?.message}</FormMessage>
             </FormItem>
             <FormItem className='m-2'>
-            <FormLabel>Country code</FormLabel>
-            <FormControl>
-                <Controller
-                name="basics.location.countryCode"
-                control={control}
-                render={({ field }) => (
-                    <Input {...field} type='text' placeholder="IN" />
-                )}
-                />
-            </FormControl>
-            <FormMessage className='text-red-500'>{errors.basics?.location?.countryCode?.message}</FormMessage>
-            </FormItem>
-            <FormItem className='m-2'>
             <FormLabel>Region</FormLabel>
             <FormControl>
                 <Controller

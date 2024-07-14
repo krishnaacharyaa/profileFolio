@@ -11,14 +11,15 @@ import Step4Form from '@/components/stepper/Step4Form';
 import { Button } from '@/components/ui/button';
 import FormNavigation from '@/components/stepper/FormNavigation';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 export default function Home() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1);
   const methods = useForm<FormData>({
     resolver: zodResolver(UserSchema),
-    mode: "all",
-    delayError: 2000
+    mode: "onChange",
+    delayError: 1000
   });
 
   const steps = [
@@ -30,10 +31,10 @@ export default function Home() {
 
 
   const stepForms = [
-    <Step1Form key={1}/>,
-    <Step2Form key={2}/>,
-    <Step3Form key={3}/>,
-    <Step4Form key={4}/>
+    <Step1Form key={1} />,
+    <Step2Form key={2} />,
+    <Step3Form key={3} />,
+    <Step4Form key={4} />
   ]
 
   const watchedValues = useWatch({
@@ -50,7 +51,6 @@ export default function Home() {
   const onSubmit = async (data: FormData) => {
     console.log('submitted')
     console.log(data);
-
     router.push('/dashboard')
   };
 

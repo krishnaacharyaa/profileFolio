@@ -23,7 +23,7 @@ type Option = {
   };
 
 const ProjectsField = () => {
-    const { control, formState: { errors } , setValue, getValues, clearErrors} = useFormContext<FormData>();
+    const { control, formState: { errors } , setValue, getValues, clearErrors, trigger} = useFormContext<FormData>();
     const [options, setOptions] = useState<Option[]>([]);
     const [highlight, setHighlight] = useState<string[]>([]);
     const {fields: projectFields , append: appendProject, remove: removeProject} = useFieldArray({
@@ -58,6 +58,7 @@ const ProjectsField = () => {
     };
 
     const handleAddHighlight = (index: number) => {
+        trigger(`projects.projectsArr.${index}.highlights`)
         const currentHighlights = getValues(`projects.projectsArr.${index}.highlights`) || [];
         setValue(`projects.projectsArr.${index}.highlights`, [...currentHighlights, highlight[index]]);
         let updatedHighlights = [...highlight];
@@ -114,7 +115,10 @@ const ProjectsField = () => {
                                 <Calendar
                                 mode="single"
                                 selected={field.value}
-                                onSelect={(date) => {date && setValue(`projects.projectsArr.${index}.startDate`, new Date(date))}}
+                                onSelect={(date) => {
+                                    date && setValue(`projects.projectsArr.${index}.startDate`, new Date(date))
+                                    trigger(`projects.projectsArr.${index}.endDate`)
+                                }}
                                 disabled={(date) =>
                                     date > new Date() || date < new Date("1900-01-01")
                                 }
@@ -130,7 +134,7 @@ const ProjectsField = () => {
                     <div className='my-2'>
                     <FormLabel>End Date</FormLabel>
                     <Controller
-                        name={`education.educationArr.${index}.endDate`}
+                        name={`projects.projectsArr.${index}.endDate`}
                         control={control}
                         render={({ field }) => (
                         <FormItem className="flex flex-col">

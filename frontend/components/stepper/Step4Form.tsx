@@ -1,4 +1,4 @@
-import ProjectsField from "@/components/Fields/ProjectsFIeld";
+import ProjectsField from "@/components/Fields/ProjectsField";
 import SkillsField from "@/components/Fields/SkillsField";
 
 const Step4Form = () => {
