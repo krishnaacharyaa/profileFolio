@@ -52,10 +52,13 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      session.user.id = token.id;
-      session.user.email = token.email; // Ensure session includes necessary user info
+      if (token) {
+        session.user.id = token.id;
+        session.user.email = token.email; // Ensure session includes necessary user info
 
-      session.token = jwt.sign(token, process.env.NEXTAUTH_SECRET);
+        session.token = jwt.sign(token, process.env.NEXTAUTH_SECRET);
+      }
+
       return session;
     },
   },

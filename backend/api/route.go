@@ -9,6 +9,7 @@ import (
 )
 
 // RegisterUserRoutes registers all the routes related to user operations
+
 func RegisterUserRoutes(router *mux.Router) {
 	router.HandleFunc("/api/signup", handlers.SignUpHandler).Methods("POST") // Route for user signup
 	router.HandleFunc("/api/signin", handlers.SignInHandler).Methods("POST") // Route for user signin
