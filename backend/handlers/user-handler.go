@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"backend/middleware"
 	"backend/models"
 	"context"
 	"encoding/json"
@@ -267,9 +268,18 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Generate JWT token
+	token, err := middleware.GenerateJWT(authUser.Email)
+	if err != nil {
+		http.Error(w, "Error generating token", http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusCreated)
 	response := map[string]interface{}{
 		"message": "User created successfully",
+		"id": new_user.ID,
+		"accessToken": token,
 		"user":    new_user,
 	}
 	json.NewEncoder(w).Encode(response)
@@ -318,7 +328,20 @@ func SignInHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(user)
+	// Generate JWT token
+	token, err := middleware.GenerateJWT(credentials.Email)
+	if err != nil {
+		http.Error(w, "Error generating token", http.StatusInternalServerError)
+		return
+	}
+
+	response := map[string]interface{}{
+		"id" : user.ID,
+		"user":user.Basics,
+		"accessToken": token,
+	}
+
+	json.NewEncoder(w).Encode(response)
 }
 
 func GetUserHandler(w http.ResponseWriter, r *http.Request) {
