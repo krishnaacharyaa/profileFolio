@@ -25,7 +25,7 @@ export const authOptions: NextAuthOptions = {
             email,
             password,
           });
-          return response.data
+          return response.data;
         } catch (error: any) {
           throw new Error(error.message);
         }
@@ -52,14 +52,12 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-
       // Include token information in the session
       if (token) {
         session.user.id = token.id;
         session.user.email = token.email; // Ensure session includes necessary user info
         session.user.accessToken = token.accessToken;
       }
-
       return session;
     },
   },
@@ -67,7 +65,7 @@ export const authOptions: NextAuthOptions = {
     signIn: '/signin',
   },
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
     maxAge: 24 * 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
