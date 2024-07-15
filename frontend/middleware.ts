@@ -9,6 +9,7 @@ export const config = {
     '/home',
     '/readme-builder',
     '/form',
+    '/',
     '/dashboard',
     '/portfolio-builder',
     '/resume-builder',

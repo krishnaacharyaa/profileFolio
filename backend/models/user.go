@@ -94,6 +94,7 @@ type Basics struct {
 type User struct {
 	ID           primitive.ObjectID `bson:"_id,omitempty" json:"-"`
 	Basics       Basics             `json:"basics"`
+	Resumes      []Resume           `json:"resumes"`
 	Work         []WorkExperience   `json:"work,omitempty"`
 	Education    []EducationDetail  `json:"education,omitempty"`
 	Certificates []Certificate      `json:"certificates,omitempty"`
@@ -102,6 +103,21 @@ type User struct {
 	Interests    []Interest         `json:"interests,omitempty"`
 	Projects     []Project          `json:"projects,omitempty"`
 }
+
+type Resume struct {
+	Name         string            `json:"name"`
+	IsDefault    bool              `json:"isDefault,omitempty"`
+	TemplateID   string            `json:"templateId,omitempty"`
+	UID          string            `json:"uid,omitempty"`
+	Basics       Basics            `json:"basics"`
+	Work         []WorkExperience  `json:"work,omitempty"`
+	Education    []EducationDetail `json:"education,omitempty"`
+	Certificates []Certificate     `json:"certificates,omitempty"`
+	Skills       []Skill           `json:"skills,omitempty"`
+	Languages    []Language        `json:"languages,omitempty"`
+	Interests    []Interest        `json:"interests,omitempty"`
+	Projects     []Project         `json:"projects,omitempty"`
+} // Resume Schema
 
 type SkillCollection struct {
 	ID   primitive.ObjectID `bson:"_id" json:"id"`
