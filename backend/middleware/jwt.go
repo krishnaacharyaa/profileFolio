@@ -23,10 +23,9 @@ func KeyFunc(token *jwt.Token) (interface{}, error) {
 	return []byte(os.Getenv("NEXTAUTH_SECRET")), nil
 }
 
-func GenerateJWT(email string) (string, error) {
+func GenerateJWT() (string, error) {
 	// Define the token claims
 	claims := jwt.MapClaims{
-		"email": email,
 		"exp":   time.Now().Add(time.Hour * 24).Unix(), // Token expiration time: 24 hours
 		"iat":   time.Now().Unix(),                     // Token issuance time
 	}

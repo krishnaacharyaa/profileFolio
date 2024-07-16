@@ -2,14 +2,14 @@ import { authOptions } from '@/lib/auth';
 import { getServerSession } from 'next-auth';
 
 const Page = async () => {
-  const session: any = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
   console.log(session);
   try {
     const response = await fetch(
-      'http://localhost:8080/api/user/email/prathmeshdupare2501@gmail.com',
+      'http://localhost:8080/api/user/email/sukomal@gmail.com',
       {
         headers: {
-          Authorization: `Bearer ${session.user.accessToken}`,
+          Authorization: `Bearer ${session?.user.accessToken}`,
         },
       }
     );
@@ -19,7 +19,6 @@ const Page = async () => {
     }
 
     const data = await response.json();
-    console.log(data);
     console.log(data);
 
     return (
