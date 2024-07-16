@@ -9,7 +9,7 @@ const Page = async () => {
       'http://localhost:8080/api/user/email/prathmeshdupare2501@gmail.com',
       {
         headers: {
-          Authorization: `Bearer ${session.token}`,
+          Authorization: `Bearer ${session.user.accessToken}`,
         },
       }
     );
