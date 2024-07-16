@@ -15,7 +15,6 @@ const UserDetails = () => {
 
   return (
     <div className='flex flex-col w-full'>
-        <div className='text-2xl font-bold my-4'>User Details</div>
         <div className='grid grid-cols-3 w-full'>
         <FormItem className='m-2'>
           <FormLabel>Name</FormLabel>

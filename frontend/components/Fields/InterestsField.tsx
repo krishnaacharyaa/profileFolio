@@ -36,7 +36,6 @@ const InterestsField = () => {
 
     return (
         <div className='flex flex-col w-full'>
-            <div className='text-2xl font-bold my-4'>Interests</div>
             <div className='flex flex-col justify-center items-start w-full flex-grow'>
                 {interestFields.map((item, index) => (
                     <div key={item.id} className='my-2'>

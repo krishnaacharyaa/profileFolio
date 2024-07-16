@@ -42,7 +42,7 @@ const ProjectsField = () => {
               value: skill.id,
               label: skill.name
             }));
-    
+            console.log(skillsData)
             setOptions(formattedOptions);
           } catch (error) {
             console.error('Failed to fetch skills data', error);

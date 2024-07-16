@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import React from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import z from "zod";
+import Image from 'next/image';
 
 type FormData = z.infer<typeof UserSchema>;
 
@@ -24,11 +25,10 @@ const Profiles = () => {
       };
   return (
     <div className='flex flex-col w-full'>
-        <div className='text-2xl font-bold my-4'>Profiles</div>
             <div className='w-full'>
             {profileFields.map((item, index) => (
-            <div key={item.id} className='my-2'>
-            <div className="grid grid-cols-3 mb-4">
+            <div key={item.id} className='flex justify-start items-center my-2'>
+            <div className="grid grid-cols-3 mb-4 flex-1">
                 <FormItem className='m-2'>
                 <FormLabel>Platform</FormLabel>
                 <FormControl>
@@ -69,10 +69,10 @@ const Profiles = () => {
                 <FormMessage className='text-red-500'>{errors?.basics?.profiles?.[index]?.url?.message}</FormMessage>
                 </FormItem>
             </div>
-            <Button type="button" onClick={() => handleRemoveProfile(index)} className="mt-2">Remove</Button>
+            <Button type="button" onClick={() => handleRemoveProfile(index)} className="mt-2"><Image src='./delete.svg' alt='svg' width={20} height={20}></Image></Button>
         </div>
     ))}
-    <Button type="button" onClick={handleAddProfile} className="mt-2">Add Profile</Button>
+    <Button type="button" onClick={handleAddProfile} className="mt-2"><Image src='./add.svg' alt='svg' width={20} height={20}></Image></Button>
         </div>
     </div>
   )

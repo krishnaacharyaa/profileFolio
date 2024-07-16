@@ -37,7 +37,6 @@ const LanguagesField = () => {
       };
   return (
     <div className='flex flex-col w-full'>
-        <div className='text-2xl font-bold my-4'>Languages</div>
             <div className='w-full'>
                 {languageFields && languageFields.map((item, index) => (
                 <div key={item.id} className='my-2'>

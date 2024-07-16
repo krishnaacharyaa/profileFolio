@@ -11,7 +11,6 @@ const AddressField = () => {
     const { control, formState: { errors }, trigger, setValue, getValues } = useFormContext<FormData>();
     return (
         <div className='flex flex-col w-full'>
-            <div className='text-2xl font-bold my-4'>Address</div>
             <div className='grid grid-cols-3 w-full'>
             <FormItem className='m-2'>
             <FormLabel>Address</FormLabel>
