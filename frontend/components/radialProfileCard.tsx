@@ -1,6 +1,6 @@
 'use client';
+
 import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
 import {
   Card,
   CardContent,
@@ -20,63 +20,78 @@ import {
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { calculateProfileCompletion } from '@/utils/profileCompletionCheck';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { useSession } from 'next-auth/react';
+import useApi from '@/hooks/useClientHook';
 
-export async function getServerSideProps(context: any) {
-  const session: any = await getServerSession(context.req, context.res, authOptions);
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: '/login',
-        permanent: false,
-      },
+interface UserData {
+  basics: {
+    name: string;
+    label: string;
+    image: string;
+    email: string;
+    phone: string;
+    url: string;
+    summary: string;
+    location: {
+      address: string;
+      postalCode: string;
+      city: string;
+      countryCode: string;
+      region: string;
     };
-  }
-
-  try {
-    const response = await fetch('http://localhost:8080/api/user', {
-      headers: {
-        Authorization: `Bearer ${session.token}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const userData = await response.json();
-    return {
-      props: {
-        userData,
-      },
-    };
-  } catch (error) {
-    console.error('Error fetching user data:', error);
-    return {
-      props: {
-        userData: null,
-      },
-    };
-  }
+    profiles: Array<{
+      network: string;
+      username: string;
+      url: string;
+    }>;
+  };
+  work: Array<{
+    name: string;
+    position: string;
+    url: string;
+    startDate: string;
+    summary: string;
+    highlights: string[];
+  }>;
+  education: Array<{
+    institution: string;
+    url: string;
+    area: string;
+    studyType: string;
+    startDate: string;
+    endDate: string;
+    score: string;
+    courses: string[];
+  }>;
+  certificates: Array<{
+    name: string;
+    date: string;
+    issuer: string;
+    url: string;
+  }>;
+  skills: Array<{
+    name: string;
+    level: string;
+    keywords: string[];
+  }>;
+  projects: Array<{
+    name: string;
+    startDate: string;
+    endDate: string;
+    description: string;
+    highlights: string[];
+    githubUrl: string;
+    deployedUrl: string;
+    techStack: string[];
+  }>;
 }
 
-const RadialProfileCard = ({ userData }: any) => {
+export default function RadialProfileCard() {
+  const { data: session } = useSession()
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [completionPercentage, setCompletionPercentage] = useState(0);
   const [message, setMessage] = useState({ percentage: 0, msg: '' });
-  const [completionStatus, setCompletionStatus] = useState({
-    name: false,
-    label: false,
-    image: false,
-    email: false,
-    phone: false,
-    url: false,
-    githubUrl: false,
-    education: false,
-    certificates: false,
-    skills: false,
-  });
+  const { data, loading, error } = useApi(`/api/user/${session?.user?.id}`)
 
   const radius = 15.9155;
   const circumference = 2 * Math.PI * radius;
@@ -98,36 +113,21 @@ const RadialProfileCard = ({ userData }: any) => {
     setMessage({ percentage, msg });
   };
 
-  const updateCompletionStatus = (data: any) => {
-    setCompletionStatus({
-      name: !!data?.basics?.name,
-      label: !!data?.basics?.label,
-      image: !!data?.basics?.image,
-      email: !!data?.basics?.email,
-      phone: !!data?.basics?.phone,
-      url: !!data?.basics?.url,
-      githubUrl: !!data?.projects[0]?.githubUrl,
-      education: !!data?.education[0]?.institution,
-      certificates: !!data?.certificates[0]?.name,
-      skills: data?.projects[0]?.techStack.length > 2,
-    });
-  };
-
   useEffect(() => {
-    if (userData) {
-      const percentage = calculateProfileCompletion(userData);
+    if (data) {
+      setUserData(data);
+      const percentage = calculateProfileCompletion(data);
       setCompletionPercentage(percentage);
       updateStatusMessage(percentage);
-      updateCompletionStatus(userData);
     }
-  }, [userData]);
+  }, [data]);
 
   return (
     <div className="flex flex-col w-2/12 mx-3 mr-3">
       <Card>
         <CardHeader className="px-4 py-5">
-          <CardTitle>Hey Suyash</CardTitle>
-          <CardDescription>Card Description</CardDescription>
+          <CardTitle>Hey {userData?.basics?.name || 'User'}</CardTitle>
+          <CardDescription>{userData?.basics?.label || 'Your position'}</CardDescription>
         </CardHeader>
         <CardContent className="px-3">
           <div className="flex flex-col outline-1 w-full">
@@ -136,7 +136,7 @@ const RadialProfileCard = ({ userData }: any) => {
                 <div className="photo flex justify-center items-center">
                   <img
                     className="w-[90%] h-[80%] rounded-full"
-                    src="https://images.pexels.com/photos/1520760/pexels-photo-1520760.jpeg?auto=compress&cs=tinysrgb&w=600"
+                    src={userData?.basics?.image || "https://t4.ftcdn.net/jpg/00/65/77/27/240_F_65772719_A1UV5kLi5nCEWI0BNLLiFaBPEkUbv5Fv.jpg"}
                     alt="Person's Photo"
                   />
                 </div>
@@ -199,9 +199,9 @@ const RadialProfileCard = ({ userData }: any) => {
                         <span>
                           <Image
                             className="w-6 h-6 mr-1"
-                            src={completionStatus.name ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            src={userData?.basics?.name ? '/svg/tick.svg' : '/svg/cross.svg'}
                             width={100}
-                            alt={completionStatus.name ? 'tick' : 'cross'}
+                            alt={userData?.basics?.name ? 'tick' : 'cross'}
                             height={100}
                           />
                         </span>
@@ -211,9 +211,9 @@ const RadialProfileCard = ({ userData }: any) => {
                         <span>
                           <Image
                             className="w-6 h-6 mr-1"
-                            src={completionStatus.label ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            src={userData?.basics?.label ? '/svg/tick.svg' : '/svg/cross.svg'}
                             width={100}
-                            alt={completionStatus.label ? 'tick' : 'cross'}
+                            alt={userData?.basics?.label ? 'tick' : 'cross'}
                             height={100}
                           />
                         </span>
@@ -223,9 +223,9 @@ const RadialProfileCard = ({ userData }: any) => {
                         <span>
                           <Image
                             className="w-6 h-6 mr-1"
-                            src={completionStatus.skills ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            src={userData?.skills && userData.skills.length > 0 ? '/svg/tick.svg' : '/svg/cross.svg'}
                             width={100}
-                            alt={completionStatus.skills ? 'tick' : 'cross'}
+                            alt={userData?.skills && userData.skills.length > 0 ? 'tick' : 'cross'}
                             height={100}
                           />
                         </span>
@@ -235,9 +235,9 @@ const RadialProfileCard = ({ userData }: any) => {
                         <span>
                           <Image
                             className="w-6 h-6 mr-1"
-                            src={completionStatus.image ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            src={userData?.basics.image ? '/svg/tick.svg' : '/svg/cross.svg'}
                             width={100}
-                            alt={completionStatus.image ? 'tick' : 'cross'}
+                            alt={userData?.basics.image ? 'tick' : 'cross'}
                             height={100}
                           />
                         </span>
@@ -247,9 +247,9 @@ const RadialProfileCard = ({ userData }: any) => {
                         <span>
                           <Image
                             className="w-6 h-6 mr-1"
-                            src={completionStatus.education ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            src={userData?.education && userData.education.length > 0 ? '/svg/tick.svg' : '/svg/cross.svg'}
                             width={100}
-                            alt={completionStatus.education ? 'tick' : 'cross'}
+                            alt={userData?.education && userData.education.length > 0 ? 'tick' : 'cross'}
                             height={100}
                           />
                         </span>
@@ -259,9 +259,9 @@ const RadialProfileCard = ({ userData }: any) => {
                         <span>
                           <Image
                             className="w-6 h-6 mr-1"
-                            src={completionStatus.email ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            src={userData?.basics.email ? '/svg/tick.svg' : '/svg/cross.svg'}
                             width={100}
-                            alt={completionStatus.email ? 'tick' : 'cross'}
+                            alt={userData?.basics.email ? 'tick' : 'cross'}
                             height={100}
                           />
                         </span>
@@ -271,9 +271,9 @@ const RadialProfileCard = ({ userData }: any) => {
                         <span>
                           <Image
                             className="w-6 h-6 mr-1"
-                            src={completionStatus.githubUrl ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            src={userData?.projects && userData.projects[0].githubUrl ? '/svg/tick.svg' : '/svg/cross.svg'}
                             width={100}
-                            alt={completionStatus.githubUrl ? 'tick' : 'cross'}
+                            alt={userData?.projects && userData.projects[0].githubUrl ? 'tick' : 'cross'}
                             height={100}
                           />
                         </span>
@@ -283,9 +283,9 @@ const RadialProfileCard = ({ userData }: any) => {
                         <span>
                           <Image
                             className="w-6 h-6 mr-1"
-                            src={completionStatus.url ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            src={userData?.basics.url ? '/svg/tick.svg' : '/svg/cross.svg'}
                             width={100}
-                            alt={completionStatus.url ? 'tick' : 'cross'}
+                            alt={userData?.basics.url ? 'tick' : 'cross'}
                             height={100}
                           />
                         </span>
@@ -295,9 +295,9 @@ const RadialProfileCard = ({ userData }: any) => {
                         <span>
                           <Image
                             className="w-6 h-6 mr-1"
-                            src={completionStatus.certificates ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            src={userData?.certificates && userData.certificates.length > 0 ? '/svg/tick.svg' : '/svg/cross.svg'}
                             width={100}
-                            alt={completionStatus.certificates ? 'tick' : 'cross'}
+                            alt={userData?.certificates && userData.certificates.length > 0 ? 'tick' : 'cross'}
                             height={100}
                           />
                         </span>
@@ -307,13 +307,13 @@ const RadialProfileCard = ({ userData }: any) => {
                         <span>
                           <Image
                             className="w-6 h-6 mr-1"
-                            src={completionStatus.phone ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            src={userData?.basics.phone ? '/svg/tick.svg' : '/svg/cross.svg'}
                             width={100}
-                            alt={completionStatus.phone ? 'tick' : 'cross'}
+                            alt={userData?.basics.phone ? 'tick' : 'cross'}
                             height={100}
                           />
                         </span>
-                        PhoneNo
+                        Phone Number
                       </li>
                     </ul>
                   </div>
@@ -336,7 +336,5 @@ const RadialProfileCard = ({ userData }: any) => {
         </CardFooter>
       </Card>
     </div>
-  );
-};
-
-export default dynamic(() => Promise.resolve(RadialProfileCard), { ssr: false });
+  )
+}

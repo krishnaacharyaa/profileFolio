@@ -5,8 +5,6 @@ import (
 	"backend/models"
 	"context"
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -48,7 +46,6 @@ func GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("Successfully retrieved user document:", user)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
@@ -75,8 +72,6 @@ func GetUserByEmailHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("Successfully retrieved user document:", user)
-
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
 }
@@ -101,8 +96,6 @@ func GetUserByUsernameHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-
-	log.Println("Successfully retrieved user document:", user)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
@@ -352,7 +345,6 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	log.Println("Successfully retrieved user document:", user)
 
 	json.NewEncoder(w).Encode(user)
 }
@@ -381,8 +373,6 @@ func GetSkillsHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	log.Println("Successfully retrieved user document:", skills)
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(skills); err != nil {
@@ -573,8 +563,6 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
-
-	fmt.Printf("New User: %+v\n", newUser) // Log new user data
 
 	collection := client.Database("profileFolio").Collection("users")
 

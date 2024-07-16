@@ -1,31 +1,20 @@
 "use client"
-import axios from 'axios';
-import { useSession } from 'next-auth/react';
-import { useEffect } from 'react';
 
+import useApi from "@/hooks/useClientHook"
+import { useSession } from "next-auth/react";
 
 export default function page() {
+    const { data: session } = useSession();
 
-    const { data: session } = useSession()
+    const { data, loading, error } = useApi(`/api/user/${session?.user?.id}`)
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const res = await axios.get('http://localhost:8080/api/user/username/sukomal06', {
-                    headers: {
-                        Authorization: `Bearer ${session?.user.accessToken}`
-                    }
-                })
-                console.log(res)
-            } catch (error) {
-                console.log(error)
-            }
-        }
-        fetchData()
-    }, [session?.user.accessToken])
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {String(error?.response?.data ?? error.message)}</div>;
+    if (!data) return <div>No user data found</div>;
+
     return (
         <div>
-            hello
+            <h1>Welcome,{data?.basics?.name}!</h1>
         </div>
     )
 }
