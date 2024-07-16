@@ -269,7 +269,7 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Generate JWT token
-	token, err := middleware.GenerateJWT(authUser.Email)
+	token, err := middleware.GenerateJWT()
 	if err != nil {
 		http.Error(w, "Error generating token", http.StatusInternalServerError)
 		return
@@ -329,7 +329,7 @@ func SignInHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Generate JWT token
-	token, err := middleware.GenerateJWT(credentials.Email)
+	token, err := middleware.GenerateJWT()
 	if err != nil {
 		http.Error(w, "Error generating token", http.StatusInternalServerError)
 		return

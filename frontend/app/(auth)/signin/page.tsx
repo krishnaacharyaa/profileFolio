@@ -210,7 +210,7 @@ export default function Signin() {
               Sign up now
             </Link>
           </div>
-          <div className="flex flex-col gap-2">
+          {/* <div className="flex flex-col gap-2">
             <Button variant="outline" onClick={handleSignInWithGoogle} className="flex gap-2">
               <ChromeIcon className="h-5 w-5" />
               Continue with Google
@@ -219,7 +219,7 @@ export default function Signin() {
               <GithubIcon className="h-5 w-5" />
               Continue with Github
             </Button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
