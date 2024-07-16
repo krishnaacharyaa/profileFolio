@@ -1,6 +1,11 @@
+"use client"
+
 import React from 'react';
-import RadialProfileCard from '../../../components/radialProfileCard';
-import UserResume from '../../../components/dashboard/UserResume';
+import RadialProfileCard from '@/components/radialProfileCard';
+import UserResume from '@/components/dashboard/UserResume';
+import CoverLetter from '@/components/dashboard/CoverLetter';
+import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 
 import {
   Card,
@@ -19,8 +24,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import CoverLetter from '../../../components/dashboard/CoverLetter';
-import Image from 'next/image';
+import useApi from '@/hooks/useClientHook';
 
 const cards = [
   {
@@ -58,6 +62,11 @@ const cards = [
 ];
 
 const Dashboard = () => {
+  const { data: session } = useSession();
+  const { data: user, loading, error } = useApi(`/api/user/${session?.user?.id}`);
+
+  console.log(user?.resumes)
+
   return (
     <div className="flex flex-col h-full ">
       <div className="flex bg-[#DFDFDF33] w-full px-8 py-4">
@@ -75,8 +84,8 @@ const Dashboard = () => {
           </Card>
           <div className="grid grid-cols-2 gap-1 my-2">
             {cards.map((card, index) => (
-              <>
-                <div key={index} className="rounded-lg py-1 px-1">
+              <div key={index}>
+                <div className="rounded-lg py-1 px-1">
                   <Dialog>
                     <Card className="border-2 flex h-[20vh] hover:border-[#3987FB] ">
                       <DialogTrigger>
@@ -101,7 +110,7 @@ const Dashboard = () => {
                     </DialogContent>
                   </Dialog>
                 </div>
-              </>
+              </div>
             ))}
           </div>
         </div>
