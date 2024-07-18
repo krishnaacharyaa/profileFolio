@@ -1,13 +1,5 @@
 import { z } from 'zod';
 
-// Function to validate ISO 8601 date strings
-const isoDateString = z.string().refine((val) => {
-  const date = new Date(val);
-  return !isNaN(date.getTime()) && val === date.toISOString();
-}, {
-  message: 'Invalid ISO 8601 date format',
-});
-
 const LocationSchema = z.object({
   address: z.string({ required_error: 'Address is required' }).min(1, { message: 'Address cannot be empty' }),
   postalCode: z.string({ required_error: 'Postal code is required' }).min(1, { message: 'Postal code cannot be empty' }).max(6, { message: 'Postal code cannot exceed 6 characters' }),
@@ -25,8 +17,8 @@ const WorkSchema = z.object({
   name: z.string({ required_error: 'Company name is required' }).min(1, { message: 'Company name cannot be empty' }),
   position: z.string({ required_error: 'Position is required' }).min(1, { message: 'Position cannot be empty' }),
   url: z.string().url('Invalid URL format'),
-  startDate: isoDateString,
-  endDate: z.union([isoDateString, z.undefined()]),
+  startDate: z.string(),
+  endDate: z.union([z.string(), z.undefined()]),
   summary: z.string({ required_error: 'Summary is required' }).min(1, { message: 'Summary cannot be empty' }),
   highlights: z.array(z.string()),
 }).refine(data => data.endDate === undefined || new Date(data.endDate) > new Date(data.startDate), {
@@ -41,8 +33,8 @@ const EducationSchema = z.object({
   studyType: z.enum(['Remote', 'In-premise'], {
     required_error: 'Study type must be either "Remote" or "In-premise"',
   }),
-  startDate: isoDateString,
-  endDate: z.union([isoDateString, z.undefined()]),
+  startDate: z.string(),
+  endDate: z.union([z.string(), z.undefined()]),
   score: z.string().nullable().default(""),
   courses: z.array(z.string()).optional(),
 }).refine(data => data.endDate === undefined || new Date(data.endDate) > new Date(data.startDate), {
@@ -52,7 +44,7 @@ const EducationSchema = z.object({
 
 const CertificateSchema = z.object({
   name: z.string({ required_error: 'Certificate name is required' }).min(1, { message: 'Certificate name cannot be empty' }),
-  date: isoDateString,
+  date: z.string(),
   issuer: z.string({ required_error: 'Issuer is required' }).min(1, { message: 'Issuer name cannot be empty' }),
   url: z.string().url('Invalid URL format').nullable(),
 });
@@ -76,8 +68,8 @@ const InterestSchema = z.object({
 
 const ProjectSchema = z.object({
   name: z.string({ required_error: 'Project name is required' }).min(1, { message: 'Project name cannot be empty' }),
-  startDate: isoDateString,
-  endDate: isoDateString,
+  startDate: z.string(),
+  endDate: z.string(),
   description: z.string({ required_error: 'Description is required' }).min(1, { message: 'Description cannot be empty' }),
   highlights: z.array(z.string()).nullable(),
   githubUrl: z.string().url('Invalid URL format').nullable(),

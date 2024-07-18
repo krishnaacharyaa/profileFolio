@@ -115,10 +115,7 @@ const ProjectsField = () => {
                                 <Calendar
                                 mode="single"
                                 selected={field.value ? new Date(field.value) : undefined}
-                                onSelect={(date) => {
-                                    date && setValue(`projects.projectsArr.${index}.startDate`, new Date(date).toISOString())
-                                    trigger(`projects.projectsArr.${index}.endDate`)
-                                }}
+                                onSelect={(date) => {date && setValue(`projects.projectsArr.${index}.startDate`, new Date(date).toISOString())}}
                                 disabled={(date) =>
                                     date > new Date() || date < new Date("1900-01-01")
                                 }
