@@ -4,7 +4,9 @@ import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/f
 import { Input } from '@/components/ui/input'
 import React, { useState } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
+import Image from 'next/image';
 import z from "zod";
+import { Badge } from '../ui/badge';
 
 type FormData = z.infer<typeof UserSchema>;
 
@@ -35,11 +37,11 @@ const InterestsField = () => {
     };
 
     return (
-        <div className='flex flex-col w-full'>
+        <div className='flex flex-col w-full px-4'>
             <div className='flex flex-col justify-center items-start w-full flex-grow'>
                 {interestFields.map((item, index) => (
-                    <div key={item.id} className='my-2'>
-                        <div className="grid grid-cols-3 mb-4">
+                    <div key={item.id} className='flex justify-center items-start my-2'>
+                        <div className="flex-1 grid grid-cols-3 mb-4">
                             <FormItem className='m-2'>
                                 <FormLabel>Interest</FormLabel>
                                 <FormControl>
@@ -71,18 +73,18 @@ const InterestsField = () => {
                                                         }}
                                                         placeholder="Add a keyword"
                                                     />
-                                                    <Button type="button" onClick={() => handleAddKeyword(index)}>Add</Button>
+                                                    <Button type="button" onClick={() => handleAddKeyword(index)}><Image src='./add.svg' alt='svg' width={20} height={20}></Image></Button>
                                                 </div>
-                                                <div className='flex justify-start items-center'>
+                                                <div className='flex justify-start items-center flex-wrap mt-2'>
                                                     {getValues(`basics.interests.${index}.keywords`)?.map((kw, kwIndex) => (
-                                                        <span key={kwIndex} className="flex justify-center items-center bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                                                        <Badge key={kwIndex} className='m-[1px]'>
                                                             {kw}
                                                             <button className='m-2' onClick={() => {
                                                                 const currentKeywords = getValues(`basics.interests.${index}.keywords`) || [];
                                                                 currentKeywords.splice(kwIndex, 1);
                                                                 setValue(`basics.interests.${index}.keywords`, currentKeywords);
                                                             }}>X</button>
-                                                        </span>
+                                                        </Badge>
                                                     ))}
                                                 </div>
                                             </div>
@@ -92,10 +94,10 @@ const InterestsField = () => {
                                 <FormMessage className='text-red-500'>{errors?.basics?.interests?.[index]?.keywords?.message}</FormMessage>
                             </FormItem>
                         </div>
-                        <Button type="button" onClick={() => handleRemoveInterest(index)} className="mt-2">Remove</Button>
+                        <Button type="button" onClick={() => handleRemoveInterest(index)} className="mt-2"><Image src='./delete.svg' alt='svg' width={20} height={20}></Image></Button>
                     </div>
                 ))}
-                <Button type="button" onClick={handleAddInterest} className="mt-2">Add Interests</Button>
+                <Button type="button" onClick={handleAddInterest} className="mt-2"><Image src='./add.svg' alt='svg' width={20} height={20}></Image></Button>
             </div>
         </div>
     )

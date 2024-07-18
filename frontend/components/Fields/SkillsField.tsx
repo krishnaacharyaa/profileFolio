@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import z from "zod";
 import { cn } from '@/lib/utils';
-import { format } from "date-fns";
+import Image from 'next/image';
 import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -66,11 +66,10 @@ const SkillsField = () => {
     ];
   return (
     <div className='flex flex-col w-full'>
-        <div className='text-2xl font-bold mb-4'>Skills</div> 
-        {skillFields.length == 0 ? <FormMessage>{errors.projects?.skills?.message ? <div className='text-sm text-red-500'>Skills Field is Required</div> : ""}</FormMessage>: ""}
+        
             {skillFields.map((item, index) => (
-                <div key={item.id}>
-                <div className="grid grid-cols-3 w-full mb-4 justify-center items-center">
+                <div key={item.id} className='flex justify-start items-center my-2'>
+                <div className="grid grid-cols-3 w-full flex-1 mb-4 justify-center items-center">
                     <FormItem className='m-2'>
                     <FormLabel>Skill Name</FormLabel>
                     <FormControl>
@@ -171,10 +170,10 @@ const SkillsField = () => {
                     <FormMessage>{errors?.projects?.projectsArr?.[index]?.techStack?.message}</FormMessage>
                     </FormItem>
                 </div>
-                <Button type="button" onClick={() => handleRemoveSkill(index)} className="mt-2">Remove</Button>
+                <Button type="button" onClick={() => handleRemoveSkill(index)} className="mt-4 mx-4"><Image src='./delete.svg' alt='svg' width={20} height={20}></Image></Button>
             </div>
             ))}
-        <Button type="button" onClick={handleAddSkill} className="mt-2">Add Skill</Button>
+        <Button type="button" onClick={handleAddSkill} className="mx-4 mt-2 max-w-20"><Image src='./add.svg' alt='svg' width={20} height={20}></Image></Button>
     </div>
   )
 }

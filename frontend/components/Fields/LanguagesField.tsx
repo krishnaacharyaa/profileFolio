@@ -9,7 +9,7 @@ import { Check, ChevronsUpDown } from 'lucide-react'
 import React from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { cn } from "@/lib/utils"
-
+import Image from 'next/image';
 import z from "zod";
 
 type FormData = z.infer<typeof UserSchema>;
@@ -36,11 +36,11 @@ const LanguagesField = () => {
         removeLanguage(index);
       };
   return (
-    <div className='flex flex-col w-full'>
+    <div className='flex flex-col w-full px-4'>
             <div className='w-full'>
                 {languageFields && languageFields.map((item, index) => (
-                <div key={item.id} className='my-2'>
-                <div className="grid grid-cols-3 items-center">
+                <div key={item.id} className='flex justify-center items-start my-2'>
+                <div className="flex-1 grid grid-cols-3 items-center">
                     <FormItem className='m-2'>
                     <FormLabel>Language</FormLabel>
                     <FormControl>
@@ -116,10 +116,10 @@ const LanguagesField = () => {
                     </FormControl>
                     <FormMessage className='text-red-500'>{errors?.basics?.languages?.[index]?.fluency?.message}</FormMessage>            </FormItem>
                 </div>
-                    <Button type="button" onClick={() => handleRemoveLanguage(index)} className="mt-2">Remove</Button>
+                    <Button type="button" onClick={() => handleRemoveLanguage(index)} className="mt-2"><Image src='./delete.svg' alt='svg' width={20} height={20}></Image></Button>
                 </div>
             ))}
-            <Button type="button" onClick={handleAddLanguage} className="mt-2">Add Language</Button>
+            <Button type="button" onClick={handleAddLanguage} className="mt-2"><Image src='./add.svg' alt='svg' width={20} height={20}></Image></Button>
         </div>
     </div>
   )

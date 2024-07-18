@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -19,31 +21,31 @@ type Profile struct {
 }
 
 type WorkExperience struct {
-	Name       string              `json:"name"`
-	Position   string              `json:"position"`
-	URL        string              `json:"url,omitempty"`
-	StartDate  primitive.DateTime  `json:"startDate"`
-	EndDate    *primitive.DateTime `json:"endDate,omitempty"`
-	Summary    string              `json:"summary"`
-	Highlights []string            `json:"highlights,omitempty"`
+	Name       string     `json:"name"`
+	Position   string     `json:"position"`
+	URL        string     `json:"url,omitempty"`
+	StartDate  time.Time  `json:"startDate"`
+	EndDate    *time.Time `json:"endDate,omitempty"`
+	Summary    string     `json:"summary"`
+	Highlights []string   `json:"highlights,omitempty"`
 }
 
 type EducationDetail struct {
-	Institution string              `json:"institution"`
-	URL         string              `json:"url,omitempty"`
-	Area        string              `json:"area"`
-	StudyType   string              `json:"studyType"`
-	StartDate   primitive.DateTime  `json:"startDate"`
-	EndDate     *primitive.DateTime `json:"endDate,omitempty"`
-	Score       *string             `json:"score,omitempty"`
-	Courses     []string            `json:"courses,omitempty"`
+	Institution string     `json:"institution"`
+	URL         string     `json:"url,omitempty"`
+	Area        string     `json:"area"`
+	StudyType   string     `json:"studyType"`
+	StartDate   time.Time  `json:"startDate"`
+	EndDate     *time.Time `json:"endDate,omitempty"`
+	Score       *string    `json:"score,omitempty"`
+	Courses     []string   `json:"courses,omitempty"`
 }
 
 type Certificate struct {
-	Name   string             `json:"name"`
-	Date   primitive.DateTime `json:"date"`
-	Issuer string             `json:"issuer"`
-	URL    string             `json:"url,omitempty"`
+	Name   string    `json:"name"`
+	Date   time.Time `json:"date"`
+	Issuer string    `json:"issuer"`
+	URL    string    `json:"url,omitempty"`
 }
 
 type Skill struct {
@@ -69,8 +71,8 @@ type AuthUser struct {
 }
 type Project struct {
 	Name        string               `json:"name"`
-	StartDate   primitive.DateTime   `json:"startDate"`
-	EndDate     *primitive.DateTime  `json:"endDate,omitempty"`
+	StartDate   time.Time            `json:"startDate"`
+	EndDate     *time.Time           `json:"endDate,omitempty"`
 	Description string               `json:"description"`
 	Highlights  []string             `json:"highlights,omitempty"`
 	GithubURL   string               `json:"githubUrl,omitempty"`

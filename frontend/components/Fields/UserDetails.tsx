@@ -75,7 +75,7 @@ const UserDetails = () => {
               name="basics.phone"
               control={control}
               render={({ field }) => (
-                <PhoneInput {...field}/>
+                <PhoneInput {...field} value={field.value}/>
               )}
             />
           </FormControl>

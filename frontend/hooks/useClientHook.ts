@@ -17,7 +17,7 @@ function useApi(url: string): UseApiResult {
     const [error, setError] = useState<AxiosError | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
+    const backendUrl = 'http://localhost:8080';
 
     useEffect(() => {
         const fetchData = async () => {

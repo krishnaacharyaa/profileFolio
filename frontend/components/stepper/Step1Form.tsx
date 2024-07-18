@@ -18,7 +18,7 @@ import { UserSchema } from '@/app/zod/user-zod';
 type FormData = z.infer<typeof UserSchema>;
 
 const Step1Form= () => {
-  const { formState: { errors } } = useFormContext<FormData>();
+  const { formState: { errors } } = useFormContext<FormData>()
 
   // Check if there are any errors in the UserDetails fields
   const hasUserDetailsErrors = !!(
@@ -64,12 +64,12 @@ const hasInterestsErrors = Array.isArray(interests) &&
   );
 
   return (
-    <div className='flex flex-col w-full my-6'>
-      <Accordion type="single" collapsible className="w-full">
+    <div className='flex flex-col w-[3/4] my-6'>
+      <Accordion type="multiple" className="w-full" defaultValue={['item-1', 'item-2']}>
       <AccordionItem value="item-1">
       <AccordionTrigger>
         <div className='flex w-full justify-between items-center px-4'>
-        <div className='flex justify-center items-center text-2xl font-bold'>User Details <span className='text-sm mx-2'>{"{Required}"}</span></div>
+        <div className='flex justify-center items-center text-2xl font-bold'>User Details <span className='text-sm text-red-500'>{"*"}</span></div>
         {hasUserDetailsErrors && <Badge variant={"destructive"}>Error</Badge>}
         </div>
       </AccordionTrigger>
@@ -80,7 +80,7 @@ const hasInterestsErrors = Array.isArray(interests) &&
       <AccordionItem value="item-2">
       <AccordionTrigger>
         <div className='flex w-full justify-between items-center px-4'>
-        <div className='flex justify-center items-center text-2xl font-bold'>Address <span className='text-sm mx-2'>{"{Required}"}</span></div>
+        <div className='flex justify-center items-center text-2xl font-bold'>Address <span className='text-sm text-red-500'>{"*"}</span></div>
         {hasAddressErrors && <Badge variant={"destructive"}>Error</Badge>}
         </div>
       </AccordionTrigger>

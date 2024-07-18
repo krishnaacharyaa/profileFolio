@@ -24,7 +24,7 @@ const Profiles = () => {
         removeProfile(index);
       };
   return (
-    <div className='flex flex-col w-full'>
+    <div className='flex flex-col w-full px-4'>
             <div className='w-full'>
             {profileFields.map((item, index) => (
             <div key={item.id} className='flex justify-start items-center my-2'>
