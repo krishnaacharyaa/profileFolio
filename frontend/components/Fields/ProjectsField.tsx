@@ -258,7 +258,7 @@ const ProjectsField = () => {
                                 }}
                                 placeholder="Add a highlight"
                                 />
-                                <Button type="button" onClick={() => handleAddHighlight(index)}>Add</Button>
+                                <Button type="button" onClick={() => handleAddHighlight(index)}><Image src='./add.svg' alt='svg' width={20} height={20}></Image></Button>
                             </div>
                             <div className='flex justify-start items-center flex-wrap mt-2'>
                             {getValues(`projects.projectsArr.${index}.highlights`)?.map((hl, hlIndex) => (
