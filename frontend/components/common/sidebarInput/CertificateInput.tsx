@@ -1,10 +1,13 @@
 'use client';
+
+import "react-datepicker/dist/react-datepicker.css";
 import { Button } from '@/components/ui/button';
 import { ChevronDown, Star, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { InputWithLabel } from '../InputWithLabel';
-import { DatePickerDemo } from '@/components/ui/date';
 import { useFieldArray, useFormContext } from 'react-hook-form';
+import DatePicker from 'react-datepicker';
+import { Label } from "@/components/ui/label";
 
 export default function CertificateInput() {
   const [certificate, setShowCertificate] = useState(false);
@@ -21,16 +24,14 @@ export default function CertificateInput() {
           <span className="text-slate-500 text-base">Certificates</span>
         </div>
         <ChevronDown
-          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
-            certificate ? 'rotate-180' : ''
-          }`}
+          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${certificate ? 'rotate-180' : ''
+            }`}
           size={20}
         />
       </div>
       <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden ${
-          certificate ? 'block' : 'hidden'
-        }`}
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${certificate ? 'block' : 'hidden'
+          }`}
       >
         <ListOfCertificates />
       </div>
@@ -80,16 +81,15 @@ export function ListOfCertificates() {
               />
               <ChevronDown
                 size={20}
-                className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
-                  showInputs === index ? 'rotate-180' : ''
-                }`}
+                className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${showInputs === index ? 'rotate-180' : ''
+                  }`}
               />
             </div>
           </div>
           {showInputs === index && <CertificateInputs index={index} />}
         </div>
       ))}
-      <Button variant={'outline'} onClick={addCertificate}>
+      <Button variant={'outline'} onClick={addCertificate} type="button">
         + Add Certificate
       </Button>
     </div>
@@ -97,6 +97,21 @@ export function ListOfCertificates() {
 }
 
 function CertificateInputs({ index }: { index: number }) {
+  const { watch, setValue } = useFormContext();
+  const issueDate = watch(`certificates.${index}.date`);
+
+  const [date, setDate] = useState<Date | undefined>(issueDate ? new Date(issueDate) : undefined);
+
+  const handleDateChange = (date: Date | null) => {
+    if (date) {
+      const formattedDate = date.toISOString();
+      setValue(`certificates.${index}.date`, formattedDate);
+      setDate(date)
+    } else {
+      setValue(`certificates.${index}.date`, '');
+      setDate(undefined)
+    }
+  };
   return (
     <div className="flex flex-col gap-3 px-4">
       <InputWithLabel
@@ -120,6 +135,20 @@ function CertificateInputs({ index }: { index: number }) {
         schemaType={`certificates.${index}`}
         placeholder="Udemy , Coursera"
       />
+      <div className='flex flex-col gap-3 w-full'>
+        <Label className="text-base font-normal text-slate-500">Issue Date</Label>
+        <DatePicker
+          selected={date}
+          onChange={(date: Date | null) => handleDateChange(date)}
+          peekNextMonth
+          showMonthDropdown
+          showYearDropdown
+          dropdownMode="select"
+          placeholderText="Issue Date"
+          className="w-full p-2 border rounded"
+          dateFormat="dd/MM/yyyy"
+        />
+      </div>
     </div>
   );
 }

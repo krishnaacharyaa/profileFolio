@@ -36,9 +36,6 @@ export default function Signin() {
     try {
       const res = await axios.post(`${backendUrl}/api/signin`, data);
       if (res.status === 200) {
-        toast.success("Login Success", {
-          position: 'top-center'
-        })
         const response = await signIn('credentials', {
           redirect: false,
           email: data.email,
@@ -51,6 +48,9 @@ export default function Signin() {
           })
         }
         if (response?.ok) {
+          toast.success("Login Success", {
+            position: 'top-center'
+          })
           reset()
           router.replace('/dashboard')
         }

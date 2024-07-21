@@ -3,11 +3,14 @@ import { ChevronDown, EditIcon, Share2 } from 'lucide-react';
 import React from 'react';
 import { Button } from '../ui/button';
 
-export default function ResumeHeader() {
+interface HeaderProps {
+  currentResume: any
+}
+export default function ResumeHeader({ currentResume }: HeaderProps) {
   return (
     <div className="flex justify-between items-center my-4">
       <div className="flex gap-2 items-center">
-        Resume name
+        <h1 className='font-semibold text-base'>{currentResume?.name || "Resume name"}</h1>
         <EditIcon size={20} cursor={'pointer'} />
       </div>
       <div className="flex gap-6 items-center">

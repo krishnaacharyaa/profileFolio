@@ -1,12 +1,14 @@
 'use client';
+
+import "react-datepicker/dist/react-datepicker.css";
 import { Button } from '@/components/ui/button';
 import { Label } from '@radix-ui/react-label';
 import { Briefcase, ChevronDown, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
-import { InputWithLabel, TextAreaWithLabel } from '../InputWithLabel';
-import { DatePickerWithRange } from '@/components/ui/datePicker';
+import { InputWithLabel } from '../InputWithLabel';
 import { Textarea } from '@/components/ui/textarea';
 import { useFieldArray, useFormContext } from 'react-hook-form';
+import DatePicker from 'react-datepicker';
 
 export default function ExperienceInput() {
   const [experience, setShowExperience] = useState(false);
@@ -23,16 +25,14 @@ export default function ExperienceInput() {
           <span className="text-slate-500 text-base">Experience</span>
         </div>
         <ChevronDown
-          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
-            experience ? 'rotate-180' : ''
-          }`}
+          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${experience ? 'rotate-180' : ''
+            }`}
           size={20}
         />
       </div>
       <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden ${
-          experience ? 'block' : 'hidden'
-        }`}
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${experience ? 'block' : 'hidden'
+          }`}
       >
         <ListOfCompanies />
       </div>
@@ -44,7 +44,7 @@ export function ListOfCompanies() {
   const { control, watch } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'companies',
+    name: 'work',
   });
 
   const [showInputs, setShowInputs] = useState<number | null>(null);
@@ -69,7 +69,7 @@ export function ListOfCompanies() {
             onClick={() => toggleInputs(index)}
           >
             <h1 className="text-slate-600 font-semibold text-base">
-              {watch(`companies.${index}.name`) || 'Company Name'}
+              {watch(`work.${index}.name`) || 'Company Name'}
             </h1>
             <div className="flex gap-3 items-center">
               <Trash2
@@ -82,16 +82,15 @@ export function ListOfCompanies() {
               />
               <ChevronDown
                 size={20}
-                className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
-                  showInputs === index ? 'rotate-180' : ''
-                }`}
+                className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${showInputs === index ? 'rotate-180' : ''
+                  }`}
               />
             </div>
           </div>
           {showInputs === index && <CompaniesInput index={index} />}
         </div>
       ))}
-      <Button variant={'outline'} onClick={addCompany}>
+      <Button variant={'outline'} onClick={addCompany} type="button">
         + Add Experiences
       </Button>
     </div>
@@ -99,44 +98,71 @@ export function ListOfCompanies() {
 }
 
 function CompaniesInput({ index }: { index: number }) {
-  const { register } = useFormContext();
+  const { register, watch, setValue } = useFormContext();
+  const watchStartDate = watch(`work.${index}.startDate`);
+  const watchEndDate = watch(`work.${index}.endDate`);
+
+  const [startDate, setStartDate] = useState<Date | undefined>(watchStartDate ? new Date(watchStartDate) : undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(watchEndDate ? new Date(watchEndDate) : undefined);
+
+
+  const handleDateChange = (date: Date | null, fieldName: string) => {
+    if (date) {
+      const formattedDate = date.toISOString();
+      setValue(`work.${index}.${fieldName}`, formattedDate);
+      if (fieldName === 'startDate') setStartDate(date);
+      if (fieldName === 'endDate') setEndDate(date);
+    } else {
+      setValue(`work.${index}.${fieldName}`, '');
+      if (fieldName === 'startDate') setStartDate(undefined);
+      if (fieldName === 'endDate') setEndDate(undefined);
+    }
+  };
   return (
-    <div className="grid md:grid-cols-1 gap-3 px-4">
-      <div className="flex flex-col gap-3">
-        <InputWithLabel
-          label="Company name"
-          name="name"
-          type="text"
-          schemaType={`companies.${index}`}
-          placeholder="Company name"
-        />
-        <InputWithLabel
-          label="Website"
-          name="url"
-          type="url"
-          schemaType={`companies.${index}`}
-          placeholder="Company website"
-        />
-        <InputWithLabel
-          label="Job Title"
-          name="position"
-          type="text"
-          schemaType={`companies.${index}`}
-          placeholder="Software Emgineer"
-        />
-        <div className="flex flex-col gap-3 w-full">
-          <Label htmlFor="duration" className="text-base font-normal text-slate-500">
-            Duration
-          </Label>
-          <DatePickerWithRange />
+    <div className='flex flex-col gap-3 px-4'>
+      <div className='flex flex-col gap-3'>
+        <InputWithLabel label='Company name' type='text' placeholder='Company name' schemaType={`work.${index}`} name='name' />
+        <InputWithLabel label='Website' type='url' placeholder='Company website' schemaType={`work.${index}`} name='url' />
+        <InputWithLabel label='Job Title' type='text' placeholder='Software Emgineer' schemaType={`work.${index}`} name='position' />
+        <div className='flex flex-col gap-3 w-full'>
+          <Label htmlFor='duration' className="text-base font-normal text-slate-500">Duration</Label>
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-2'>
+            <DatePicker
+              selected={startDate}
+              onChange={(date: Date | null) => handleDateChange(date, 'startDate')}
+              selectsStart
+              peekNextMonth
+              showMonthDropdown
+              showYearDropdown
+              dropdownMode="select"
+              startDate={startDate}
+              endDate={endDate}
+              placeholderText="Start Date"
+              className="w-full p-2 border rounded"
+              dateFormat="dd/MM/yyyy"
+            />
+            <DatePicker
+              selected={endDate}
+              onChange={(date: Date | null) => handleDateChange(date, 'endDate')}
+              selectsEnd
+              peekNextMonth
+              showMonthDropdown
+              showYearDropdown
+              dropdownMode="select"
+              startDate={startDate}
+              endDate={endDate}
+              minDate={startDate}
+              placeholderText="End Date"
+              className="w-full p-2 border rounded"
+              dateFormat="dd/MM/yyyy"
+            />
+          </div>
         </div>
       </div>
-      <TextAreaWithLabel
-        label="Job Title"
-        name="summary"
-        schemaType={`companies.${index}`}
-        placeholder="Summary"
-      />
+      <div className='flex flex-col gap-3'>
+        <Label htmlFor={`work.${index}.summary`} className="text-base font-normal text-slate-500">Summary</Label>
+        <Textarea placeholder='Enter Summary' id='summary' {...register(`companies.${index}.summary`)} />
+      </div>
     </div>
   );
 }

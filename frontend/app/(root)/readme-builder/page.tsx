@@ -1,10 +1,10 @@
 'use client';
 import React, { useState } from 'react';
-import AboutSection from '../../../components/readme-builder/AboutSection';
-import MarkdownPreview from '../../../components/readme-builder/MarkdownPreview';
+import AboutSection from '@/components/readme-builder/AboutSection';
+import MarkdownPreview from '@/components/readme-builder/MarkdownPreview';
 import { generateMarkdown, downloadMarkdown, copyMarkdown } from '@/utils/markdownUtils';
-import Skills from '../../../components/readme-builder/Skills';
-import SocialLinks, { SocialLinksData } from '../../../components/readme-builder/SocialLinks';
+import Skills from '@/components/readme-builder/Skills';
+import SocialLinks, { SocialLinksData } from '@/components/readme-builder/SocialLinks';
 import { Button } from '@/components/ui/button'
 import { Toaster } from 'react-hot-toast';
 

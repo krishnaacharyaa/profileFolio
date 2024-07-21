@@ -6,7 +6,6 @@ import { Button } from '../ui/button';
 export const Navbar = () => {
   const session = useSession();
   const router = useRouter();
-  console.log(session)
   return (
     <div className="flex justify-between items-center font-semibold bg-background shadow-md px-4 py-3 top-0 sticky z-10">
       <div className='font-semibold text-2xl'>ProfileFolio</div>

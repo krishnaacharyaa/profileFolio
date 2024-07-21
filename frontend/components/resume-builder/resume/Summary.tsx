@@ -3,7 +3,7 @@ import { useFormContext } from 'react-hook-form';
 export default function Summary() {
   const { watch } = useFormContext();
 
-  const summary = watch('personalInfo.summary');
+  const summary = watch('basics.summary');
   return (
     summary && (
       <div className="flex flex-col gap-1 mt-2">
