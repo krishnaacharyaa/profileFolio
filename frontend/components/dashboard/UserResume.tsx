@@ -99,8 +99,6 @@ export default function UserResume({ resumes, setRefresh }: ResumeProps) {
                         <DropdownMenuContent>
                           <DropdownMenuItem>Make Default</DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
-                          <DropdownMenuSeparator />
                           <DropdownMenuItem onClick={() => handleDelete(resume?._id)}>Delete</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

@@ -20,6 +20,7 @@ export default function Page() {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
 
   const [currentResume, setCurrentResume] = useState<any>(null);
+  const [resumeName, setResumeName] = useState<string>("");
 
   useEffect(() => {
     if (user && user.resumes && resumeId) {
@@ -27,6 +28,17 @@ export default function Page() {
       setCurrentResume(foundResume || null);
     }
   }, [user, resumeId]);
+
+  useEffect(() => {
+    if (user) {
+      if (resumeId && currentResume) {
+        setResumeName(currentResume.name || "Resume name");
+      } else {
+        const userName = user?.basics?.name;
+        setResumeName(userName || "Resume name");
+      }
+    }
+  }, [user, currentResume, resumeId]);
 
   const methods = useForm();
 
@@ -37,7 +49,6 @@ export default function Page() {
   }, [currentResume, methods]);
 
   const onSubmit = async (data: FieldValues) => {
-    console.log(data)
     try {
       const config = {
         headers: { Authorization: `Bearer ${token}` }
@@ -46,17 +57,18 @@ export default function Page() {
       let response;
       if (resumeId) {
         // PUT request to update existing resume
-        response = await axios.put(`${backendUrl}/api/user/${userId}/resumes/${resumeId}`, data, config);
+        const updatedData = { ...data, name: resumeName };
+        response = await axios.put(`${backendUrl}/api/user/${userId}/resumes/${resumeId}`, updatedData, config);
       } else {
         // POST request to create new resume
-        response = await axios.post(`${backendUrl}/api/user/${userId}/resumes`, data, config);
+        const resumeData = { ...data, name: resumeName, isDefault: false, templateId: "" }
+        response = await axios.post(`${backendUrl}/api/user/${userId}/resumes`, resumeData, config);
       }
 
       toast.success(response.data?.message, {
         position: 'top-center'
       })
     } catch (error: any) {
-      console.error('API error:', error);
       toast.error(error?.response?.data || error.message, {
         position: 'top-center'
       })
@@ -65,7 +77,7 @@ export default function Page() {
 
   return (
     <div className="h-full px-12">
-      <ResumeHeader currentResume={currentResume} />
+      <ResumeHeader resumeName={resumeName} setResumeName={setResumeName} />
       <hr />
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)} className="h-full">
