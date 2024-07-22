@@ -1,76 +1,88 @@
 const defaultUserInputs = {
   "basics": {
-    "summary": "Experienced software engineer with a passion for developing innovative programs.",
-    "name": "Sukomal Dutta",
-    "email": "sukomaldutta99@gmail.com",
-    "phone": "6296283806",
-    "jobTitle": "Full stack developer",
-    "links": [
+    "summary": "Enthusiastic software developer with a passion for creating innovative solutions.",
+    "name": "John Doe",
+    "email": "johndoe@example.com",
+    "phone": "1234567890",
+    "label": "Software Developer",
+    "profiles": [
       {
-        "url": "https://linkedin.com/in/janesmith",
-        "social": "linkedin"
+        "url": "https://linkedin.com/in/johndoe",
+        "network": "linkedin"
       },
       {
-        "url": "https://github.com/janesmith",
-        "social": "github"
+        "url": "https://github.com/johndoe",
+        "network": "github"
       }
     ]
   },
-  "skills": {
-    "languages": " Java, Javascript, Typescript, Python ,  Java, Javascript, Typescript, Python",
-    "libraries": " React.js, Node.js, TailwindCss, Next.js, Scss, Hono",
-    "tools": " Git, Vscode, firebase, cloudinary,Razorpay, Cloudflare",
-    "databases": "MongoDb, Postgress , Mysql"
-  },
-  "educations": [
+  "skills": [
     {
-      "institution": "Kanad Institute of engineering",
-      "url": "https://kanad.com",
-      "studyType": "Bachelor",
-      "area": "Computer Science",
-      "score": "9.6",
-      "scoreType": "gpa",
-      "startDate": "01-07-2021",
-      "endDate": "09-07-2024"
+      "name": "languages",
+      "techStack": "Java, Javascript, Typescript, Python"
+    },
+    {
+      "name": "libraries",
+      "techStack": "React.js, Node.js, TailwindCss, Next.js, Scss, Hono"
+    },
+    {
+      "name": "tools",
+      "techStack": "Git, Vscode, firebase, cloudinary,Razorpay, Cloudflare"
+    },
+    {
+      "name": "databases",
+      "techStack": "MongoDb, Postgress , Mysql"
     }
   ],
-  "companies": [
+  "education": [
     {
-      "name": "Google",
-      "position": "Software Emgineer",
-      "url": "https://google.com",
-      "startDate": "09-07-2019",
-      "endDate": "09-07-2022",
-      "summary": "Developed and maintained various web applications"
+      "institution": "Tech University",
+      "url": "https://techuniversity.edu",
+      "studyType": "Bachelor",
+      "area": "Computer Science",
+      "score": "3.8",
+      "scoreType": "gpa",
+      "startDate": "2021-09-30T18:30:00.000Z",
+      "endDate": "2024-07-30T18:30:00.000Z"
+    }
+  ],
+  "work": [
+    {
+      "name": "Tech Solutions Inc.",
+      "position": "Junior Developer",
+      "url": "https://techsolutions.com",
+      "startDate": "2021-09-30T18:30:00.000Z",
+      "endDate": "2024-07-30T18:30:00.000Z",
+      "summary": "Developing and maintaining web applications for various clients"
     }
   ],
   "projects": [
     {
-      "name": "Personal Portfolio",
-      "startDate": "07-07-2021",
-      "endDate": "07-07-2022",
-      "description": "I developed a personal portfolio website to showcase my projects and skills",
-      "technologies": "React.js, Next.js , Mongodb , Go",
-      "githubUrl": "https://github.com/sukomal07/profile",
-      "deployedUrl": "https://project.com"
+      "name": "E-commerce Platform",
+      "startDate": "2021-09-30T18:30:00.000Z",
+      "endDate": "2024-07-30T18:30:00.000Z",
+      "description": "Developed a full-stack e-commerce platform with user authentication and payment integration",
+      "technologies": "React, Node.js, Express, MongoDB",
+      "githubUrl": "https://github.com/johndoe/ecommerce-platform",
+      "deployedUrl": "https://myecommerceproject.com"
     }
   ],
   "languages": [
     {
       "language": "English",
-      "fluency": "expert"
+      "fluency": "native"
     },
     {
-      "language": "Bengali",
-      "fluency": "expert"
+      "language": "Spanish",
+      "fluency": "intermediate"
     }
   ],
   "certificates": [
     {
-      "name": "Full Stack developer",
-      "date": "02-07-2024",
-      "issuer": "CNCF",
-      "url": "https://cncf.io/certified-kubernetes-administrator"
+      "name": "AWS Certified Developer – Associate",
+      "date": "15-12-2023",
+      "issuer": "Amazon Web Services",
+      "url": "https://aws.amazon.com/certification/certified-developer-associate/"
     }
   ]
 }
