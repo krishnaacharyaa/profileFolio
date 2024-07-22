@@ -2,8 +2,8 @@ const defaultUserInputs = {
   "basics": {
     "summary": "Experienced software engineer with a passion for developing innovative programs.",
     "name": "Sukomal Dutta",
-    "email": "sukomaldutta99@gmail.com",
-    "phone": "6296283806",
+    "email": "sukomal@gmail.com",
+    "phone": "1258946378",
     "jobTitle": "Full stack developer",
     "links": [
       {
@@ -24,7 +24,7 @@ const defaultUserInputs = {
   },
   "educations": [
     {
-      "institution": "Kanad Institute of engineering",
+      "institution": "Institute name",
       "url": "https://kanad.com",
       "studyType": "Bachelor",
       "area": "Computer Science",
