@@ -34,6 +34,7 @@ const ProjectsField = () => {
     })
     const handleAddProject = () => {
         appendProject({name: "", startDate: new Date().toISOString(), endDate: new Date().toISOString(), description: "", githubUrl: "", deployedUrl: "", techStack: [], highlights: []});
+        appendProject({name: "", startDate: new Date().toISOString(), endDate: new Date().toISOString(), description: "", githubUrl: "", deployedUrl: "", techStack: [], highlights: []});
         clearErrors('projects.projectsArr')
     };
       useEffect(() => {
@@ -115,7 +116,10 @@ const ProjectsField = () => {
                                 <Calendar
                                 mode="single"
                                 selected={field.value ? new Date(field.value) : undefined}
-                                onSelect={(date) => {date && setValue(`projects.projectsArr.${index}.startDate`, new Date(date).toISOString())}}
+                                onSelect={(date) => {
+                                    date && setValue(`projects.projectsArr.${index}.startDate`, new Date(date).toISOString())
+                                    trigger(`projects.projectsArr.${index}.endDate`)
+                                }}
                                 disabled={(date) =>
                                     date > new Date() || date < new Date("1900-01-01")
                                 }

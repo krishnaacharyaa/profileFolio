@@ -1,5 +1,13 @@
 import { z } from 'zod';
 
+// Function to validate ISO 8601 date strings
+const isoDateString = z.string().refine((val) => {
+  const date = new Date(val);
+  return !isNaN(date.getTime()) && val === date.toISOString();
+}, {
+  message: 'Invalid ISO 8601 date format',
+});
+
 const LocationSchema = z.object({
   address: z.string({ required_error: 'Address is required' }).min(1, { message: 'Address cannot be empty' }),
   postalCode: z.string({ required_error: 'Postal code is required' }).min(1, { message: 'Postal code cannot be empty' }).max(6, { message: 'Postal code cannot exceed 6 characters' }),
