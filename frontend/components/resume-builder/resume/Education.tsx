@@ -1,3 +1,4 @@
+import { format, parseISO } from 'date-fns';
 import { ExternalLink } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 
@@ -8,11 +9,24 @@ interface Education {
   studyType?: string;
   score?: string;
   scoreType?: string;
+  startDate?: string;
+  endDate?: string;
 }
 
 export default function Educations() {
   const { watch } = useFormContext();
-  const educations = watch('educations') as Education[];
+  const educations = watch('education') as Education[];
+  function convertISOToFormattedDate(isoString: string | undefined): string {
+    if (!isoString) return '';
+
+    try {
+      const date = parseISO(isoString);
+      return format(date, 'dd-MM-yyyy');
+    } catch (error) {
+      console.error('Error parsing ISO string:', error);
+      return '';
+    }
+  }
 
   return (
     educations?.length > 0 && (
@@ -36,11 +50,16 @@ export default function Educations() {
                 {education?.studyType}
               </p>
             </div>
-            {education?.score && education?.scoreType && (
+            <div className="flex items-center justify-between">
+              {education?.score && education?.scoreType && (
+                <span className="uppercase font-light text-sm">
+                  {education?.scoreType} - {education?.score}
+                </span>
+              )}
               <span className="uppercase font-light text-sm">
-                {education?.scoreType} - {education?.score}
+                {convertISOToFormattedDate(education?.startDate)} {education?.startDate && education?.endDate && "-"} {convertISOToFormattedDate(education?.endDate)}
               </span>
-            )}
+            </div>
           </div>
         ))}
       </div>

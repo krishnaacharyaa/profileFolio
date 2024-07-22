@@ -1,3 +1,4 @@
+import { format, parseISO } from 'date-fns';
 import { ExternalLink } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 
@@ -6,12 +7,26 @@ interface Experience {
   position: string;
   url?: string;
   summary?: string;
+  startDate?: string;
+  endDate?: string;
 }
 
 export default function Experience() {
   const { watch } = useFormContext();
 
-  const companies = watch('companies') as Experience[];
+  const companies = watch('work') as Experience[];
+
+  function convertISOToFormattedDate(isoString: string | undefined): string {
+    if (!isoString) return '';
+
+    try {
+      const date = parseISO(isoString);
+      return format(date, 'dd-MM-yyyy');
+    } catch (error) {
+      console.error('Error parsing ISO string:', error);
+      return '';
+    }
+  }
   return (
     companies?.length > 0 && (
       <div className="flex flex-col gap-1 mt-2">
@@ -29,7 +44,12 @@ export default function Experience() {
               ) : (
                 <h1 className="font-semibold text-xl">{company.name}</h1>
               )}
-              <p className="font-light text-sm">{company.position}</p>
+              <div>
+                <p className="font-light text-sm">{company.position}</p>
+                <span className="uppercase font-light text-sm">
+                  {convertISOToFormattedDate(company?.startDate)} {company?.startDate && company?.endDate && "-"} {convertISOToFormattedDate(company?.endDate)}
+                </span>
+              </div>
             </div>
             {company?.summary && <p className="font-light text-sm px-1 mt-2">{company.summary}</p>}
           </div>

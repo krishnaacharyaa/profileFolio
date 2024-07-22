@@ -6,7 +6,6 @@ import { Button } from '../ui/button';
 export const Navbar = () => {
   const session = useSession();
   const router = useRouter();
-  console.log(session)
   return (
     <div className="flex justify-between items-center font-semibold bg-background shadow-md px-4 py-3 top-0 sticky z-10">
       <div className='flex justify-center items-center font-semibold text-2xl'>
@@ -20,10 +19,10 @@ export const Navbar = () => {
           <>
             {' '}
             <p className='text-primary'>{session.data.user?.email}</p>{' '}
-            <Button className='' onClick={() => signOut({ redirect: true, callbackUrl: '/' })}>Sign out</Button>{' '}
+            <Button variant='default' onClick={() => signOut({ redirect: true, callbackUrl: '/' })}>Sign out</Button>{' '}
           </>
         ) : (
-          <Button className='' onClick={() => router.push('/signin')}>Sign in</Button>
+          <Button variant='default' onClick={() => router.push('/signin')}>Sign in</Button>
         )}
       </div>
     </div>

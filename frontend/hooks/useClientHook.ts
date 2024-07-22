@@ -11,7 +11,7 @@ interface UseApiResult {
     loading: boolean;
 }
 
-function useApi(url: string): UseApiResult {
+function useApi(url: string, refresh?: boolean): UseApiResult {
     const { data: session } = useSession();
     const [data, setData] = useState(null);
     const [error, setError] = useState<AxiosError | null>(null);
@@ -43,7 +43,7 @@ function useApi(url: string): UseApiResult {
         };
 
         fetchData();
-    }, [url, session?.user?.accessToken]);
+    }, [url, session?.user?.accessToken, refresh]);
 
     return { data, error, loading };
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import RadialProfileCard from '@/components/radialProfileCard';
 import UserResume from '@/components/dashboard/UserResume';
 import CoverLetter from '@/components/dashboard/CoverLetter';
@@ -63,9 +63,15 @@ const cards = [
 
 const Dashboard = () => {
   const { data: session } = useSession();
-  const { data: user, loading, error } = useApi(`/api/user/${session?.user?.id}`);
+  const [resumes, setResumes] = useState<any>([]);
+  const [refresh, setRefresh] = useState<boolean>(false);
+  const { data: user, loading, error } = useApi(`/api/user/${session?.user?.id}`, refresh);
 
-  console.log(user?.resumes)
+  useEffect(() => {
+    if (user && user.resumes) {
+      setResumes(user.resumes);
+    }
+  }, [user]);
 
   return (
     <div className="flex flex-col h-full ">
@@ -116,7 +122,7 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="px-8 py-2 w-[93vw]">
-        <UserResume />
+        <UserResume resumes={resumes} setRefresh={setRefresh} />
       </div>
     </div>
   );

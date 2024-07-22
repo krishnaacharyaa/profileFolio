@@ -1,9 +1,15 @@
 'use client';
+
+import "react-datepicker/dist/react-datepicker.css";
 import { Button } from '@/components/ui/button';
 import { BookText, ChevronDown, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { InputWithLabel } from '../InputWithLabel';
 import { useFieldArray, useFormContext } from 'react-hook-form';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import DatePicker from 'react-datepicker';
 
 export default function EducationInput() {
   const [showEducation, setShowEducation] = useState(false);
@@ -20,16 +26,14 @@ export default function EducationInput() {
           <span className="text-slate-500 text-base">Education</span>
         </div>
         <ChevronDown
-          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
-            showEducation ? 'rotate-180' : ''
-          }`}
+          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${showEducation ? 'rotate-180' : ''
+            }`}
           size={20}
         />
       </div>
       <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden ${
-          showEducation ? 'block' : 'hidden'
-        }`}
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${showEducation ? 'block' : 'hidden'
+          }`}
       >
         <ListOfInstitution />
       </div>
@@ -41,7 +45,7 @@ export function ListOfInstitution() {
   const { control, watch } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'educations',
+    name: 'education',
   });
 
   const [showInputs, setShowInputs] = useState<number | null>(null);
@@ -58,7 +62,8 @@ export function ListOfInstitution() {
       area: '',
       score: '',
       scoreType: '',
-      duration: '',
+      startDate: '',
+      endDate: ''
     });
   };
 
@@ -76,7 +81,7 @@ export function ListOfInstitution() {
               onClick={() => toggleInputs(index)}
             >
               <h1 className="text-slate-600 font-semibold text-base">
-                {watch(`educations.${index}.institution`) || 'Institution name'}
+                {watch(`education.${index}.institution`) || 'Institution name'}
               </h1>
               <div className="flex gap-3 items-center">
                 <Trash2
@@ -89,9 +94,8 @@ export function ListOfInstitution() {
                 />
                 <ChevronDown
                   size={20}
-                  className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
-                    showInputs === index ? 'rotate-180' : ''
-                  }`}
+                  className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${showInputs === index ? 'rotate-180' : ''
+                    }`}
                 />
               </div>
             </div>
@@ -99,7 +103,7 @@ export function ListOfInstitution() {
           </div>
         );
       })}
-      <Button variant={'outline'} onClick={addEducation}>
+      <Button variant={'outline'} onClick={addEducation} type="button">
         + Add Education
       </Button>
     </div>
@@ -107,58 +111,81 @@ export function ListOfInstitution() {
 }
 
 function InstituteInputs({ index }: { index: number }) {
-  return (
-    <div className="grid md:grid-cols-2 gap-3 px-4">
-      <InputWithLabel
-        label="Institution"
-        name="institution"
-        type="text"
-        schemaType={`educations.${index}`}
-        placeholder="University name"
-      />
-      <InputWithLabel
-        label="Website"
-        name="url"
-        type="url"
-        schemaType={`educations.${index}`}
-        placeholder="Institution website"
-      />
-      <InputWithLabel
-        label="Degree"
-        name="degree"
-        type="text"
-        schemaType={`educations.${index}`}
-        placeholder="Bachelors"
-      />
-      <InputWithLabel
-        label="Field of Study"
-        name="area"
-        type="text"
-        schemaType={`educations.${index}`}
-        placeholder="Computer science"
-      />
-      <InputWithLabel
-        label="Score"
-        name="score"
-        type="text"
-        schemaType={`educations.${index}`}
-        placeholder="GPA/CGPA"
-      />
-      <InputWithLabel
-        label="duration"
-        name="duration"
-        type="text"
-        schemaType={`educations.${index}`}
-        placeholder="date"
-      />
+  const { register, watch, setValue } = useFormContext();
+  const watchStartDate = watch(`education.${index}.startDate`);
+  const watchEndDate = watch(`education.${index}.endDate`);
 
-      <InputWithLabel
-        label="Courses"
-        name="courses"
-        type="textarea"
-        schemaType={`educations.${index}`}
-        placeholder="Courses"
-      />
+  const [startDate, setStartDate] = useState<Date | undefined>(watchStartDate ? new Date(watchStartDate) : undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(watchEndDate ? new Date(watchEndDate) : undefined);
+
+  const handleDateChange = (date: Date | null, fieldName: string) => {
+    if (date) {
+      const formattedDate = date.toISOString();
+      setValue(`education.${index}.${fieldName}`, formattedDate);
+      if (fieldName === 'startDate') setStartDate(date);
+      if (fieldName === 'endDate') setEndDate(date);
+    } else {
+      setValue(`education.${index}.${fieldName}`, '');
+      if (fieldName === 'startDate') setStartDate(undefined);
+      if (fieldName === 'endDate') setEndDate(undefined);
+    }
+  };
+
+  return (
+    <div className='flex flex-col gap-3 px-4'>
+      <div className='grid lg:grid-cols-2 grid-cols-1 gap-3'>
+        <InputWithLabel label='Institution' type='text' placeholder='University name' schemaType={`education.${index}`} name="institution" />
+        <InputWithLabel label='Website' schemaType={`education.${index}`} name="url" type='url' placeholder='Institution website' />
+        <InputWithLabel label='Degree' schemaType={`education.${index}`} name="studyType" type='text' placeholder='Bachelors' />
+        <InputWithLabel label='Field of Study' schemaType={`education.${index}`} name="area" type='text' placeholder='Computer science' />
+        <Input {...register(`education.${index}.score`)} type="text" placeholder='4.5' />
+        <Select
+          onValueChange={(value) => setValue(`education.${index}.scoreType`, value)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="gpa">GPA</SelectItem>
+            <SelectItem value="cgpa">CGPA</SelectItem>
+            <SelectItem value="percentage">Percentage</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className='flex flex-col gap-3 w-full'>
+        <Label className="text-base font-normal text-slate-500">Duration</Label>
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-2'>
+          <DatePicker
+            selected={startDate}
+            onChange={(date: Date | null) => handleDateChange(date, 'startDate')}
+            selectsStart
+            peekNextMonth
+            showMonthDropdown
+            showYearDropdown
+            dropdownMode="select"
+            startDate={startDate}
+            endDate={endDate}
+            placeholderText="Start Date"
+            className="w-full p-2 border rounded"
+            dateFormat="dd/MM/yyyy"
+          />
+          <DatePicker
+            selected={endDate}
+            onChange={(date: Date | null) => handleDateChange(date, 'endDate')}
+            selectsEnd
+            peekNextMonth
+            showMonthDropdown
+            showYearDropdown
+            dropdownMode="select"
+            startDate={startDate}
+            endDate={endDate}
+            minDate={startDate}
+            placeholderText="End Date"
+            className="w-full p-2 border rounded"
+            dateFormat="dd/MM/yyyy"
+          />
+        </div>
+      </div>
     </div>
-  );
+  )
 }
