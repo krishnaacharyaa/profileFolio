@@ -249,8 +249,9 @@ const EducationField = () => {
                     <div className='flex mt-2'>
                     <Checkbox id="noEnd" checked={noEnd} onCheckedChange={() => {
                         console.log(noEnd);
-                        setValue(`education.educationArr.${index}.endDate`, noEnd ? new Date().toISOString() : undefined);
+                        setValue(`education.educationArr.${index}.endDate`, noEnd ? new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() : undefined);
                         setNoEnd(!noEnd);
+                        clearErrors(`education.educationArr.${index}.endDate`)
                     }}/>
                     <label
                         htmlFor="noEnd"

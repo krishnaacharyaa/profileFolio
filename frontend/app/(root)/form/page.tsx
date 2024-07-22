@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import StepIndicator from '@/components/stepper/StepIndicator';
 import Step1Form from '@/components/stepper/Step1Form';
 import {UserSchema} from '@/app/zod/user-zod';
-import {FormProvider, useForm} from 'react-hook-form';
+import {FormProvider, useForm, useWatch} from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Step2Form from '@/components/stepper/Step2Form';
 import Step3Form from '@/components/stepper/Step3Form';
@@ -34,6 +34,14 @@ export default function Home() {
     mode: "onChange",
     delayError: 1000,
   });
+  const watchedValues = useWatch({
+    control: methods.control
+  });
+
+  useEffect(() => {
+    console.log("Watched values:", watchedValues);
+    console.log(methods.formState.errors)
+  }, [watchedValues]);
 
   useEffect(() => {
     const fetchData = async () => {

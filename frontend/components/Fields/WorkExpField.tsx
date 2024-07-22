@@ -22,7 +22,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 type FormData = z.infer<typeof UserSchema>;
 
 const WorkExp = () => {
-    const { control, formState: { errors }, setValue, getValues, trigger } = useFormContext<FormData>();
+    const { control, formState: { errors }, setValue, getValues, trigger, clearErrors } = useFormContext<FormData>();
     const [noEnd, setNoEnd] = useState(true);
     const [highlight, setHighlight] = useState<string[]>([]);
     const { fields, append, remove } = useFieldArray({
@@ -184,8 +184,9 @@ const WorkExp = () => {
                     <div className='flex mt-2'>
                     <Checkbox id="noEnd" checked={noEnd} onCheckedChange={() => {
                         console.log(noEnd);
-                        setValue(`work.${index}.endDate`, noEnd ? new Date().toISOString() : undefined);
+                        setValue(`work.${index}.endDate`, noEnd ? new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() : undefined);
                         setNoEnd(!noEnd);
+                        clearErrors(`work.${index}.endDate`)
                     }}/>
                     <label
                         htmlFor="noEnd"
