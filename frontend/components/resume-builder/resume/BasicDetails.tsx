@@ -1,27 +1,27 @@
 import { useFormContext } from 'react-hook-form';
 
 interface Link {
-  social: string;
+  network: string;
   url: string;
 }
 
 interface PersonalInfo {
   name: string;
-  jobTitle: string;
+  label: string;
   email: string;
   phone: string;
-  links: Link[];
+  profiles: Link[];
 }
 
 export default function BasicDetails() {
   const { watch } = useFormContext();
 
-  const personalInfo = watch('personalInfo') as PersonalInfo;
+  const personalInfo = watch('basics') as PersonalInfo;
 
   return (
     <div className="flex flex-col gap-1">
       <h1 className="text-4xl text-center capitalize ">{personalInfo?.name}</h1>
-      <span className="text-center text-sm font-light capitalize">{personalInfo?.jobTitle}</span>
+      <span className="text-center text-sm font-light capitalize">{personalInfo?.label}</span>
       <div className="flex justify-center items-center gap-1">
         <a href={`mailto:${personalInfo?.email}`} className="text-sm">
           {personalInfo?.email}
@@ -30,12 +30,12 @@ export default function BasicDetails() {
         <p className="text-sm">{personalInfo?.phone}</p>
       </div>
       <div className="flex justify-center gap-1">
-        {personalInfo?.links?.map((link, index) => (
+        {personalInfo?.profiles?.map((link, index) => (
           <div key={index} className="flex items-center gap-1">
             <a href={link?.url} target="_blank" className="capitalize font-semibold text-base">
-              {link?.social}
+              {link?.network}
             </a>
-            {index < personalInfo.links.length - 1 && <span>|</span>}
+            {index < personalInfo.profiles.length - 1 && <span>|</span>}
           </div>
         ))}
       </div>

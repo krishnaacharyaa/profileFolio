@@ -1,11 +1,14 @@
 'use client';
+
+import "react-datepicker/dist/react-datepicker.css";
 import { Button } from '@/components/ui/button';
 import { Label } from '@radix-ui/react-label';
 import { Airplay, ChevronDown, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
-import { InputWithLabel, TextAreaWithLabel } from '../InputWithLabel';
-import { DatePickerWithRange } from '@/components/ui/datePicker';
+import { InputWithLabel } from '../InputWithLabel';
 import { useFieldArray, useFormContext } from 'react-hook-form';
+import { Textarea } from '@/components/ui/textarea';
+import DatePicker from 'react-datepicker';
 
 export default function ProjectInput() {
   const [projects, setShowProjects] = useState(false);
@@ -23,16 +26,14 @@ export default function ProjectInput() {
           <span className="text-slate-500 text-base">Projects</span>
         </div>
         <ChevronDown
-          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
-            projects ? 'rotate-180' : ''
-          }`}
+          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${projects ? 'rotate-180' : ''
+            }`}
           size={20}
         />
       </div>
       <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden ${
-          projects ? 'block' : 'hidden'
-        }`}
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${projects ? 'block' : 'hidden'
+          }`}
       >
         <ListOfProjects />
       </div>
@@ -53,7 +54,7 @@ export function ListOfProjects() {
   };
 
   const addProject = () => {
-    append({ name: '', startDate: '', endDate: '', description: '', technologies: '', url: '' });
+    append({ name: '', startDate: '', endDate: '', description: '', technologies: '', githubUrl: '', deployedUrl: '' });
   };
 
   const deleteProject = (index: number) => {
@@ -81,67 +82,87 @@ export function ListOfProjects() {
               />
               <ChevronDown
                 size={20}
-                className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
-                  showInputs === index ? 'rotate-180' : ''
-                }`}
+                className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${showInputs === index ? 'rotate-180' : ''
+                  }`}
               />
             </div>
           </div>
           {showInputs === index && <ProjectInputs index={index} />}
         </div>
       ))}
-      <Button variant={'outline'} onClick={addProject}>
+      <Button variant={'outline'} onClick={addProject} type="button">
         + Add Contribution / Projects
       </Button>
     </div>
   );
 }
 function ProjectInputs({ index }: { index: number }) {
-  const { register } = useFormContext();
+  const { register, watch, setValue } = useFormContext();
+  const watchStartDate = watch(`projects.${index}.startDate`);
+  const watchEndDate = watch(`projects.${index}.endDate`);
+
+  const [startDate, setStartDate] = useState<Date | undefined>(watchStartDate ? new Date(watchStartDate) : undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(watchEndDate ? new Date(watchEndDate) : undefined);
+
+
+  const handleDateChange = (date: Date | null, fieldName: string) => {
+    if (date) {
+      const formattedDate = date.toISOString();
+      setValue(`projects.${index}.${fieldName}`, formattedDate);
+      if (fieldName === 'startDate') setStartDate(date);
+      if (fieldName === 'endDate') setEndDate(date);
+    } else {
+      setValue(`projects.${index}.${fieldName}`, '');
+      if (fieldName === 'startDate') setStartDate(undefined);
+      if (fieldName === 'endDate') setEndDate(undefined);
+    }
+  };
   return (
-    <div className="grid md:grid-cols-1 gap-3 px-4">
-      <div className="flex flex-col gap-3 px-4">
-        <InputWithLabel
-          label="Project name"
-          name="name"
-          type="text"
-          schemaType={`projects.${index}`}
-          placeholder="Project name"
-        />
-        <InputWithLabel
-          label="Technologies Used"
-          name="technologies"
-          schemaType={`projects.${index}`}
-          type="text"
-          placeholder="React.js , Node.js , TypeScript ..."
-        />
-        <InputWithLabel
-          label="Project Link / GitHub Repository"
-          schemaType={`projects.${index}`}
-          name="giturl"
-          type="text"
-          placeholder="github.com/your-username/repository"
-        />
-        <InputWithLabel
-          label="Project Link"
-          schemaType={`projects.${index}`}
-          name="liveurl"
-          type="text"
-          placeholder="Hosting link"
-        />
-        <div className="flex flex-col gap-3 w-full">
-          <Label htmlFor="duration" className="text-base font-normal text-slate-500">
-            Duration
-          </Label>
-          <DatePickerWithRange />
+    <div className='flex flex-col gap-3 px-4'>
+      <div className='flex flex-col gap-3'>
+        <InputWithLabel label='Project name' type='text' placeholder='Project name' schemaType={`projects.${index}`} name='name' />
+        <InputWithLabel label='Technologies Used' schemaType={`projects.${index}`} name='technologies' type='text' placeholder='React.js , Node.js , TypeScript ...' />
+        <InputWithLabel label='Project Link' schemaType={`projects.${index}`} name='deployedUrl' type='url' placeholder='https://project.com' />
+        <InputWithLabel label='GitHub Repository' schemaType={`projects.${index}`} name='githubUrl' type='url' placeholder='https://github.com/your-username/repository' />
+        <div className='flex flex-col gap-3 w-full'>
+          <Label htmlFor='duration' className="text-base font-normal text-slate-500">Duration</Label>
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-2'>
+            <DatePicker
+              selected={startDate}
+              onChange={(date: Date | null) => handleDateChange(date, 'startDate')}
+              selectsStart
+              peekNextMonth
+              showMonthDropdown
+              showYearDropdown
+              dropdownMode="select"
+              startDate={startDate}
+              endDate={endDate}
+              placeholderText="Start Date"
+              className="w-full p-2 border rounded"
+              dateFormat="dd/MM/yyyy"
+            />
+            <DatePicker
+              selected={endDate}
+              onChange={(date: Date | null) => handleDateChange(date, 'endDate')}
+              selectsEnd
+              peekNextMonth
+              showMonthDropdown
+              showYearDropdown
+              dropdownMode="select"
+              startDate={startDate}
+              endDate={endDate}
+              minDate={startDate}
+              placeholderText="End Date"
+              className="w-full p-2 border rounded"
+              dateFormat="dd/MM/yyyy"
+            />
+          </div>
         </div>
       </div>
-      <TextAreaWithLabel
-        label="Project Link"
-        schemaType={`projects.${index}`}
-        name="description"
-        placeholder="Summary"
-      />
+      <div className='flex flex-col gap-3'>
+        <Label htmlFor={`projects.${index}.description`} className="text-base font-normal text-slate-500">Description</Label>
+        <Textarea placeholder='Enter description' {...register(`projects.${index}.description`)} id='description' />
+      </div>
     </div>
   );
 }

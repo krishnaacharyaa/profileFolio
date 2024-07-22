@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth';
 
 const Page = async () => {
   const session = await getServerSession(authOptions);
-  console.log(session);
   try {
     const response = await fetch(
       'http://localhost:8080/api/user/email/sukomal@gmail.com',

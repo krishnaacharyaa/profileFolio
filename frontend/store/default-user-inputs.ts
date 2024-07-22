@@ -1,22 +1,77 @@
 const defaultUserInputs = {
-  personalInfo: {
-    name: 'Elon Musk',
-    email: 'muskelon@gmail.com',
-    phone: '(+1) 123 456 7890',
-    jobTitle: 'Full-Stack Engineer',
-    summary:
-      'A businessman and investor known for his key roles in space company SpaceX and automotive company Tesla, Inc. Other involvements include ownership of X Corp. formerly Twitter, and his role in the founding of The Boring Company, xAI, Neuralink and OpenAI.',
-    links: [
-      { url: 'https://github.com/elonmusk', social: 'GitHub' },
-      { url: 'https://linkedin.com/elonmusk', social: 'LinkedIn' },
-    ],
+  "basics": {
+    "summary": "Experienced software engineer with a passion for developing innovative programs.",
+    "name": "Sukomal Dutta",
+    "email": "sukomaldutta99@gmail.com",
+    "phone": "6296283806",
+    "jobTitle": "Full stack developer",
+    "links": [
+      {
+        "url": "https://linkedin.com/in/janesmith",
+        "social": "linkedin"
+      },
+      {
+        "url": "https://github.com/janesmith",
+        "social": "github"
+      }
+    ]
   },
-  skills: {
-    languages: 'JavaScript, TypeScript, Python, Java',
-    libraries: 'React.js, Next.js, Express.js',
-    tools: 'VS Code, Git, Postman',
-    databases: 'MongoDB, SQL, Postgres',
+  "skills": {
+    "languages": " Java, Javascript, Typescript, Python ,  Java, Javascript, Typescript, Python",
+    "libraries": " React.js, Node.js, TailwindCss, Next.js, Scss, Hono",
+    "tools": " Git, Vscode, firebase, cloudinary,Razorpay, Cloudflare",
+    "databases": "MongoDb, Postgress , Mysql"
   },
-};
-
+  "educations": [
+    {
+      "institution": "Kanad Institute of engineering",
+      "url": "https://kanad.com",
+      "studyType": "Bachelor",
+      "area": "Computer Science",
+      "score": "9.6",
+      "scoreType": "gpa",
+      "startDate": "01-07-2021",
+      "endDate": "09-07-2024"
+    }
+  ],
+  "companies": [
+    {
+      "name": "Google",
+      "position": "Software Emgineer",
+      "url": "https://google.com",
+      "startDate": "09-07-2019",
+      "endDate": "09-07-2022",
+      "summary": "Developed and maintained various web applications"
+    }
+  ],
+  "projects": [
+    {
+      "name": "Personal Portfolio",
+      "startDate": "07-07-2021",
+      "endDate": "07-07-2022",
+      "description": "I developed a personal portfolio website to showcase my projects and skills",
+      "technologies": "React.js, Next.js , Mongodb , Go",
+      "githubUrl": "https://github.com/sukomal07/profile",
+      "deployedUrl": "https://project.com"
+    }
+  ],
+  "languages": [
+    {
+      "language": "English",
+      "fluency": "expert"
+    },
+    {
+      "language": "Bengali",
+      "fluency": "expert"
+    }
+  ],
+  "certificates": [
+    {
+      "name": "Full Stack developer",
+      "date": "02-07-2024",
+      "issuer": "CNCF",
+      "url": "https://cncf.io/certified-kubernetes-administrator"
+    }
+  ]
+}
 export default defaultUserInputs;

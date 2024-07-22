@@ -39,9 +39,6 @@ function Signup() {
     try {
       const res = await axios.post(`${backendUrl}/api/signup`, data);
       if (res.status === 201) {
-        toast.success(res.data?.message, {
-          position: 'top-center'
-        })
         const response = await signIn('credentials', {
           redirect: false,
           email: data.email,
@@ -54,6 +51,9 @@ function Signup() {
           })
         }
         if (response?.ok) {
+          toast.success(res.data?.message, {
+            position: 'top-center'
+          })
           reset()
           router.replace('/form')
         }

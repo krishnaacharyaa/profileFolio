@@ -9,11 +9,7 @@ import LanguageInput from './sidebarInput/LanguageInput';
 import CertificateInput from './sidebarInput/CertificateInput';
 import { Button } from '../ui/button';
 
-interface SidebarProps {
-  handleSubmit?: () => void;
-}
-
-export default function Sidebar({ handleSubmit }: SidebarProps) {
+export default function Sidebar() {
   return (
     <div className="lg:w-[400px] md:w-[260px] h-full ">
       <div className="py-4 border border-gray-200 rounded-md h-[530px] overflow-y-auto scrollbar-none scroll-smooth">
@@ -37,7 +33,7 @@ export default function Sidebar({ handleSubmit }: SidebarProps) {
       </div>
       <div className="flex items-center justify-between py-4 px-3">
         <Button variant={'outline'}>Cancel</Button>
-        <Button variant={'default'} onClick={handleSubmit}>
+        <Button variant={'default'} type='submit'>
           Save
         </Button>
       </div>
