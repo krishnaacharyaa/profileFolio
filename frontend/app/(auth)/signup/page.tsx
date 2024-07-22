@@ -14,7 +14,7 @@ import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 
-const backendUrl = 'http://localhost:8080';
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
 
 function Signup() {
   const router = useRouter();
