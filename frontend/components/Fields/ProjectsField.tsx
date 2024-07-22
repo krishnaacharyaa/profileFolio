@@ -34,7 +34,6 @@ const ProjectsField = () => {
     })
     const handleAddProject = () => {
         appendProject({name: "", startDate: new Date().toISOString(), endDate: new Date().toISOString(), description: "", githubUrl: "", deployedUrl: "", techStack: [], highlights: []});
-        appendProject({name: "", startDate: new Date().toISOString(), endDate: new Date().toISOString(), description: "", githubUrl: "", deployedUrl: "", techStack: [], highlights: []});
         clearErrors('projects.projectsArr')
     };
       useEffect(() => {

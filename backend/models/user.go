@@ -3,8 +3,6 @@ package models
 import (
 	"time"
 
-	"time"
-
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -30,13 +28,6 @@ type WorkExperience struct {
 	EndDate    *time.Time `json:"endDate,omitempty"`
 	Summary    string     `json:"summary"`
 	Highlights []string   `json:"highlights,omitempty"`
-	Name       string     `json:"name"`
-	Position   string     `json:"position"`
-	URL        string     `json:"url,omitempty"`
-	StartDate  time.Time  `json:"startDate"`
-	EndDate    *time.Time `json:"endDate,omitempty"`
-	Summary    string     `json:"summary"`
-	Highlights []string   `json:"highlights,omitempty"`
 }
 
 type EducationDetail struct {
@@ -47,14 +38,11 @@ type EducationDetail struct {
 	StartDate   time.Time  `json:"startDate"`
 	EndDate     *time.Time `json:"endDate,omitempty"`
 	Score       *string    `json:"score,omitempty"`
+	ScoreType   *string    `json:"scoreType,omitempty"`
 	Courses     []string   `json:"courses,omitempty"`
 }
 
 type Certificate struct {
-	Name   string    `json:"name"`
-	Date   time.Time `json:"date"`
-	Issuer string    `json:"issuer"`
-	URL    string    `json:"url,omitempty"`
 	Name   string    `json:"name"`
 	Date   time.Time `json:"date"`
 	Issuer string    `json:"issuer"`
@@ -110,24 +98,9 @@ type Basics struct {
 type ResumeSkill struct {
 	Name      string `json:"name"`
 	TechStack string `json:"techStack"`
-type ResumeSkill struct {
-	Name      string `json:"name"`
-	TechStack string `json:"techStack"`
 }
 
 type Resume struct {
-	ID           primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
-	Name         string             `json:"name,omitempty"`
-	IsDefault    bool               `json:"isDefault,omitempty"`
-	TemplateID   string             `json:"templateId,omitempty"`
-	Basics       Basics             `json:"basics,omitempty"`
-	Work         []WorkExperience   `json:"work,omitempty"`
-	Education    []EducationDetail  `json:"education,omitempty"`
-	Certificates []Certificate      `json:"certificates,omitempty"`
-	Skills       []ResumeSkill      `json:"skills,omitempty"`
-	Languages    []Language         `json:"languages,omitempty"`
-	Interests    []Interest         `json:"interests,omitempty"`
-	Projects     []Project          `json:"projects,omitempty"`
 	ID           primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
 	Name         string             `json:"name,omitempty"`
 	IsDefault    bool               `json:"isDefault,omitempty"`
