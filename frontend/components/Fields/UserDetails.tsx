@@ -5,14 +5,16 @@ import { Textarea } from '@/components/ui/textarea';
 import React from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import z from "zod";
+import { PhoneInput } from '../ui/phone-input';
+
 
 type FormData = z.infer<typeof UserSchema>;
+
 
 const UserDetails = () => {
     const { control, formState: { errors }, trigger, setValue, getValues } = useFormContext<FormData>()
   return (
     <div className='flex flex-col w-full'>
-        <div className='text-2xl font-bold my-4'>User Details</div>
         <div className='grid grid-cols-3 w-full'>
         <FormItem className='m-2'>
           <FormLabel>Name</FormLabel>
@@ -73,7 +75,16 @@ const UserDetails = () => {
               name="basics.phone"
               control={control}
               render={({ field }) => (
-                <Input {...field} type="text" placeholder="1234567890" />
+                <PhoneInput
+                value={field.value}
+                onChange={(number) => {
+                  setValue('basics.phone', number)
+                  setTimeout(() => {trigger('basics.phone')}, 1000)
+                }}
+                international={true}
+                placeholder="Enter a phone number"
+                defaultCountry="IN"
+              />
               )}
             />
           </FormControl>

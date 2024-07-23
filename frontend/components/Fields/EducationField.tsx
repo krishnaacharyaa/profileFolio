@@ -12,17 +12,21 @@ import z from "zod";
 import {format } from "date-fns";
 import { cn } from '@/lib/utils';
 import { Calendar } from '@/components/ui/calendar';
+import { Checkbox } from '../ui/checkbox';
+import Image from 'next/image';
+import { Badge } from '../ui/badge';
 
 type FormData = z.infer<typeof UserSchema>;
 
 type StudyType = 'Remote' | 'In-premise';
 
 const EducationField = () => {
-    const { control, formState: { errors }, setValue, getValues, clearErrors } = useFormContext<FormData>();
+    const { control, formState: { errors }, setValue, getValues, clearErrors, trigger } = useFormContext<FormData>();
     const { fields: educationFields, append: appendEducation, remove: removeEducation } = useFieldArray({
         control,
         name: "education.educationArr",
     });
+    const [noEnd, setNoEnd] = useState(true);
     const [course, setCourse] = useState<string[]>([]);
     const StudyOptions: { value: StudyType, label: string }[] = [
         { value: "Remote", label: "Remote" },
@@ -30,7 +34,7 @@ const EducationField = () => {
     ];
     
     const handleAddEducation = () => {
-        appendEducation({institution: "", url: "", area: "", studyType: "In-premise", startDate: new Date(), endDate: new Date(), score: "", courses: []});
+        appendEducation({institution: "", url: "", area: "", studyType: "In-premise", startDate: new Date().toISOString(), score: "", courses: []});
         clearErrors('education.educationArr')
     };
     
@@ -39,6 +43,7 @@ const EducationField = () => {
     };
 
     const handleAddCourse = (index: number) => {
+        trigger(`education.educationArr.${index}.courses`);
         const currentCourses = getValues(`education.educationArr.${index}.courses`) || [];
         setValue(`education.educationArr.${index}.courses`, [...currentCourses, course[index]]);
         let updatedCourses = [...course];
@@ -47,8 +52,6 @@ const EducationField = () => {
       };
   return (
     <div className='flex flex-col w-full'>
-        <div className='text-2xl font-bold mb-4'>Education</div>
-            {educationFields.length == 0 ? <FormMessage>{errors.education?.educationArr?.message ? <div className='text-sm text-red-500'>Education Field is Required</div> : ""}</FormMessage>: ""}
             {educationFields.map((item, index) => (
                 <div key={item.id}>
                 <div className="grid grid-cols-3 w-full mb-4">
@@ -152,7 +155,7 @@ const EducationField = () => {
                     />
                     </FormControl>
                     <FormMessage className='text-red-500'>{errors?.education?.educationArr?.[index]?.studyType?.message}</FormMessage>            </FormItem>
-                    <div className='my-2'>
+                    <div className='mx-2 my-2'>
                     <FormLabel>Start Date</FormLabel>
                     <Controller
                         name={`education.educationArr.${index}.startDate`}
@@ -181,8 +184,11 @@ const EducationField = () => {
                             <PopoverContent className="w-auto p-0" align="start">
                                 <Calendar
                                 mode="single"
-                                selected={field.value}
-                                onSelect={(date) => {date && setValue(`education.educationArr.${index}.startDate`, new Date(date))}}
+                                selected={field.value ? new Date(field.value) : undefined}
+                                onSelect={(date) => {
+                                    date && setValue(`education.educationArr.${index}.startDate`, new Date(date).toISOString())
+                                    trigger(`education.educationArr.${index}.endDate`)
+                                }}
                                 disabled={(date) =>
                                     date > new Date() || date < new Date("1900-01-01")
                                 }
@@ -195,7 +201,7 @@ const EducationField = () => {
                         )}
                     />
                     </div>
-                    <div className='my-2'>
+                    <div className='flex flex-col justify-center mx-2 my-2'>
                     <FormLabel>End Date</FormLabel>
                     <Controller
                         name={`education.educationArr.${index}.endDate`}
@@ -224,8 +230,11 @@ const EducationField = () => {
                             <PopoverContent className="w-auto p-0" align="start">
                                 <Calendar
                             mode="single"
-                            selected={field.value || undefined}
-                            onSelect={(date) => {date && setValue(`education.educationArr.${index}.endDate`, new Date(date))}}
+                            selected={field.value ? new Date(field.value) : undefined}
+                            onSelect={(date) => {
+                                date && setValue(`education.educationArr.${index}.endDate`, new Date(date).toISOString())
+                                setNoEnd(false);
+                            }}
                             disabled={(date) =>
                             date > new Date() || date < new Date("1900-01-01")
                             }
@@ -237,6 +246,20 @@ const EducationField = () => {
                         </FormItem>
                         )}
                     />
+                    <div className='flex mt-2'>
+                    <Checkbox id="noEnd" checked={noEnd} onCheckedChange={() => {
+                        console.log(noEnd);
+                        setValue(`education.educationArr.${index}.endDate`, noEnd ? new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() : undefined);
+                        setNoEnd(!noEnd);
+                        clearErrors(`education.educationArr.${index}.endDate`)
+                    }}/>
+                    <label
+                        htmlFor="noEnd"
+                        className="text-sm mx-2 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                        Enrolled till date
+                    </label>
+                    </div>
                     </div>
                     <FormItem className='m-2'>
                     <FormLabel>Score</FormLabel>
@@ -272,18 +295,18 @@ const EducationField = () => {
                                 }}
                                 placeholder="CS101 - Introduction to Computer Science"
                                 />
-                                <Button type="button" onClick={() => handleAddCourse(index)}>Add</Button>
+                                <Button type="button" onClick={() => handleAddCourse(index)}><Image src='./add.svg' alt='svg' width={20} height={20}></Image></Button>
                             </div>
-                            <div className='flex flex-col justify-start items-start w-full'>
+                            <div className='flex justify-start items-center flex-wrap mt-2'>
                             {getValues(`education.educationArr.${index}.courses`)?.map((Course, CIndex) => (
-                                <div key={CIndex} className="flex justify-center items-center bg-gray-200 rounded-full px-3 py-2 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                                <Badge key={CIndex} className='m-[1px]'>
                                 {Course}
                                 <button className='m-2' onClick={() => {
                                     const currentCourses = getValues(`education.educationArr.${index}.courses`) || [];
                                     currentCourses.splice(CIndex, 1);
                                     setValue(`education.educationArr.${index}.courses`, currentCourses);
                                 }}>X</button>
-                                </div>
+                                </Badge>
                             ))}
                             </div>
                             </div>
@@ -293,10 +316,11 @@ const EducationField = () => {
                   <FormMessage className='text-red-500'>{errors?.education?.educationArr?.[index]?.courses?.message}</FormMessage>
                 </FormItem>
                 </div>
-                <Button type="button" onClick={() => handleRemoveEducation(index)} className="mt-2">Remove</Button>
+                
+                <Button type="button" onClick={() => handleRemoveEducation(index)} className="mt-2 mx-4 "><Image src='./delete.svg' alt='svg' width={20} height={20}></Image></Button>
                 </div>
             ))}
-        <Button type="button" onClick={handleAddEducation} className="mt-2">Add Education</Button>
+        <Button type="button" onClick={handleAddEducation} className="mt-2 mx-4 max-w-20"><Image src='./add.svg' alt='svg' width={20} height={20}></Image></Button>
     </div>
   )
 }

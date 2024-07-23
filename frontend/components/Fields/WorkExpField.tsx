@@ -4,9 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { z } from 'zod';
 import {UserSchema} from '@/app/zod/user-zod';
-import { parseISO, format } from "date-fns";
+import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
+import { Badge } from '../ui/badge';
+import Image from 'next/image';
 import {
   Popover,
   PopoverContent,
@@ -15,13 +17,12 @@ import {
 import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { cn } from "@/lib/utils";
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 
 type FormData = z.infer<typeof UserSchema>;
 
 const WorkExp = () => {
-    const { control, formState: { errors }, setValue, getValues } = useFormContext<FormData>();
+    const { control, formState: { errors }, setValue, getValues, trigger, clearErrors } = useFormContext<FormData>();
     const [noEnd, setNoEnd] = useState(true);
     const [highlight, setHighlight] = useState<string[]>([]);
     const { fields, append, remove } = useFieldArray({
@@ -30,13 +31,14 @@ const WorkExp = () => {
     });
 
     const handleAddField = () => {
-        append({ name: "", position: "", url: "", startDate: new Date(), summary: "", highlights: [] });
+        append({ name: "", position: "", url: "", startDate: new Date().toISOString(), summary: "", highlights: [] });
     };
 
     const handleRemoveField = (index: number) => {
         remove(index);
     };
     const handleAddHighlight = (index: number) => {
+        trigger(`work.${index}.highlights`)
         const currentHighlights = getValues(`work.${index}.highlights`) || [];
         setValue(`work.${index}.highlights`, [...currentHighlights, highlight[index]]);
         let updatedHighlights = [...highlight];
@@ -117,10 +119,10 @@ const WorkExp = () => {
                             <PopoverContent className="w-auto p-0" align="start">
                                 <Calendar
                                 mode="single"
-                                selected={field.value}
+                                selected={field.value ? new Date(field.value) : undefined}
                                 onSelect={(date) => {
-                                    date && setValue(`work.${index}.startDate`, new Date(date));
-                                    setNoEnd(false);
+                                    date && setValue(`work.${index}.startDate`, new Date(date).toISOString());
+                                    trigger(`work.${index}.endDate`)
                                 }}
                                 disabled={(date) =>
                                     date > new Date() || date < new Date("1900-01-01")
@@ -134,7 +136,7 @@ const WorkExp = () => {
                         )}
                     />
                     </div>
-                    <div className='my-2'>
+                    <div className='flex flex-col justify-center mx-2 my-2'>
                     <FormLabel>End Date</FormLabel>
                     <Controller
                         name={`work.${index}.endDate`}
@@ -163,8 +165,11 @@ const WorkExp = () => {
                             <PopoverContent className="w-auto p-0" align="start">
                                 <Calendar
                             mode="single"
-                            selected={field.value}
-                            onSelect={(date) => {date && setValue(`work.${index}.endDate`, new Date(date))}}
+                            selected={field.value ? new Date(field.value) : undefined}
+                            onSelect={(date) => {
+                                date && setValue(`work.${index}.endDate`, new Date(date).toISOString())
+                                setNoEnd(false);
+                            }}
                             disabled={(date) =>
                             date > new Date() || date < new Date("1900-01-01")
                             }
@@ -176,6 +181,20 @@ const WorkExp = () => {
                         </FormItem>
                         )}
                     />
+                    <div className='flex mt-2'>
+                    <Checkbox id="noEnd" checked={noEnd} onCheckedChange={() => {
+                        console.log(noEnd);
+                        setValue(`work.${index}.endDate`, noEnd ? new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() : undefined);
+                        setNoEnd(!noEnd);
+                        clearErrors(`work.${index}.endDate`)
+                    }}/>
+                    <label
+                        htmlFor="noEnd"
+                        className="text-sm mx-2 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                        Working till date
+                    </label>
+                    </div>
                     </div>
                     <FormItem className='m-2'>
                     <FormLabel>Summary</FormLabel>
@@ -211,18 +230,18 @@ const WorkExp = () => {
                                 }}
                                 placeholder="Add a highlight"
                                 />
-                                <Button type="button" onClick={() => handleAddHighlight(index)}>Add</Button>
+                                <Button type="button" className='mx-2' onClick={() => handleAddHighlight(index)}><Image src='./add.svg' alt='svg' width={20} height={20}></Image></Button>
                             </div>
-                            <div className='flex flex-col justify-start items-center w-full'>
+                            <div className='flex flex-wrap mt-2 justify-start items-start w-full'>
                             {getValues(`work.${index}.highlights`)?.map((hl, hlIndex) => (
-                                <div key={hlIndex} className="flex justify-center items-center bg-gray-200 rounded-full px-3 py-2 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                                <Badge key={hlIndex}>
                                 {hl}
                                 <button className='m-2' onClick={() => {
                                     const currentHighlights = getValues(`work.${index}.highlights`) || [];
                                     currentHighlights.splice(hlIndex, 1);
                                     setValue(`work.${index}.highlights`, currentHighlights);
                                 }}>X</button>
-                                </div>
+                                </Badge>
                             ))}
                             </div>
                             </div>
@@ -232,19 +251,7 @@ const WorkExp = () => {
                   <FormMessage className='text-red-500'>{errors?.work?.[index]?.highlights?.message}</FormMessage>
                 </FormItem>
                 </div>
-                <div className="flex items-center space-x-2">
-                    <Checkbox id="noEnd" checked={noEnd} onClick={() => {
-                        setValue(`work.${index}.endDate`, noEnd ? new Date() : undefined);
-                        setNoEnd(!noEnd);
-                    }}/>
-                    <label
-                        htmlFor="noEnd"
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                        Working till present
-                    </label>
-                </div>
-                <Button type="button" onClick={() => handleRemoveField(index)} className="mt-2">Remove</Button>
+                <Button type="button" onClick={() => handleRemoveField(index)} className="mt-2"><Image src='./delete.svg' alt='svg' width={20} height={20}></Image></Button>
                 </div>
             ))}
         <Button type="button" onClick={handleAddField} className="mt-2">Add Work Experience</Button>

@@ -4,6 +4,8 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
 import { FormMessage } from '../ui/form';
+import { Divide } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface FormNavigationProps {
   currentStep: number;
@@ -23,8 +25,9 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
   setCurrentStep,
   steps,
 }) => {
-  const [notExp, setNotExp] = useState(false);
-  const { control, formState: { errors }, trigger } = useFormContext();
+  const [notExp, setNotExp] = useState<boolean>(false);
+  const [errValidation, setErrValidation] = useState<boolean>();
+  const { control, formState: { errors }, trigger, getValues, clearErrors } = useFormContext();
   const workFields = useWatch({
     control,
     name: "work", // Assuming "work" is the name of the work experience section
@@ -61,12 +64,26 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
       setCurrentStep(currentStep + 1);
     }else if(currentStep == 2){
       if(notExp){
-        setNotExp(!notExp)
         setCurrentStep(currentStep + 1);
-      }else{
+        setNotExp(!notExp);
+        clearErrors('work')
+        setErrValidation(false);
+      }else if(isStepValid && !notExp && getValues('work').length != 0){
+        setCurrentStep(currentStep + 1);
+        setErrValidation(false);
+      }else if(!isStepValid && !notExp && getValues('work').length != 0){
+        setErrValidation(false);
         console.log(`Step ${currentStep} validation failed. Cannot proceed. ${JSON.stringify(errors)}`);
       }
+      else{
+        setErrValidation(true);
+        toast.warning("Either check that you have no work experience or add fields for your work experience", {
+          position: 'bottom-right',
+          duration: 4000
+        })
+      }
     }else{
+      setErrValidation(true);
       console.log(`Step ${currentStep} validation failed. Cannot proceed. ${JSON.stringify(errors)}`);
     }
   };
@@ -81,8 +98,10 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
               console.log("Checkbox changed: ", checked);
               setNotExp(checked === true);
             }}
+            checked={notExp}
+            disabled={getValues('work') && getValues('work').length != 0}
           />
-          <Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+          <Label htmlFor="terms" className="text-sm mx-2 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
             {"I've no Experience yet"}
           </Label>
         </div>

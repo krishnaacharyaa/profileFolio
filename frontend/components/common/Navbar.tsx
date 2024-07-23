@@ -8,7 +8,12 @@ export const Navbar = () => {
   const router = useRouter();
   return (
     <div className="flex justify-between items-center font-semibold bg-background shadow-md px-4 py-3 top-0 sticky z-10">
-      <div className='font-semibold text-2xl'>ProfileFolio</div>
+      <div className='flex justify-center items-center font-semibold text-2xl'>
+        <div className="mx-2">ProfileFolio</div>
+        {session?.data?.user.id ? <Button onClick={() => {
+        router.push(`/form?id=${session?.data?.user.id}`)
+      }}>Edit</Button> : ""}
+      </div>
       <div className="flex gap-2 justify-evenly items-center">
         {session.status === 'authenticated' ? (
           <>

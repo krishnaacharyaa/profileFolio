@@ -11,7 +11,6 @@ const AddressField = () => {
     const { control, formState: { errors }, trigger, setValue, getValues } = useFormContext<FormData>();
     return (
         <div className='flex flex-col w-full'>
-            <div className='text-2xl font-bold my-4'>Address</div>
             <div className='grid grid-cols-3 w-full'>
             <FormItem className='m-2'>
             <FormLabel>Address</FormLabel>
@@ -51,19 +50,6 @@ const AddressField = () => {
                 />
             </FormControl>
             <FormMessage className='text-red-500'>{errors.basics?.location?.city?.message}</FormMessage>
-            </FormItem>
-            <FormItem className='m-2'>
-            <FormLabel>Country code</FormLabel>
-            <FormControl>
-                <Controller
-                name="basics.location.countryCode"
-                control={control}
-                render={({ field }) => (
-                    <Input {...field} type='text' placeholder="IN" />
-                )}
-                />
-            </FormControl>
-            <FormMessage className='text-red-500'>{errors.basics?.location?.countryCode?.message}</FormMessage>
             </FormItem>
             <FormItem className='m-2'>
             <FormLabel>Region</FormLabel>

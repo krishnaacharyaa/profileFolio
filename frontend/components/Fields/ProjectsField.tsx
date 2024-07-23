@@ -4,11 +4,13 @@ import { Calendar } from '@/components/ui/calendar';
 import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import Image from 'next/image';
 import { CalendarIcon } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils';
 import { format } from "date-fns";
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
+import { Badge } from '../ui/badge';
 import z from "zod";
 import { Textarea } from '@/components/ui/textarea';
 import { getSkillsData } from '@/app/actions/user-actions';
@@ -23,7 +25,7 @@ type Option = {
   };
 
 const ProjectsField = () => {
-    const { control, formState: { errors } , setValue, getValues, clearErrors} = useFormContext<FormData>();
+    const { control, formState: { errors } , setValue, getValues, clearErrors, trigger} = useFormContext<FormData>();
     const [options, setOptions] = useState<Option[]>([]);
     const [highlight, setHighlight] = useState<string[]>([]);
     const {fields: projectFields , append: appendProject, remove: removeProject} = useFieldArray({
@@ -31,7 +33,7 @@ const ProjectsField = () => {
         name:"projects.projectsArr"
     })
     const handleAddProject = () => {
-        appendProject({name: "", startDate: new Date(), endDate: new Date(), description: "", githubUrl: "", deployedUrl: "", techStack: [], highlights: []});
+        appendProject({name: "", startDate: new Date().toISOString(), endDate: new Date().toISOString(), description: "", githubUrl: "", deployedUrl: "", techStack: [], highlights: []});
         clearErrors('projects.projectsArr')
     };
       useEffect(() => {
@@ -42,7 +44,7 @@ const ProjectsField = () => {
               value: skill.id,
               label: skill.name
             }));
-    
+            console.log(skillsData)
             setOptions(formattedOptions);
           } catch (error) {
             console.error('Failed to fetch skills data', error);
@@ -58,6 +60,7 @@ const ProjectsField = () => {
     };
 
     const handleAddHighlight = (index: number) => {
+        trigger(`projects.projectsArr.${index}.highlights`)
         const currentHighlights = getValues(`projects.projectsArr.${index}.highlights`) || [];
         setValue(`projects.projectsArr.${index}.highlights`, [...currentHighlights, highlight[index]]);
         let updatedHighlights = [...highlight];
@@ -66,8 +69,6 @@ const ProjectsField = () => {
     };  
     return (
         <div className='flex flex-col w-full'>
-            <div className='text-2xl font-bold mb-4'>Projects</div> 
-            {projectFields.length == 0 ? <FormMessage>{errors.projects?.projectsArr?.message ? <div className='text-sm text-red-500'>Projects Field is Required</div> : ""}</FormMessage>: ""}
                 {projectFields.map((item, index) => (
                 <div key={item.id}>
                 <div className="grid grid-cols-3 w-full mb-4">
@@ -113,8 +114,11 @@ const ProjectsField = () => {
                             <PopoverContent className="w-auto p-0" align="start">
                                 <Calendar
                                 mode="single"
-                                selected={field.value}
-                                onSelect={(date) => {date && setValue(`projects.projectsArr.${index}.startDate`, new Date(date))}}
+                                selected={field.value ? new Date(field.value) : undefined}
+                                onSelect={(date) => {
+                                    date && setValue(`projects.projectsArr.${index}.startDate`, new Date(date).toISOString())
+                                    trigger(`projects.projectsArr.${index}.endDate`)
+                                }}
                                 disabled={(date) =>
                                     date > new Date() || date < new Date("1900-01-01")
                                 }
@@ -130,7 +134,7 @@ const ProjectsField = () => {
                     <div className='my-2'>
                     <FormLabel>End Date</FormLabel>
                     <Controller
-                        name={`education.educationArr.${index}.endDate`}
+                        name={`projects.projectsArr.${index}.endDate`}
                         control={control}
                         render={({ field }) => (
                         <FormItem className="flex flex-col">
@@ -156,8 +160,8 @@ const ProjectsField = () => {
                             <PopoverContent className="w-auto p-0" align="start">
                                 <Calendar
                             mode="single"
-                            selected={field.value || undefined}
-                            onSelect={(date) => {date && setValue(`projects.projectsArr.${index}.endDate`, new Date(date))}}
+                            selected={field.value ? new Date(field.value) : undefined}
+                            onSelect={(date) => {date && setValue(`projects.projectsArr.${index}.endDate`, new Date(date).toISOString())}}
                             disabled={(date) =>
                             date > new Date() || date < new Date("1900-01-01")
                             }
@@ -254,18 +258,18 @@ const ProjectsField = () => {
                                 }}
                                 placeholder="Add a highlight"
                                 />
-                                <Button type="button" onClick={() => handleAddHighlight(index)}>Add</Button>
+                                <Button type="button" onClick={() => handleAddHighlight(index)}><Image src='./add.svg' alt='svg' width={20} height={20}></Image></Button>
                             </div>
-                            <div className='flex flex-col justify-start items-center w-full'>
+                            <div className='flex justify-start items-center flex-wrap mt-2'>
                             {getValues(`projects.projectsArr.${index}.highlights`)?.map((hl, hlIndex) => (
-                                <div key={hlIndex} className="flex justify-center items-center bg-gray-200 rounded-full px-3 py-2 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                                <Badge key={hlIndex} className="m-[1px]">
                                 {hl}
                                 <button className='m-2' onClick={() => {
                                     const currentHighlights = getValues(`projects.projectsArr.${index}.highlights`) || [];
                                     currentHighlights.splice(hlIndex, 1);
                                     setValue(`projects.projectsArr.${index}.highlights`, currentHighlights);
                                 }}>X</button>
-                                </div>
+                                </Badge>
                             ))}
                             </div>
                             </div>
@@ -275,10 +279,10 @@ const ProjectsField = () => {
                   <FormMessage className='text-red-500'>{errors?.work?.[index]?.highlights?.message}</FormMessage>
                 </FormItem>
                 </div>
-                <Button type="button" onClick={() => handleRemoveProject(index)} className="mt-2">Remove</Button>
+                <Button type="button" onClick={() => handleRemoveProject(index)} className="mt-2 mx-4"><Image src='./delete.svg' alt='svg' width={20} height={20}></Image></Button>
                 </div>
             ))}
-        <Button type="button" onClick={handleAddProject} className="mt-2">Add Project</Button>
+        <Button type="button" onClick={handleAddProject} className="mt-2 mx-4 max-w-20"><Image src='./add.svg' alt='svg' width={20} height={20}></Image></Button>
         </div>
     )
     }

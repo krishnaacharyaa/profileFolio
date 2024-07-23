@@ -7,6 +7,7 @@ import {format } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 import React from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import z from "zod";
@@ -21,7 +22,7 @@ const CertificateField = () => {
       });
     
     const handleAddCertificates = () => {
-        appendCertificate({name: "", date: new Date, issuer: "", url: ""});
+        appendCertificate({name: "", date: new Date().toISOString(), issuer: "", url: ""});
         clearErrors('education.certificates')
       };
     
@@ -30,7 +31,6 @@ const CertificateField = () => {
       };
   return (
     <div className='flex flex-col w-full'>
-        <div className='text-2xl font-bold my-4'>Certificates</div>
             {certificateFields.map((item, index) => (
                 <div key={item.id}>
                 <div className="grid grid-cols-3 w-full mb-4">
@@ -76,8 +76,8 @@ const CertificateField = () => {
                             <PopoverContent className="w-auto p-0" align="start">
                                 <Calendar
                                 mode="single"
-                                selected={field.value}
-                                onSelect={(date) => {date && setValue(`education.certificates.${index}.date`, new Date(date))}}
+                                selected={field.value ? new Date(field.value) : undefined}
+                                onSelect={(date) => {date && setValue(`education.certificates.${index}.date`, new Date(date).toISOString())}}
                                 disabled={(date) =>
                                     date > new Date() || date < new Date("1900-01-01")
                                 }
@@ -117,10 +117,10 @@ const CertificateField = () => {
                     <FormMessage>{errors?.education?.certificates?.[index]?.url?.message}</FormMessage>
                     </FormItem>
                 </div>
-                <Button type="button" onClick={() => handleRemoveCertificates(index)} className="mt-2">Remove</Button>
+                <Button type="button" onClick={() => handleRemoveCertificates(index)} className="mt-2 mx-4 "><Image src='./delete.svg' alt='svg' width={20} height={20}></Image></Button>
                 </div>
             ))}
-        <Button type="button" onClick={handleAddCertificates} className="mt-2">Add Certificate</Button>
+        <Button type="button" onClick={handleAddCertificates} className="mt-2 mx-4 max-w-20"><Image src='./add.svg' alt='svg' width={20} height={20}></Image></Button>
     </div>
   )
 }
