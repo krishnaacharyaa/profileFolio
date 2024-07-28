@@ -2,12 +2,13 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"sync"
 	"time"
 
-	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -17,18 +18,16 @@ var (
 	once   sync.Once
 )
 
-
 func init() {
-	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found")
-	}
+	initDB()
 }
 
-func GetClient() *mongo.Client {
+func initDB() {
 	once.Do(func() {
-		mongoURI := os.Getenv("MONGO_URI")
+		mongoURI := os.Getenv("MONGODB_URI")
 		if mongoURI == "" {
-			log.Fatal("MONGO_URI environment variable is not set")
+			log.Println("MONGODB_URI environment variable is not set")
+			return
 		}
 
 		clientOptions := options.Client().ApplyURI(mongoURI)
@@ -38,14 +37,25 @@ func GetClient() *mongo.Client {
 		var err error
 		client, err = mongo.Connect(ctx, clientOptions)
 		if err != nil {
-			log.Fatal(err)
+			log.Printf("Error connecting to MongoDB: %v", err)
+			return
 		}
 
 		err = client.Ping(ctx, nil)
 		if err != nil {
-			log.Fatal(err)
+			log.Printf("Error pinging MongoDB: %v", err)
+			return
 		}
-	})
 
+		log.Println("Connected to MongoDB successfully")
+	})
+}
+
+func GetClient() *mongo.Client {
 	return client
+}
+
+// Handler is a dummy handler to satisfy Vercel's requirements
+func Handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "This is a dummy handler for db.go")
 }
