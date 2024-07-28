@@ -4,17 +4,16 @@ package api
 import (
 	"backend/handlers"   // Importing the handlers package
 	"backend/middleware" // Importing the middleware package
-	"net/http"
 
 	"github.com/gorilla/mux" // Importing the mux package from Gorilla for HTTP routing
 )
 
 // Handler is the main entry point for Vercel
-func Handler(w http.ResponseWriter, r *http.Request) {
-	router := mux.NewRouter()
-	RegisterUserRoutes(router)
-	router.ServeHTTP(w, r)
-}
+// func Handler(w http.ResponseWriter, r *http.Request) {
+// 	router := mux.NewRouter()
+// 	RegisterUserRoutes(router)
+// 	router.ServeHTTP(w, r)
+// }
 
 // RegisterUserRoutes registers all the routes related to user operations
 
