@@ -11,8 +11,8 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	switch path {
 	case "user":
 		GetAllUsersHandler(w, r)
-	case "cover-letter":
-		GetCoverLetterHandler(w, r)
+	// case "cover-letter":
+	// 	GetCoverLetterHandler(w, r)
 	default:
 		http.Error(w, "Not Found", http.StatusNotFound)
 	}
