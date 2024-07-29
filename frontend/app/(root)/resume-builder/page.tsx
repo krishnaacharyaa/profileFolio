@@ -1,4 +1,5 @@
 'use client';
+import { Suspense, useEffect, useState } from 'react';
 import Sidebar from '@/components/common/Sidebar';
 import ResumeHeader from '@/components/resume-builder/ResumeHeader';
 import ResumeView from '@/components/resume-builder/ResumeView';
@@ -6,11 +7,10 @@ import { useForm, FormProvider, FieldValues } from 'react-hook-form';
 import { useSearchParams } from 'next/navigation';
 import useApi from '@/hooks/useClientHook';
 import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
 
-export default function Page() {
+function PageContent() {
   const searchParams = useSearchParams();
   const resumeId = searchParams?.get('resumeId');
   const { data: session } = useSession();
@@ -20,7 +20,7 @@ export default function Page() {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
 
   const [currentResume, setCurrentResume] = useState<any>(null);
-  const [resumeName, setResumeName] = useState<string>("");
+  const [resumeName, setResumeName] = useState<string>('');
 
   useEffect(() => {
     if (user && user.resumes && resumeId) {
@@ -32,10 +32,10 @@ export default function Page() {
   useEffect(() => {
     if (user) {
       if (resumeId && currentResume) {
-        setResumeName(currentResume.name || "Resume name");
+        setResumeName(currentResume.name || 'Resume name');
       } else {
         const userName = user?.basics?.name;
-        setResumeName(userName || "Resume name");
+        setResumeName(userName || 'Resume name');
       }
     }
   }, [user, currentResume, resumeId]);
@@ -51,29 +51,33 @@ export default function Page() {
   const onSubmit = async (data: FieldValues) => {
     try {
       const config = {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       };
 
       let response;
       if (resumeId) {
         // PUT request to update existing resume
         const updatedData = { ...data, name: resumeName };
-        response = await axios.put(`${backendUrl}/api/user/${userId}/resumes/${resumeId}`, updatedData, config);
+        response = await axios.put(
+          `${backendUrl}/api/user/${userId}/resumes/${resumeId}`,
+          updatedData,
+          config
+        );
       } else {
         // POST request to create new resume
-        const resumeData = { ...data, name: resumeName, isDefault: false, templateId: "" }
+        const resumeData = { ...data, name: resumeName, isDefault: false, templateId: '' };
         response = await axios.post(`${backendUrl}/api/user/${userId}/resumes`, resumeData, config);
       }
 
       toast.success(response.data?.message, {
-        position: 'top-center'
-      })
+        position: 'top-center',
+      });
     } catch (error: any) {
       toast.error(error?.response?.data || error.message, {
-        position: 'top-center'
-      })
+        position: 'top-center',
+      });
     }
-  }
+  };
 
   return (
     <div className="h-full px-12">
@@ -88,5 +92,13 @@ export default function Page() {
         </form>
       </FormProvider>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PageContent />
+    </Suspense>
   );
 }
