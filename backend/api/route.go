@@ -4,6 +4,8 @@ package api
 import (
 	"backend/handlers"   // Importing the handlers package
 	"backend/middleware" // Importing the middleware package
+	"fmt"
+	"net/http"
 
 	"github.com/gorilla/mux" // Importing the mux package from Gorilla for HTTP routing
 )
@@ -52,4 +54,8 @@ func RegisterUserRoutes(router *mux.Router) {
 
 	// This is Cover letter handler using Open AI (to be used only when OPENAI key is present)
 	// authenticated.HandleFunc("/cover-letter", handlers.OpenAICoverLetterHandler).Methods("POST")
+}
+
+func RouteHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "This is a dummy handler for route.go")
 }
