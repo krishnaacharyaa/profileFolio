@@ -22,6 +22,15 @@ func GetMongoURI() string {
 	return uri
 }
 
+
+func GetFrontendURI() string {
+	uri, exists := os.LookupEnv("ALLOWED_ORIGINS")
+	if !exists {
+		log.Fatal("ALLOWED_ORIGINS not set in environment")
+	}
+	return uri
+}
+
 func GetOpenAIAPIKey() string {
 	uri, exists := os.LookupEnv("OPENAI_API_KEY")
 	if !exists {
