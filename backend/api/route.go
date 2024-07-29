@@ -8,13 +8,6 @@ import (
 	"github.com/gorilla/mux" // Importing the mux package from Gorilla for HTTP routing
 )
 
-// Handler is the main entry point for Vercel
-// func Handler(w http.ResponseWriter, r *http.Request) {
-// 	router := mux.NewRouter()
-// 	RegisterUserRoutes(router)
-// 	router.ServeHTTP(w, r)
-// }
-
 // RegisterUserRoutes registers all the routes related to user operations
 
 func RegisterUserRoutes(router *mux.Router) {

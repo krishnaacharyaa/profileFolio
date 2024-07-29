@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"sync"
-	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -18,11 +17,7 @@ var (
 	once   sync.Once
 )
 
-func init() {
-	initDB()
-}
-
-func initDB() {
+func GetClient() *mongo.Client {
 	once.Do(func() {
 		mongoURI := os.Getenv("MONGODB_URI")
 		if mongoURI == "" {
@@ -31,17 +26,14 @@ func initDB() {
 		}
 
 		clientOptions := options.Client().ApplyURI(mongoURI)
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
-
 		var err error
-		client, err = mongo.Connect(ctx, clientOptions)
+		client, err = mongo.Connect(context.Background(), clientOptions)
 		if err != nil {
 			log.Printf("Error connecting to MongoDB: %v", err)
 			return
 		}
 
-		err = client.Ping(ctx, nil)
+		err = client.Ping(context.Background(), nil)
 		if err != nil {
 			log.Printf("Error pinging MongoDB: %v", err)
 			return
@@ -49,13 +41,9 @@ func initDB() {
 
 		log.Println("Connected to MongoDB successfully")
 	})
-}
 
-func GetClient() *mongo.Client {
 	return client
 }
-
-// Handler is a dummy handler to satisfy Vercel's requirements
-func Handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "This is a dummy handler for db.go")
+func MongoDBHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "This is a dummy handler for db.go")
 }
