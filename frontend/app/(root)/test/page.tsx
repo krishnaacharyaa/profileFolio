@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react';
 
 const TestPage = () => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     fetch('https://profilefolio-backend.vercel.app/api/test')
