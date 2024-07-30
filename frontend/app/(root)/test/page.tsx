@@ -1,38 +1,32 @@
-import { authOptions } from '@/lib/auth';
-import { getServerSession } from 'next-auth';
+import { useEffect, useState } from 'react';
 
-const Page = async () => {
-  const session = await getServerSession(authOptions);
-  try {
-    const response = await fetch(
-      'http://localhost:8080/api/user/email/sukomal@gmail.com',
-      {
-        headers: {
-          Authorization: `Bearer ${session?.user.accessToken}`,
-        },
-      }
-    );
+const TestPage = () => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+  useEffect(() => {
+    fetch('https://profilefolio-backend.vercel.app/api/test')
+      .then((response) => response.text())
+      .then((data) => {
+        setData(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+        setLoading(false);
+      });
+  }, []);
 
-    const data = await response.json();
-    console.log(data);
-
-    return (
-      <>
-        <div>hello</div>
-      </>
-    );
-  } catch (error) {
-    console.error('Error fetching user data:', error);
-    return (
-      <>
-        <div>hello</div>
-      </>
-    );
+  if (loading) {
+    return <div>Loading...</div>;
   }
+
+  return (
+    <div>
+      <h1>Test Page</h1>
+      <p>{data}</p>
+    </div>
+  );
 };
 
-export default Page;
+export default TestPage;
