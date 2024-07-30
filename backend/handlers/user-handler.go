@@ -5,6 +5,7 @@ import (
 	"backend/models"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -350,7 +351,7 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func TestHandler(w http.ResponseWriter, r *http.Request){
-	println(w,"Hello there test")
+	fmt.Fprintf(w, "This is a dummy handler for db.go")
 }
 func GetSkillsHandler(w http.ResponseWriter, r *http.Request) {
 	collection := client.Database("profileFolio").Collection("skills")
