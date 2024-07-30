@@ -28,6 +28,7 @@ func GetFrontendURI() string {
 	if !exists {
 		log.Fatal("ALLOWED_ORIGINS not set in environment")
 	}
+	log.Print("FrontendURI is ", uri)
 	return uri
 }
 

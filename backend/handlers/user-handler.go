@@ -349,6 +349,9 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
+func TestHandler(w http.ResponseWriter, r *http.Request){
+	println(w,"Hello there test")
+}
 func GetSkillsHandler(w http.ResponseWriter, r *http.Request) {
 	collection := client.Database("profileFolio").Collection("skills")
 	var skills []models.SkillCollection

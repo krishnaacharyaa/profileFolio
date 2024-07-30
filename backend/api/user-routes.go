@@ -16,6 +16,7 @@ func RegisterUserRoutes(router *mux.Router) {
 	router.HandleFunc("/api/signup", handlers.SignUpHandler).Methods("POST") // Route for user signup
 	router.HandleFunc("/api/signin", handlers.SignInHandler).Methods("POST") // Route for user signin
 	router.HandleFunc("/api/skills", handlers.GetSkillsHandler).Methods("GET") 
+	router.HandleFunc("/api/test", handlers.TestHandler).Methods("GET")
 	
 	// Routes that require authentication
 	authenticated := router.PathPrefix("/api").Subrouter()
