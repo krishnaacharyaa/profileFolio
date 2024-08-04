@@ -161,7 +161,7 @@ function CompaniesInput({ index }: { index: number }) {
       </div>
       <div className='flex flex-col gap-3'>
         <Label htmlFor={`work.${index}.summary`} className="text-base font-normal text-slate-500">Summary</Label>
-        <Textarea placeholder='Enter Summary' id='summary' {...register(`companies.${index}.summary`)} />
+        <Textarea placeholder='Enter Summary' id='summary' {...register(`work.${index}.summary`)} />
       </div>
     </div>
   );

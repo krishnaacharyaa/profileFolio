@@ -6,13 +6,11 @@ const Page = () => {
   return (
     <div className="h-full px-12">
       <FormProviders>
-        <div className="mt-7 flex justify-between h-full">
+        <div className="mt-7 flex justify-between h-full gap-8 mb-4">
           <Sidebar />
           <PortfolioView />
         </div>
-        <button type="submit" className="border-2 border-black rounded-md p-4">
-          Submit
-        </button>
+        
       </FormProviders>
     </div>
   );

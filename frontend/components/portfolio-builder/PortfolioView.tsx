@@ -1,21 +1,12 @@
-import Education from '@/components/portfolio-builder/Education';
-import WorkExperience from '@/components/portfolio-builder/Experience';
-import Header from '@/components/portfolio-builder/Header';
-import Profile from '@/components/portfolio-builder/Profile';
-import Projects from '@/components/portfolio-builder/Projects';
-import Skills from '@/components/portfolio-builder/Skills';
-import Footer from './Footer';
+import Template1 from "./Template1";
+
 
 export default function () {
   return (
-    <div className="bg-white py-2 px-4 rounded  overflow-y-scroll h-screen">
-      <Header />
-      <Profile />
-      <Education />
-      <WorkExperience />
-      <Projects />
-      <Skills />
-      <Footer />
+    <div className="bg-[#f3f7f7] py-2 px-4 rounded scrollbar-thin overflow-y-scroll h-screen">
+      <div className='bg-white w-[220mm] min-h-full'>
+        <Template1/>
+      </div>
     </div>
   );
 }
