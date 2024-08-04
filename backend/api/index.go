@@ -15,6 +15,7 @@ import (
 
 func initMongoClient() {
 	mongoURI := os.Getenv("MONGODB_URI")
+	print(mongoURI)
 	if mongoURI == "" {
 		log.Println("MONGODB_URI environment variable is not set")
 		return
