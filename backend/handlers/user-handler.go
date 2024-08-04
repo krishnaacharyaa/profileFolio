@@ -3,7 +3,6 @@ package handlers
 import (
 	"backend/middleware"
 	"backend/models"
-	"backend/shared"
 
 	"context"
 	"encoding/json"
@@ -22,6 +21,7 @@ var client *mongo.Client
 
 func SetClient(mongoClient *mongo.Client) {
 	client = mongoClient
+	fmt.Printf("Set in the client")
 }
 
 func GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
@@ -191,11 +191,11 @@ func UpdateUserByUsernameHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SignUpHandler(w http.ResponseWriter, r *http.Request) {
-	client := shared.GetClient()
-	if client == nil {
-		http.Error(w, "Database connection not established", http.StatusInternalServerError)
-		return
-	}
+	// client := shared.GetClient()
+	// if client == nil {
+	// 	http.Error(w, "Database connection not established", http.StatusInternalServerError)
+	// 	return
+	// }
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
@@ -287,11 +287,11 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SignInHandler(w http.ResponseWriter, r *http.Request) {
-	client := shared.GetClient()
-	if client == nil {
-		http.Error(w, "Database connection not established", http.StatusInternalServerError)
-		return
-	}
+	// client := shared.GetClient()
+	// if client == nil {
+	// 	http.Error(w, "Database connection not established", http.StatusInternalServerError)
+	// 	return
+	// }
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
