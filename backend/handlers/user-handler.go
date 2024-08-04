@@ -3,6 +3,8 @@ package handlers
 import (
 	"backend/middleware"
 	"backend/models"
+	"backend/shared"
+
 	"context"
 	"encoding/json"
 	"fmt"
@@ -189,6 +191,11 @@ func UpdateUserByUsernameHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SignUpHandler(w http.ResponseWriter, r *http.Request) {
+	client := shared.GetClient()
+	if client == nil {
+		http.Error(w, "Database connection not established", http.StatusInternalServerError)
+		return
+	}
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
@@ -280,6 +287,11 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SignInHandler(w http.ResponseWriter, r *http.Request) {
+	client := shared.GetClient()
+	if client == nil {
+		http.Error(w, "Database connection not established", http.StatusInternalServerError)
+		return
+	}
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
