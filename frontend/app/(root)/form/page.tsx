@@ -134,7 +134,7 @@ function FormComponent() {
       resumes: [],
     };
     const response = await axios.patch(
-      `http://localhost:8080/api/user/${session?.user.id}`,
+      `${backendUrl}/api/user/${session?.user.id}`,
       newDataObject,
       {
         headers: { Authorization: `Bearer ${session?.user.accessToken}` },
