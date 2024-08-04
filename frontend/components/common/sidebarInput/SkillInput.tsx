@@ -20,14 +20,16 @@ export default function SkillsInput() {
           <span className="text-slate-500 text-base">Skills</span>
         </div>
         <ChevronDown
-          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${skills ? 'rotate-180' : ''
-            }`}
+          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
+            skills ? 'rotate-180' : ''
+          }`}
           size={20}
         />
       </div>
       <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden ${skills ? 'block' : 'hidden'
-          }`}
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${
+          skills ? 'block' : 'hidden'
+        }`}
       >
         <ListOfSkills />
       </div>
@@ -76,15 +78,16 @@ function ListOfSkills() {
               />
               <ChevronDown
                 size={20}
-                className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${showInputs === index ? 'rotate-180' : ''
-                  }`}
+                className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
+                  showInputs === index ? 'rotate-180' : ''
+                }`}
               />
             </div>
           </div>
           {showInputs === index && <SkillsInputs index={index} />}
         </div>
       ))}
-      <Button variant={'outline'} onClick={addSkill} type='button'>
+      <Button variant={'outline'} onClick={addSkill} type="button">
         + Add new skill
       </Button>
     </div>
@@ -92,9 +95,21 @@ function ListOfSkills() {
 }
 function SkillsInputs({ index }: { index: number }) {
   return (
-    <div className='p-2 flex flex-col gap-3 items-center'>
-      <InputWithLabel label='Skill name' name='name' type='text' placeholder='Web development , Databases, Tools ,etc...' schemaType={`skills.${index}`} />
-      <InputWithLabel label='Techstack' name='techStack' type='text' placeholder='React.js , Next.js, Node.js, Mongodb' schemaType={`skills.${index}`} />
+    <div className="p-2 flex flex-col gap-3 items-center">
+      <InputWithLabel
+        label="Skill name"
+        name="name"
+        type="text"
+        placeholder="Web development , Databases, Tools ,etc..."
+        schemaType={`skills.${index}`}
+      />
+      <InputWithLabel
+        label="Techstack"
+        name="techStack"
+        type="text"
+        placeholder="React.js , Next.js, Node.js, Mongodb"
+        schemaType={`skills.${index}`}
+      />
     </div>
   );
 }

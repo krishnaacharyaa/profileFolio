@@ -33,7 +33,7 @@ export default function Sidebar() {
       </div>
       <div className="flex items-center justify-between py-4 px-3">
         <Button variant={'outline'}>Cancel</Button>
-        <Button variant={'default'} type='submit'>
+        <Button variant={'default'} type="submit">
           Save
         </Button>
       </div>

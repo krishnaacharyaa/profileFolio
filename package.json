@@ -1,18 +1,18 @@
 {
-	"name": "profilefolio",
-	"version": "1.0.0",
-	"scripts": {
-		"start-frontend": "cd frontend && npm run dev",
-		"start-backend": "cd backend && go run main.go",
-		"start": "concurrently -n \"FRONTEND,BACKEND\" -c \"bgBlue,bgYellow\" -p \"[{name}]\" \"npm run start-frontend\" \"npm run start-backend\"",
-		"install-frontend": "cd frontend && npm install",
-		"install-backend": "cd backend && go mod tidy",
-		"installer": "npm install && npm run install-backend && npm run install-frontend"
-	},
-	"devDependencies": {
-		"concurrently": "^7.0.0"
-	},
-	"keywords": [],
-	"author": "krishnaacharyaa",
-	"license": "ISC"
+  "name": "profilefolio",
+  "version": "1.0.0",
+  "scripts": {
+    "start-frontend": "cd frontend && npm run dev",
+    "start-backend": "cd backend && go run main.go",
+    "start": "concurrently -n \"FRONTEND,BACKEND\" -c \"bgBlue,bgYellow\" -p \"[{name}]\" \"npm run start-frontend\" \"npm run start-backend\"",
+    "install-frontend": "cd frontend && npm install",
+    "install-backend": "cd backend && go mod tidy",
+    "installer": "npm install && npm run install-backend && npm run install-frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^7.0.0"
+  },
+  "keywords": [],
+  "author": "krishnaacharyaa",
+  "license": "ISC"
 }

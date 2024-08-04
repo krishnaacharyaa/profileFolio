@@ -23,13 +23,13 @@ export default function Signin() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    reset
+    reset,
   } = useForm<TSignInSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
-      password: ""
-    }
+      email: '',
+      password: '',
+    },
   });
 
   const handleonSubmit = async (data: FieldValues) => {
@@ -40,25 +40,25 @@ export default function Signin() {
           redirect: false,
           email: data.email,
           password: data.password,
-        })
+        });
 
         if (response?.error) {
           toast.error(response.error, {
-            position: 'top-center'
-          })
+            position: 'top-center',
+          });
         }
         if (response?.ok) {
-          toast.success("Login Success", {
-            position: 'top-center'
-          })
-          reset()
-          router.replace('/dashboard')
+          toast.success('Login Success', {
+            position: 'top-center',
+          });
+          reset();
+          router.replace('/dashboard');
         }
       }
     } catch (error: any) {
       toast.error(error?.response?.data, {
-        position: 'top-center'
-      })
+        position: 'top-center',
+      });
     }
   };
 

@@ -22,15 +22,15 @@ function Signup() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    reset
+    reset,
   } = useForm<TSignUpSchema>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
-      userName: "",
-      email: "",
-      password: "",
-      confirmPassword: ""
-    }
+      userName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
   });
 
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -43,25 +43,25 @@ function Signup() {
           redirect: false,
           email: data.email,
           password: data.password,
-        })
+        });
 
         if (response?.error) {
           toast.error(response.error, {
-            position: 'top-center'
-          })
+            position: 'top-center',
+          });
         }
         if (response?.ok) {
           toast.success(res.data?.message, {
-            position: 'top-center'
-          })
-          reset()
-          router.replace('/form')
+            position: 'top-center',
+          });
+          reset();
+          router.replace('/form');
         }
       }
     } catch (error: any) {
       toast.error(error?.response?.data, {
-        position: 'top-center'
-      })
+        position: 'top-center',
+      });
     }
   };
 

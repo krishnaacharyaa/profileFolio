@@ -38,32 +38,34 @@ export default function UserResume({ resumes, setRefresh }: ResumeProps) {
   };
 
   const handlePortfolio = () => {
-    router.push("/portfolio-builder")
-  }
+    router.push('/portfolio-builder');
+  };
 
   const handleDelete = async (resumeId: string) => {
     try {
-
       const config = {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       };
 
-      const response = await axios.delete(`${backendUrl}/api/user/${userId}/resumes/${resumeId}`, config)
+      const response = await axios.delete(
+        `${backendUrl}/api/user/${userId}/resumes/${resumeId}`,
+        config
+      );
       if (response.status === 200) {
         const newResumes = resumeList.filter((resume: any) => resume._id !== resumeId);
         setResumeList(newResumes);
         setRefresh(true);
 
         toast.success(response.data?.message, {
-          position: 'top-center'
+          position: 'top-center',
         });
       }
     } catch (error: any) {
       toast.error(error?.response?.data || error.message, {
-        position: 'top-center'
-      })
+        position: 'top-center',
+      });
     }
-  }
+  };
 
   return (
     <div className="w-full mx-3 px-6 py-4 md:py-4 lg:py-4">
@@ -72,7 +74,8 @@ export default function UserResume({ resumes, setRefresh }: ResumeProps) {
         <div>
           <h3 className="text-xl font-semibold mb-4 md:mb-6">Resume</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
-            {resumes && resumes.length > 0 && (
+            {resumes &&
+              resumes.length > 0 &&
               resumes.map((resume: any, index) => (
                 <div key={index}>
                   <div className="relative overflow-hidden rounded-lg border p-2 shadow-lg group hover:shadow-xl cursor-pointer hover:scale-105 transition-transform duration-300 ">
@@ -85,7 +88,7 @@ export default function UserResume({ resumes, setRefresh }: ResumeProps) {
                       onClick={() => handleResumeClick(resume?._id)}
                     />
                     <div className="flex mx-3 justify-between">
-                      <span className='text-sm capitalize'>{resume?.name}</span>
+                      <span className="text-sm capitalize">{resume?.name}</span>
                       <DropdownMenu>
                         <DropdownMenuTrigger>
                           <Image
@@ -99,14 +102,15 @@ export default function UserResume({ resumes, setRefresh }: ResumeProps) {
                         <DropdownMenuContent>
                           <DropdownMenuItem>Make Default</DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => handleDelete(resume?._id)}>Delete</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleDelete(resume?._id)}>
+                            Delete
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
                   </div>
                 </div>
-              ))
-            )}
+              ))}
             {resumes.length < 3 && (
               <div
                 onClick={handleNewResume}
@@ -119,7 +123,7 @@ export default function UserResume({ resumes, setRefresh }: ResumeProps) {
             )}
           </div>
         </div>
-        <div className='justify-self-end' onClick={handlePortfolio}>
+        <div className="justify-self-end" onClick={handlePortfolio}>
           <h3 className="text-xl font-semibold mb-4 md:mb-6">Portfolio</h3>
           <div className="grid grid-cols-1 md:grid-cols-1 gap-4 md:gap-6 lg:gap-8">
             <div className="relative w-[12vw] justify-self-end overflow-hidden rounded-lg p-2 shadow-lg group hover:shadow-xl ">

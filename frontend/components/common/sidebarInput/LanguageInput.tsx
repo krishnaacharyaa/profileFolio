@@ -28,14 +28,16 @@ export default function LanguageInput() {
           <span className="text-slate-500 text-base">Languages</span>
         </div>
         <ChevronDown
-          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${language ? 'rotate-180' : ''
-            }`}
+          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
+            language ? 'rotate-180' : ''
+          }`}
           size={20}
         />
       </div>
       <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden ${language ? 'block' : 'hidden'
-          }`}
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${
+          language ? 'block' : 'hidden'
+        }`}
       >
         <ListOfLanguages />
       </div>
@@ -85,15 +87,16 @@ export function ListOfLanguages() {
               />
               <ChevronDown
                 size={20}
-                className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${showInputs === index ? 'rotate-180' : ''
-                  }`}
+                className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
+                  showInputs === index ? 'rotate-180' : ''
+                }`}
               />
             </div>
           </div>
           {showInputs === index && <LanguageInputs index={index} />}
         </div>
       ))}
-      <Button variant={'outline'} onClick={addLanguage} type='button'>
+      <Button variant={'outline'} onClick={addLanguage} type="button">
         + Add Language
       </Button>
     </div>

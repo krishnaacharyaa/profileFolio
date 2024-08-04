@@ -47,7 +47,9 @@ export default function Experience() {
               <div>
                 <p className="font-light text-sm">{company.position}</p>
                 <span className="uppercase font-light text-sm">
-                  {convertISOToFormattedDate(company?.startDate)} {company?.startDate && company?.endDate && "-"} {convertISOToFormattedDate(company?.endDate)}
+                  {convertISOToFormattedDate(company?.startDate)}{' '}
+                  {company?.startDate && company?.endDate && '-'}{' '}
+                  {convertISOToFormattedDate(company?.endDate)}
                 </span>
               </div>
             </div>

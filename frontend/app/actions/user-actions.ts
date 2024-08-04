@@ -11,11 +11,7 @@ export async function getUserData(): Promise<User> {
   // Adding now because it is wieredly caching the response, changes in the 8080/api/user is not reflected here if no-store isn't added
 
   console.log(backendUrl);
-  return fetchAndValidate<User | any>(
-    `http://localhost:8080/api/user`,
-    { cache: 'no-store' },
-    UserSchema
-  );
+  return fetchAndValidate<User | any>(`${backendUrl}/api/user`, { cache: 'no-store' }, UserSchema);
 }
 
 export async function getSkillsData(): Promise<SkillRef[]> {

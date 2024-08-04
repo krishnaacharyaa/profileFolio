@@ -36,11 +36,16 @@ export default function ResumeHeader({ setResumeName, resumeName }: HeaderProps)
               onChange={(e) => setInputValue(e.target.value)}
               className="w-40"
             />
-            <Check size={20} cursor={'pointer'} className='text-green-500' onClick={handleCheckClick} />
+            <Check
+              size={20}
+              cursor={'pointer'}
+              className="text-green-500"
+              onClick={handleCheckClick}
+            />
           </>
         ) : (
           <>
-            <h1 className='font-semibold text-base'>{resumeName}</h1>
+            <h1 className="font-semibold text-base">{resumeName}</h1>
             <EditIcon size={20} cursor={'pointer'} onClick={handleEditClick} />
           </>
         )}

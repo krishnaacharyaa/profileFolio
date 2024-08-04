@@ -27,10 +27,16 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
 }) => {
   const [notExp, setNotExp] = useState<boolean>(false);
   const [errValidation, setErrValidation] = useState<boolean>();
-  const { control, formState: { errors }, trigger, getValues, clearErrors } = useFormContext();
+  const {
+    control,
+    formState: { errors },
+    trigger,
+    getValues,
+    clearErrors,
+  } = useFormContext();
   const workFields = useWatch({
     control,
-    name: "work", // Assuming "work" is the name of the work experience section
+    name: 'work', // Assuming "work" is the name of the work experience section
   });
 
   const handleBack = () => {
@@ -42,13 +48,13 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
   const validateStepFields = async (stepNumber: number) => {
     switch (stepNumber) {
       case 1:
-        return await trigger("basics");
+        return await trigger('basics');
       case 2:
-        return await trigger("work");
+        return await trigger('work');
       case 3:
-        return await trigger("education");
+        return await trigger('education');
       case 4:
-        return await trigger("projects");
+        return await trigger('projects');
       default:
         return false;
     }
@@ -59,49 +65,58 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
     console.log(notExp);
     console.log(isStepValid);
 
-    const isWorkFilled = workFields && Object.values(workFields).some(field => field);
-    if(currentStep != 2 && isStepValid){
+    const isWorkFilled = workFields && Object.values(workFields).some((field) => field);
+    if (currentStep != 2 && isStepValid) {
       setCurrentStep(currentStep + 1);
-    }else if(currentStep == 2){
-      if(notExp){
+    } else if (currentStep == 2) {
+      if (notExp) {
         setCurrentStep(currentStep + 1);
         setNotExp(!notExp);
-        clearErrors('work')
+        clearErrors('work');
         setErrValidation(false);
-      }else if(isStepValid && !notExp && getValues('work').length != 0){
+      } else if (isStepValid && !notExp && getValues('work').length != 0) {
         setCurrentStep(currentStep + 1);
         setErrValidation(false);
-      }else if(!isStepValid && !notExp && getValues('work').length != 0){
+      } else if (!isStepValid && !notExp && getValues('work').length != 0) {
         setErrValidation(false);
-        console.log(`Step ${currentStep} validation failed. Cannot proceed. ${JSON.stringify(errors)}`);
-      }
-      else{
+        console.log(
+          `Step ${currentStep} validation failed. Cannot proceed. ${JSON.stringify(errors)}`
+        );
+      } else {
         setErrValidation(true);
-        toast.warning("Either check that you have no work experience or add fields for your work experience", {
-          position: 'bottom-right',
-          duration: 4000
-        })
+        toast.warning(
+          'Either check that you have no work experience or add fields for your work experience',
+          {
+            position: 'bottom-right',
+            duration: 4000,
+          }
+        );
       }
-    }else{
+    } else {
       setErrValidation(true);
-      console.log(`Step ${currentStep} validation failed. Cannot proceed. ${JSON.stringify(errors)}`);
+      console.log(
+        `Step ${currentStep} validation failed. Cannot proceed. ${JSON.stringify(errors)}`
+      );
     }
   };
 
   return (
-    <div className='flex flex-col items-center w-full'>
+    <div className="flex flex-col items-center w-full">
       {currentStep === 2 && (
         <div className="flex justify-center items-center w-full m-4">
           <Checkbox
             id="terms"
             onCheckedChange={(checked) => {
-              console.log("Checkbox changed: ", checked);
+              console.log('Checkbox changed: ', checked);
               setNotExp(checked === true);
             }}
             checked={notExp}
             disabled={getValues('work') && getValues('work').length != 0}
           />
-          <Label htmlFor="terms" className="text-sm mx-2 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+          <Label
+            htmlFor="terms"
+            className="text-sm mx-2 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
             {"I've no Experience yet"}
           </Label>
         </div>

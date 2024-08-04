@@ -21,7 +21,6 @@ var client *mongo.Client
 
 func SetClient(mongoClient *mongo.Client) {
 	client = mongoClient
-	fmt.Printf("Set in the client")
 }
 
 func GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {

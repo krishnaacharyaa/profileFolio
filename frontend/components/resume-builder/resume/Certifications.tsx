@@ -40,9 +40,9 @@ export default function Certifications() {
               ) : (
                 <h1 className="font-semibold text-xl">{certificate.name}</h1>
               )}
-              <div className='flex items-center gap-2'>
+              <div className="flex items-center gap-2">
                 <p className="font-light text-sm">{certificate.issuer}</p>
-                {certificate.issuer && certificate.date && ("|")}
+                {certificate.issuer && certificate.date && '|'}
                 <p className="font-light text-sm">{convertISOToFormattedDate(certificate.date)}</p>
               </div>
             </div>

@@ -13,7 +13,6 @@ export async function fetchAndValidate<T>(
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user.accessToken) {
-
     throw new Error('No session or token found');
   }
 

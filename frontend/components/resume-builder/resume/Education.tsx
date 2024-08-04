@@ -57,7 +57,9 @@ export default function Educations() {
                 </span>
               )}
               <span className="uppercase font-light text-sm">
-                {convertISOToFormattedDate(education?.startDate)} {education?.startDate && education?.endDate && "-"} {convertISOToFormattedDate(education?.endDate)}
+                {convertISOToFormattedDate(education?.startDate)}{' '}
+                {education?.startDate && education?.endDate && '-'}{' '}
+                {convertISOToFormattedDate(education?.endDate)}
               </span>
             </div>
           </div>

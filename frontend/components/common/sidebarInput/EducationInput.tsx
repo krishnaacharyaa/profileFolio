@@ -1,13 +1,19 @@
 'use client';
 
-import "react-datepicker/dist/react-datepicker.css";
+import 'react-datepicker/dist/react-datepicker.css';
 import { Button } from '@/components/ui/button';
 import { BookText, ChevronDown, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { InputWithLabel } from '../InputWithLabel';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import DatePicker from 'react-datepicker';
 
@@ -26,14 +32,16 @@ export default function EducationInput() {
           <span className="text-slate-500 text-base">Education</span>
         </div>
         <ChevronDown
-          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${showEducation ? 'rotate-180' : ''
-            }`}
+          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
+            showEducation ? 'rotate-180' : ''
+          }`}
           size={20}
         />
       </div>
       <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden ${showEducation ? 'block' : 'hidden'
-          }`}
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${
+          showEducation ? 'block' : 'hidden'
+        }`}
       >
         <ListOfInstitution />
       </div>
@@ -63,7 +71,7 @@ export function ListOfInstitution() {
       score: '',
       scoreType: '',
       startDate: '',
-      endDate: ''
+      endDate: '',
     });
   };
 
@@ -94,8 +102,9 @@ export function ListOfInstitution() {
                 />
                 <ChevronDown
                   size={20}
-                  className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${showInputs === index ? 'rotate-180' : ''
-                    }`}
+                  className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
+                    showInputs === index ? 'rotate-180' : ''
+                  }`}
                 />
               </div>
             </div>
@@ -115,8 +124,12 @@ function InstituteInputs({ index }: { index: number }) {
   const watchStartDate = watch(`education.${index}.startDate`);
   const watchEndDate = watch(`education.${index}.endDate`);
 
-  const [startDate, setStartDate] = useState<Date | undefined>(watchStartDate ? new Date(watchStartDate) : undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(watchEndDate ? new Date(watchEndDate) : undefined);
+  const [startDate, setStartDate] = useState<Date | undefined>(
+    watchStartDate ? new Date(watchStartDate) : undefined
+  );
+  const [endDate, setEndDate] = useState<Date | undefined>(
+    watchEndDate ? new Date(watchEndDate) : undefined
+  );
 
   const handleDateChange = (date: Date | null, fieldName: string) => {
     if (date) {
@@ -132,16 +145,38 @@ function InstituteInputs({ index }: { index: number }) {
   };
 
   return (
-    <div className='flex flex-col gap-3 px-4'>
-      <div className='grid lg:grid-cols-2 grid-cols-1 gap-3'>
-        <InputWithLabel label='Institution' type='text' placeholder='University name' schemaType={`education.${index}`} name="institution" />
-        <InputWithLabel label='Website' schemaType={`education.${index}`} name="url" type='url' placeholder='Institution website' />
-        <InputWithLabel label='Degree' schemaType={`education.${index}`} name="studyType" type='text' placeholder='Bachelors' />
-        <InputWithLabel label='Field of Study' schemaType={`education.${index}`} name="area" type='text' placeholder='Computer science' />
-        <Input {...register(`education.${index}.score`)} type="text" placeholder='4.5' />
-        <Select
-          onValueChange={(value) => setValue(`education.${index}.scoreType`, value)}
-        >
+    <div className="flex flex-col gap-3 px-4">
+      <div className="grid lg:grid-cols-2 grid-cols-1 gap-3">
+        <InputWithLabel
+          label="Institution"
+          type="text"
+          placeholder="University name"
+          schemaType={`education.${index}`}
+          name="institution"
+        />
+        <InputWithLabel
+          label="Website"
+          schemaType={`education.${index}`}
+          name="url"
+          type="url"
+          placeholder="Institution website"
+        />
+        <InputWithLabel
+          label="Degree"
+          schemaType={`education.${index}`}
+          name="studyType"
+          type="text"
+          placeholder="Bachelors"
+        />
+        <InputWithLabel
+          label="Field of Study"
+          schemaType={`education.${index}`}
+          name="area"
+          type="text"
+          placeholder="Computer science"
+        />
+        <Input {...register(`education.${index}.score`)} type="text" placeholder="4.5" />
+        <Select onValueChange={(value) => setValue(`education.${index}.scoreType`, value)}>
           <SelectTrigger>
             <SelectValue placeholder="Select" />
           </SelectTrigger>
@@ -152,9 +187,9 @@ function InstituteInputs({ index }: { index: number }) {
           </SelectContent>
         </Select>
       </div>
-      <div className='flex flex-col gap-3 w-full'>
+      <div className="flex flex-col gap-3 w-full">
         <Label className="text-base font-normal text-slate-500">Duration</Label>
-        <div className='grid grid-cols-1 lg:grid-cols-2 gap-2'>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
           <DatePicker
             selected={startDate}
             onChange={(date: Date | null) => handleDateChange(date, 'startDate')}
@@ -187,5 +222,5 @@ function InstituteInputs({ index }: { index: number }) {
         </div>
       </div>
     </div>
-  )
+  );
 }

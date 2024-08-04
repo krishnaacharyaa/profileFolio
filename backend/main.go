@@ -44,10 +44,13 @@ func main() {
 		AllowCredentials: true,
 		Debug:            true,
 	})
+	// Define the port
+	port := ":8080"
+	fmt.Printf("Starting server on port %s\n", port)
 
 	// Start server
 	handler := corsOptions.Handler(router)
-	log.Fatal(http.ListenAndServe(":8080", handler))
+	log.Fatal(http.ListenAndServe(port, handler))
 }
 
 func printGoLogo() {

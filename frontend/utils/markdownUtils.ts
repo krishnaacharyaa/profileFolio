@@ -2,7 +2,6 @@ import * as templates from './templates';
 import { SocialLinksData } from '@/components/readme-builder/SocialLinks';
 import toast from 'react-hot-toast';
 
-
 export const generateMarkdown = (
   aboutData: {
     working: string;

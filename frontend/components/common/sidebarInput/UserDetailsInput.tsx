@@ -31,14 +31,16 @@ export default function UserDetailsInput() {
           <span className="text-slate-500 text-base">Personal Info</span>
         </div>
         <ChevronDown
-          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${showInputs ? 'rotate-180' : ''
-            }`}
+          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
+            showInputs ? 'rotate-180' : ''
+          }`}
           size={20}
         />
       </div>
       <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden ${showInputs ? 'block' : 'hidden'
-          }`}
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${
+          showInputs ? 'block' : 'hidden'
+        }`}
       >
         <UserInfoInputs />
       </div>
@@ -143,7 +145,12 @@ function UserInfoInputs() {
             </div>
           </div>
         ))}
-        <Button variant={'outline'} onClick={handleAddLink} disabled={fields.length >= 5} type='button'>
+        <Button
+          variant={'outline'}
+          onClick={handleAddLink}
+          disabled={fields.length >= 5}
+          type="button"
+        >
           + Add Link
         </Button>
       </div>

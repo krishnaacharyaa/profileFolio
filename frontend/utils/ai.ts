@@ -3,9 +3,9 @@ export const fetchCoverLetter = async (message: string, profile: object) => {
     message: message,
     profile: profile,
   };
-
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
   try {
-    const response = await fetch('http://localhost:8080/api/cover-letter', {
+    const response = await fetch(`${backendUrl}/api/cover-letter`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

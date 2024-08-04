@@ -1,6 +1,6 @@
 'use client';
 
-import "react-datepicker/dist/react-datepicker.css";
+import 'react-datepicker/dist/react-datepicker.css';
 import { Button } from '@/components/ui/button';
 import { Label } from '@radix-ui/react-label';
 import { Briefcase, ChevronDown, Trash2 } from 'lucide-react';
@@ -25,14 +25,16 @@ export default function ExperienceInput() {
           <span className="text-slate-500 text-base">Experience</span>
         </div>
         <ChevronDown
-          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${experience ? 'rotate-180' : ''
-            }`}
+          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
+            experience ? 'rotate-180' : ''
+          }`}
           size={20}
         />
       </div>
       <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden ${experience ? 'block' : 'hidden'
-          }`}
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${
+          experience ? 'block' : 'hidden'
+        }`}
       >
         <ListOfCompanies />
       </div>
@@ -82,8 +84,9 @@ export function ListOfCompanies() {
               />
               <ChevronDown
                 size={20}
-                className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${showInputs === index ? 'rotate-180' : ''
-                  }`}
+                className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
+                  showInputs === index ? 'rotate-180' : ''
+                }`}
               />
             </div>
           </div>
@@ -102,9 +105,12 @@ function CompaniesInput({ index }: { index: number }) {
   const watchStartDate = watch(`work.${index}.startDate`);
   const watchEndDate = watch(`work.${index}.endDate`);
 
-  const [startDate, setStartDate] = useState<Date | undefined>(watchStartDate ? new Date(watchStartDate) : undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(watchEndDate ? new Date(watchEndDate) : undefined);
-
+  const [startDate, setStartDate] = useState<Date | undefined>(
+    watchStartDate ? new Date(watchStartDate) : undefined
+  );
+  const [endDate, setEndDate] = useState<Date | undefined>(
+    watchEndDate ? new Date(watchEndDate) : undefined
+  );
 
   const handleDateChange = (date: Date | null, fieldName: string) => {
     if (date) {
@@ -119,14 +125,34 @@ function CompaniesInput({ index }: { index: number }) {
     }
   };
   return (
-    <div className='flex flex-col gap-3 px-4'>
-      <div className='flex flex-col gap-3'>
-        <InputWithLabel label='Company name' type='text' placeholder='Company name' schemaType={`work.${index}`} name='name' />
-        <InputWithLabel label='Website' type='url' placeholder='Company website' schemaType={`work.${index}`} name='url' />
-        <InputWithLabel label='Job Title' type='text' placeholder='Software Emgineer' schemaType={`work.${index}`} name='position' />
-        <div className='flex flex-col gap-3 w-full'>
-          <Label htmlFor='duration' className="text-base font-normal text-slate-500">Duration</Label>
-          <div className='grid grid-cols-1 lg:grid-cols-2 gap-2'>
+    <div className="flex flex-col gap-3 px-4">
+      <div className="flex flex-col gap-3">
+        <InputWithLabel
+          label="Company name"
+          type="text"
+          placeholder="Company name"
+          schemaType={`work.${index}`}
+          name="name"
+        />
+        <InputWithLabel
+          label="Website"
+          type="url"
+          placeholder="Company website"
+          schemaType={`work.${index}`}
+          name="url"
+        />
+        <InputWithLabel
+          label="Job Title"
+          type="text"
+          placeholder="Software Emgineer"
+          schemaType={`work.${index}`}
+          name="position"
+        />
+        <div className="flex flex-col gap-3 w-full">
+          <Label htmlFor="duration" className="text-base font-normal text-slate-500">
+            Duration
+          </Label>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
             <DatePicker
               selected={startDate}
               onChange={(date: Date | null) => handleDateChange(date, 'startDate')}
@@ -159,9 +185,15 @@ function CompaniesInput({ index }: { index: number }) {
           </div>
         </div>
       </div>
-      <div className='flex flex-col gap-3'>
-        <Label htmlFor={`work.${index}.summary`} className="text-base font-normal text-slate-500">Summary</Label>
-        <Textarea placeholder='Enter Summary' id='summary' {...register(`companies.${index}.summary`)} />
+      <div className="flex flex-col gap-3">
+        <Label htmlFor={`work.${index}.summary`} className="text-base font-normal text-slate-500">
+          Summary
+        </Label>
+        <Textarea
+          placeholder="Enter Summary"
+          id="summary"
+          {...register(`companies.${index}.summary`)}
+        />
       </div>
     </div>
   );

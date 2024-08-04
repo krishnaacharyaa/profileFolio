@@ -19,7 +19,7 @@ import z from 'zod';
 interface AnyObject {
   [key: string]: any;
 }
-
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
 type FormData = z.infer<typeof UserSchema>;
 
 function FormComponent() {
@@ -27,6 +27,7 @@ function FormComponent() {
   const id = searchParams?.get('id') || '';
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
+  const [serverData, setServerData] = useState();
   const { data: session } = useSession();
   const methods = useForm<FormData>({
     resolver: zodResolver(UserSchema),
@@ -47,10 +48,11 @@ function FormComponent() {
       console.log(id);
       if (id) {
         try {
-          const response = await axios.get(`http://localhost:8080/api/user/${id}`, {
+          const response = await axios.get(`${backendUrl}/api/user/${id}`, {
             headers: { Authorization: `Bearer ${session?.user.accessToken}` },
           });
           if (response.status == 200) {
+            setServerData(response.data);
             const serverData: any = response.data;
             console.log(serverData);
             const newDataObject = {
@@ -118,8 +120,7 @@ function FormComponent() {
         label: data.basics.current_role,
         phone: data.basics.phone,
         summary: data.basics.summary,
-        email: data.basics.email,
-        url: data.basics.url,
+        email: session?.user.email,
         location: data.basics.location,
         profiles: data.basics.profiles,
       },
@@ -130,6 +131,7 @@ function FormComponent() {
       languages: data.basics.languages,
       interests: data.basics.interests,
       projects: data.projects.projectsArr,
+      resumes: [],
     };
     const response = await axios.patch(
       `http://localhost:8080/api/user/${session?.user.id}`,

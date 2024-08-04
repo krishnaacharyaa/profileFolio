@@ -38,7 +38,7 @@ export default function Projects() {
         {projects?.map((project, index) => (
           <div key={index} className="px-2">
             <div className="flex items-center justify-between">
-              <div className='flex items-center gap-2'>
+              <div className="flex items-center gap-2">
                 {project?.deployedUrl ? (
                   <div className="flex items-center gap-2">
                     <a href={project.deployedUrl} target="_blank" className="font-semibold text-xl">
@@ -58,7 +58,9 @@ export default function Projects() {
               <div>
                 <p className="font-normal text-base">{project.technologies}</p>
                 <span className="uppercase font-light text-sm">
-                  {convertISOToFormattedDate(project?.startDate)} {project?.startDate && project?.endDate && "-"} {convertISOToFormattedDate(project?.endDate)}
+                  {convertISOToFormattedDate(project?.startDate)}{' '}
+                  {project?.startDate && project?.endDate && '-'}{' '}
+                  {convertISOToFormattedDate(project?.endDate)}
                 </span>
               </div>
             </div>

@@ -15,17 +15,18 @@ ProfileFolio simplifies professional profile management by generating customized
     ```bash
     docker-compose up --build
     ```
-4.  Access the Application - Frontend: http://localhost:3000 - Backend: http://localhost:8080/api/user
+3.  Access the Application - Frontend: http://localhost:3000 - Backend: http://localhost:8080/api/user
 </details>
 <details>
 <summary><strong>Install Manually</strong></summary>
 
 - Open Mongodb atlas in localhost:27017
   Create `profileFolio` db and
- 1. Add this sample data in collection `users`
 
-  ```json
-  {
+1.  Add this sample data in collection `users`
+
+```json
+{
   "_id": { "$oid": "667b885950aa1b4215433ff4" },
   "basics": {
     "name": "Jane Smith",
@@ -123,10 +124,7 @@ ProfileFolio simplifies professional profile management by generating customized
   "interests": [
     {
       "name": "Traveling",
-      "keywords": [
-        "Backpacking",
-        "Cultural Experiences"
-      ]
+      "keywords": ["Backpacking", "Cultural Experiences"]
     }
   ],
   "projects": [
@@ -153,8 +151,10 @@ ProfileFolio simplifies professional profile management by generating customized
     }
   ]
 }
-  ```
+```
+
 2. Add this sample data in collection `skills`
+
 ```json
 [
   {
@@ -181,9 +181,11 @@ ProfileFolio simplifies professional profile management by generating customized
 ```bash
 cp ./backend/.env.sample ./backend/.env
 ```
+
 ```bash
 npm run installer
 ```
+
 ```bash
 npm start
 ```

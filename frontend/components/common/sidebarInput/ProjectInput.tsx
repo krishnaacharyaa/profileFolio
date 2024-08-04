@@ -1,6 +1,6 @@
 'use client';
 
-import "react-datepicker/dist/react-datepicker.css";
+import 'react-datepicker/dist/react-datepicker.css';
 import { Button } from '@/components/ui/button';
 import { Label } from '@radix-ui/react-label';
 import { Airplay, ChevronDown, Trash2 } from 'lucide-react';
@@ -26,14 +26,16 @@ export default function ProjectInput() {
           <span className="text-slate-500 text-base">Projects</span>
         </div>
         <ChevronDown
-          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${projects ? 'rotate-180' : ''
-            }`}
+          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
+            projects ? 'rotate-180' : ''
+          }`}
           size={20}
         />
       </div>
       <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden ${projects ? 'block' : 'hidden'
-          }`}
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${
+          projects ? 'block' : 'hidden'
+        }`}
       >
         <ListOfProjects />
       </div>
@@ -54,7 +56,15 @@ export function ListOfProjects() {
   };
 
   const addProject = () => {
-    append({ name: '', startDate: '', endDate: '', description: '', technologies: '', githubUrl: '', deployedUrl: '' });
+    append({
+      name: '',
+      startDate: '',
+      endDate: '',
+      description: '',
+      technologies: '',
+      githubUrl: '',
+      deployedUrl: '',
+    });
   };
 
   const deleteProject = (index: number) => {
@@ -82,8 +92,9 @@ export function ListOfProjects() {
               />
               <ChevronDown
                 size={20}
-                className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${showInputs === index ? 'rotate-180' : ''
-                  }`}
+                className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
+                  showInputs === index ? 'rotate-180' : ''
+                }`}
               />
             </div>
           </div>
@@ -101,9 +112,12 @@ function ProjectInputs({ index }: { index: number }) {
   const watchStartDate = watch(`projects.${index}.startDate`);
   const watchEndDate = watch(`projects.${index}.endDate`);
 
-  const [startDate, setStartDate] = useState<Date | undefined>(watchStartDate ? new Date(watchStartDate) : undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(watchEndDate ? new Date(watchEndDate) : undefined);
-
+  const [startDate, setStartDate] = useState<Date | undefined>(
+    watchStartDate ? new Date(watchStartDate) : undefined
+  );
+  const [endDate, setEndDate] = useState<Date | undefined>(
+    watchEndDate ? new Date(watchEndDate) : undefined
+  );
 
   const handleDateChange = (date: Date | null, fieldName: string) => {
     if (date) {
@@ -118,15 +132,41 @@ function ProjectInputs({ index }: { index: number }) {
     }
   };
   return (
-    <div className='flex flex-col gap-3 px-4'>
-      <div className='flex flex-col gap-3'>
-        <InputWithLabel label='Project name' type='text' placeholder='Project name' schemaType={`projects.${index}`} name='name' />
-        <InputWithLabel label='Technologies Used' schemaType={`projects.${index}`} name='technologies' type='text' placeholder='React.js , Node.js , TypeScript ...' />
-        <InputWithLabel label='Project Link' schemaType={`projects.${index}`} name='deployedUrl' type='url' placeholder='https://project.com' />
-        <InputWithLabel label='GitHub Repository' schemaType={`projects.${index}`} name='githubUrl' type='url' placeholder='https://github.com/your-username/repository' />
-        <div className='flex flex-col gap-3 w-full'>
-          <Label htmlFor='duration' className="text-base font-normal text-slate-500">Duration</Label>
-          <div className='grid grid-cols-1 lg:grid-cols-2 gap-2'>
+    <div className="flex flex-col gap-3 px-4">
+      <div className="flex flex-col gap-3">
+        <InputWithLabel
+          label="Project name"
+          type="text"
+          placeholder="Project name"
+          schemaType={`projects.${index}`}
+          name="name"
+        />
+        <InputWithLabel
+          label="Technologies Used"
+          schemaType={`projects.${index}`}
+          name="technologies"
+          type="text"
+          placeholder="React.js , Node.js , TypeScript ..."
+        />
+        <InputWithLabel
+          label="Project Link"
+          schemaType={`projects.${index}`}
+          name="deployedUrl"
+          type="url"
+          placeholder="https://project.com"
+        />
+        <InputWithLabel
+          label="GitHub Repository"
+          schemaType={`projects.${index}`}
+          name="githubUrl"
+          type="url"
+          placeholder="https://github.com/your-username/repository"
+        />
+        <div className="flex flex-col gap-3 w-full">
+          <Label htmlFor="duration" className="text-base font-normal text-slate-500">
+            Duration
+          </Label>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
             <DatePicker
               selected={startDate}
               onChange={(date: Date | null) => handleDateChange(date, 'startDate')}
@@ -159,9 +199,18 @@ function ProjectInputs({ index }: { index: number }) {
           </div>
         </div>
       </div>
-      <div className='flex flex-col gap-3'>
-        <Label htmlFor={`projects.${index}.description`} className="text-base font-normal text-slate-500">Description</Label>
-        <Textarea placeholder='Enter description' {...register(`projects.${index}.description`)} id='description' />
+      <div className="flex flex-col gap-3">
+        <Label
+          htmlFor={`projects.${index}.description`}
+          className="text-base font-normal text-slate-500"
+        >
+          Description
+        </Label>
+        <Textarea
+          placeholder="Enter description"
+          {...register(`projects.${index}.description`)}
+          id="description"
+        />
       </div>
     </div>
   );

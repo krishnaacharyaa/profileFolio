@@ -87,11 +87,11 @@ interface UserData {
 }
 
 export default function RadialProfileCard() {
-  const { data: session } = useSession()
+  const { data: session } = useSession();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [completionPercentage, setCompletionPercentage] = useState(0);
   const [message, setMessage] = useState({ percentage: 0, msg: '' });
-  const { data, loading, error } = useApi(`/api/user/${session?.user?.id}`)
+  const { data, loading, error } = useApi(`/api/user/${session?.user?.id}`);
 
   const radius = 15.9155;
   const circumference = 2 * Math.PI * radius;
@@ -136,7 +136,10 @@ export default function RadialProfileCard() {
                 <div className="photo flex justify-center items-center">
                   <img
                     className="w-[90%] h-[80%] rounded-full"
-                    src={userData?.basics?.image || "https://t4.ftcdn.net/jpg/00/65/77/27/240_F_65772719_A1UV5kLi5nCEWI0BNLLiFaBPEkUbv5Fv.jpg"}
+                    src={
+                      userData?.basics?.image ||
+                      'https://t4.ftcdn.net/jpg/00/65/77/27/240_F_65772719_A1UV5kLi5nCEWI0BNLLiFaBPEkUbv5Fv.jpg'
+                    }
                     alt="Person's Photo"
                   />
                 </div>
@@ -223,7 +226,11 @@ export default function RadialProfileCard() {
                         <span>
                           <Image
                             className="w-6 h-6 mr-1"
-                            src={userData?.skills && userData.skills.length > 0 ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            src={
+                              userData?.skills && userData.skills.length > 0
+                                ? '/svg/tick.svg'
+                                : '/svg/cross.svg'
+                            }
                             width={100}
                             alt={userData?.skills && userData.skills.length > 0 ? 'tick' : 'cross'}
                             height={100}
@@ -247,9 +254,17 @@ export default function RadialProfileCard() {
                         <span>
                           <Image
                             className="w-6 h-6 mr-1"
-                            src={userData?.education && userData.education.length > 0 ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            src={
+                              userData?.education && userData.education.length > 0
+                                ? '/svg/tick.svg'
+                                : '/svg/cross.svg'
+                            }
                             width={100}
-                            alt={userData?.education && userData.education.length > 0 ? 'tick' : 'cross'}
+                            alt={
+                              userData?.education && userData.education.length > 0
+                                ? 'tick'
+                                : 'cross'
+                            }
                             height={100}
                           />
                         </span>
@@ -271,9 +286,17 @@ export default function RadialProfileCard() {
                         <span>
                           <Image
                             className="w-6 h-6 mr-1"
-                            src={userData?.projects && userData.projects[0].githubUrl ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            src={
+                              userData?.projects && userData.projects[0].githubUrl
+                                ? '/svg/tick.svg'
+                                : '/svg/cross.svg'
+                            }
                             width={100}
-                            alt={userData?.projects && userData.projects[0].githubUrl ? 'tick' : 'cross'}
+                            alt={
+                              userData?.projects && userData.projects[0].githubUrl
+                                ? 'tick'
+                                : 'cross'
+                            }
                             height={100}
                           />
                         </span>
@@ -295,9 +318,17 @@ export default function RadialProfileCard() {
                         <span>
                           <Image
                             className="w-6 h-6 mr-1"
-                            src={userData?.certificates && userData.certificates.length > 0 ? '/svg/tick.svg' : '/svg/cross.svg'}
+                            src={
+                              userData?.certificates && userData.certificates.length > 0
+                                ? '/svg/tick.svg'
+                                : '/svg/cross.svg'
+                            }
                             width={100}
-                            alt={userData?.certificates && userData.certificates.length > 0 ? 'tick' : 'cross'}
+                            alt={
+                              userData?.certificates && userData.certificates.length > 0
+                                ? 'tick'
+                                : 'cross'
+                            }
                             height={100}
                           />
                         </span>
@@ -336,5 +367,5 @@ export default function RadialProfileCard() {
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }

@@ -1,13 +1,13 @@
 'use client';
 
-import "react-datepicker/dist/react-datepicker.css";
+import 'react-datepicker/dist/react-datepicker.css';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, Star, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { InputWithLabel } from '../InputWithLabel';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import DatePicker from 'react-datepicker';
-import { Label } from "@/components/ui/label";
+import { Label } from '@/components/ui/label';
 
 export default function CertificateInput() {
   const [certificate, setShowCertificate] = useState(false);
@@ -24,14 +24,16 @@ export default function CertificateInput() {
           <span className="text-slate-500 text-base">Certificates</span>
         </div>
         <ChevronDown
-          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${certificate ? 'rotate-180' : ''
-            }`}
+          className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
+            certificate ? 'rotate-180' : ''
+          }`}
           size={20}
         />
       </div>
       <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden ${certificate ? 'block' : 'hidden'
-          }`}
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${
+          certificate ? 'block' : 'hidden'
+        }`}
       >
         <ListOfCertificates />
       </div>
@@ -81,8 +83,9 @@ export function ListOfCertificates() {
               />
               <ChevronDown
                 size={20}
-                className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${showInputs === index ? 'rotate-180' : ''
-                  }`}
+                className={`text-slate-400 cursor-pointer transform transition-transform duration-300 ${
+                  showInputs === index ? 'rotate-180' : ''
+                }`}
               />
             </div>
           </div>
@@ -106,10 +109,10 @@ function CertificateInputs({ index }: { index: number }) {
     if (date) {
       const formattedDate = date.toISOString();
       setValue(`certificates.${index}.date`, formattedDate);
-      setDate(date)
+      setDate(date);
     } else {
       setValue(`certificates.${index}.date`, '');
-      setDate(undefined)
+      setDate(undefined);
     }
   };
   return (
@@ -135,7 +138,7 @@ function CertificateInputs({ index }: { index: number }) {
         schemaType={`certificates.${index}`}
         placeholder="Udemy , Coursera"
       />
-      <div className='flex flex-col gap-3 w-full'>
+      <div className="flex flex-col gap-3 w-full">
         <Label className="text-base font-normal text-slate-500">Issue Date</Label>
         <DatePicker
           selected={date}

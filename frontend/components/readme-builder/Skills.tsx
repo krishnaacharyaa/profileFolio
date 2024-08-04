@@ -4,9 +4,9 @@ import {
   DropdownMenuContent,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge";
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 interface SkillsProps {
   onSkillsChange: (skills: string[]) => void;
 }
@@ -54,37 +54,38 @@ const Skills: React.FC<SkillsProps> = ({ onSkillsChange }) => {
   //Function to handle dropdown skill selection
   const toggleSkill = (skill: string) => {
     setSelectedSkills((prevSkills) => {
-        const newSkills = prevSkills.includes(skill)
-            ? prevSkills.filter((s) => s !== skill)
-            : [...prevSkills, skill];
+      const newSkills = prevSkills.includes(skill)
+        ? prevSkills.filter((s) => s !== skill)
+        : [...prevSkills, skill];
 
-        onSkillsChange(newSkills);
-        return newSkills;
+      onSkillsChange(newSkills);
+      return newSkills;
     });
   };
 
   return (
     <div className="mt-4">
       <h2 className="text-lg font-semibold mb-2">Skills</h2>
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="outline">Add Skills</Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56 max-h-[300px] overflow-y-auto transform translate-x-4">
-                    <DropdownMenuSeparator />
-                    <div className="flex flex-wrap gap-2 p-2">
-                        {availableSkills.map((skill) => (
-                            <Badge key={skill}
-                                variant={selectedSkills.includes(skill) ? "default" : "outline"}
-                                className="cursor-pointer"
-                                onClick={() => toggleSkill(skill)}
-                            >
-                                {skill}
-                            </Badge>
-                        ))}
-                    </div>
-                </DropdownMenuContent>
-            </DropdownMenu>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline">Add Skills</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56 max-h-[300px] overflow-y-auto transform translate-x-4">
+          <DropdownMenuSeparator />
+          <div className="flex flex-wrap gap-2 p-2">
+            {availableSkills.map((skill) => (
+              <Badge
+                key={skill}
+                variant={selectedSkills.includes(skill) ? 'default' : 'outline'}
+                className="cursor-pointer"
+                onClick={() => toggleSkill(skill)}
+              >
+                {skill}
+              </Badge>
+            ))}
+          </div>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };

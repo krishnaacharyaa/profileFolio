@@ -15,9 +15,9 @@ func LoadEnv() {
 }
 
 func GetMongoURI() string {
-	uri, exists := os.LookupEnv("MONGO_URL")
+	uri, exists := os.LookupEnv("MONGODB_URI")
 	if !exists {
-		log.Fatal("MONGO_URL not set in environment")
+		log.Fatal("MONGODB_URI not set in environment")
 	}
 	return uri
 }
