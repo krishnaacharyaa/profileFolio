@@ -186,41 +186,35 @@ const EducationField = () => {
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
+                        <PopoverTrigger asChild>
                           <Button
-                            variant={'outline'}
-                            className={cn(
-                              'w-[240px] pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground'
-                            )}
+                            variant={"outline"}
+                            className={cn("w-[240px] justify-start text-left font-normal", !field.value && "text-muted-foreground")}
                           >
-                            {field.value ? (
-                              format(new Date(field.value), 'PPP')
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                           </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value ? new Date(field.value) : undefined}
-                          onSelect={(date) => {
-                            date &&
-                              setValue(
-                                `education.educationArr.${index}.startDate`,
-                                new Date(date).toISOString()
-                              );
-                            trigger(`education.educationArr.${index}.endDate`);
-                          }}
-                          disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                        </PopoverTrigger>
+                        <PopoverContent align="start" className=" w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            fromYear={1960}
+                            toYear={2030}
+                            captionLayout="dropdown-buttons"
+                            selected={field.value ? new Date(field.value) : undefined}
+                            onSelect={(date) => {
+                              date &&
+                                setValue(
+                                  `education.educationArr.${index}.startDate`,
+                                  new Date(date).toISOString()
+                                );
+                              trigger(`education.educationArr.${index}.endDate`);
+                            }}
+                            disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
                     <FormMessage>
                       {errors.education?.educationArr?.[index]?.startDate?.message}
                     </FormMessage>
@@ -236,41 +230,35 @@ const EducationField = () => {
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
+                        <PopoverTrigger asChild>
                           <Button
-                            variant={'outline'}
-                            className={cn(
-                              'w-[240px] pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground'
-                            )}
+                            variant={"outline"}
+                            className={cn("w-[240px] justify-start text-left font-normal", !field.value && "text-muted-foreground")}
                           >
-                            {field.value ? (
-                              format(new Date(field.value), 'PPP')
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                           </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value ? new Date(field.value) : undefined}
-                          onSelect={(date) => {
-                            date &&
-                              setValue(
-                                `education.educationArr.${index}.endDate`,
-                                new Date(date).toISOString()
-                              );
-                            setNoEnd(false);
-                          }}
-                          disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                        </PopoverTrigger>
+                        <PopoverContent align="start" className=" w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            selected={field.value ? new Date(field.value) : undefined}
+                            fromYear={1960}
+                            toYear={2030}
+                            captionLayout="dropdown-buttons"
+                            onSelect={(date) => {
+                              date &&
+                                setValue(
+                                  `education.educationArr.${index}.endDate`,
+                                  new Date(date).toISOString()
+                                );
+                              setNoEnd(false);
+                            }}
+                            disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
                     <FormMessage>
                       {errors.education?.educationArr?.[index]?.endDate?.message}
                     </FormMessage>
