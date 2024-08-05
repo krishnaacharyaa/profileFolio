@@ -57,7 +57,7 @@ const Step1Form = () => {
     Array.isArray(interests) &&
     interests.some(
       (interest) =>
-        interest?.name?.message || interest?.keywords?.some((keyword: any) => keyword?.message)
+        interest?.name?.message || interest?.keywords?.message
     );
 
   return (
