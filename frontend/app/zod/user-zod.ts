@@ -162,7 +162,7 @@ const UserSchema = z.object({
           // Check if the number of digits is between 7 and 15
           return digitsOnly.length >= 7 && digitsOnly.length <= 15;
         },
-        { message: 'Phone number must have between 7 and 15 digits' }
+        { message: 'Phone number must be 7-15 digits' }
       )
       .refine(
         (value) => {
