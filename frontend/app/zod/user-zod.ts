@@ -11,6 +11,10 @@ const isoDateString = z.string().refine(
   }
 );
 
+const githubUrl = z.string().url('Invalid URL format').refine(url => url.includes('github.com'), {
+  message: 'URL must be a GitHub link',
+});
+
 const LocationSchema = z.object({
   address: z
     .string({ required_error: 'Address is required' })
@@ -132,7 +136,7 @@ const ProjectSchema = z
       .string({ required_error: 'Description is required' })
       .min(1, { message: 'Description cannot be empty' }),
     highlights: z.array(z.string()).nullable(),
-    githubUrl: z.string().url('Invalid URL format').nullable(),
+    githubUrl: githubUrl,
     deployedUrl: z.string().url('Invalid URL format').nullable().optional(),
     techStack: z.array(z.string()).min(1, { message: 'Tech stack cannot be empty' }),
   })
