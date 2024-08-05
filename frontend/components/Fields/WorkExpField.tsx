@@ -48,12 +48,14 @@ const WorkExp = () => {
     remove(index);
   };
   const handleAddHighlight = (index: number) => {
-    trigger(`work.${index}.highlights`);
-    const currentHighlights = getValues(`work.${index}.highlights`) || [];
-    setValue(`work.${index}.highlights`, [...currentHighlights, highlight[index]]);
-    let updatedHighlights = [...highlight];
-    updatedHighlights[index] = ''; // Clear input after adding
-    setHighlight(updatedHighlights);
+    if(highlight[index] && highlight[index].length != 0){
+      trigger(`work.${index}.highlights`);
+      const currentHighlights = getValues(`work.${index}.highlights`) || [];
+      setValue(`work.${index}.highlights`, [...currentHighlights, highlight[index]]);
+      let updatedHighlights = [...highlight];
+      updatedHighlights[index] = ''; // Clear input after adding
+      setHighlight(updatedHighlights);
+      }
   };
   return (
     <div className="flex flex-col w-full">

@@ -78,12 +78,14 @@ const ProjectsField = () => {
   };
 
   const handleAddHighlight = (index: number) => {
-    trigger(`projects.projectsArr.${index}.highlights`);
-    const currentHighlights = getValues(`projects.projectsArr.${index}.highlights`) || [];
-    setValue(`projects.projectsArr.${index}.highlights`, [...currentHighlights, highlight[index]]);
-    let updatedHighlights = [...highlight];
-    updatedHighlights[index] = ''; // Clear input after adding
-    setHighlight(updatedHighlights);
+    if(highlight[index] && highlight[index].length != 0){
+      trigger(`projects.projectsArr.${index}.highlights`);
+      const currentHighlights = getValues(`projects.projectsArr.${index}.highlights`) || [];
+      setValue(`projects.projectsArr.${index}.highlights`, [...currentHighlights, highlight[index]]);
+      let updatedHighlights = [...highlight];
+      updatedHighlights[index] = ''; // Clear input after adding
+      setHighlight(updatedHighlights);
+    }
   };
   return (
     <div className="flex flex-col w-full">

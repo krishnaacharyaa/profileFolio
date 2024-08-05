@@ -39,12 +39,14 @@ const InterestsField = () => {
   };
 
   const handleAddKeyword = (index: number) => {
-    const currentKeywords = getValues(`basics.interests.${index}.keywords`) || [];
-    setValue(`basics.interests.${index}.keywords`, [...currentKeywords, keyword[index]]);
-    let updatedKeywords = [...keyword];
-    trigger(`basics.interests.${index}.keywords`);
-    updatedKeywords[index] = ''; // Clear input after adding
-    setKeyword(updatedKeywords);
+    if(keyword[index] && keyword[index].length != 0){
+      const currentKeywords = getValues(`basics.interests.${index}.keywords`) || [];
+      setValue(`basics.interests.${index}.keywords`, [...currentKeywords, keyword[index]]);
+      let updatedKeywords = [...keyword];
+      trigger(`basics.interests.${index}.keywords`);
+      updatedKeywords[index] = ''; // Clear input after adding
+      setKeyword(updatedKeywords);
+    }
   };
 
   return (

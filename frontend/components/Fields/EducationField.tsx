@@ -68,12 +68,14 @@ const EducationField = () => {
   };
 
   const handleAddCourse = (index: number) => {
-    trigger(`education.educationArr.${index}.courses`);
-    const currentCourses = getValues(`education.educationArr.${index}.courses`) || [];
-    setValue(`education.educationArr.${index}.courses`, [...currentCourses, course[index]]);
-    let updatedCourses = [...course];
-    updatedCourses[index] = ''; // Clear input after adding
-    setCourse(updatedCourses);
+    if(course[index] && course[index].length != 0){
+      trigger(`education.educationArr.${index}.courses`);
+      const currentCourses = getValues(`education.educationArr.${index}.courses`) || [];
+      setValue(`education.educationArr.${index}.courses`, [...currentCourses, course[index]]);
+      let updatedCourses = [...course];
+      updatedCourses[index] = ''; // Clear input after adding
+      setCourse(updatedCourses);
+    }
   };
   return (
     <div className="flex flex-col w-full">
