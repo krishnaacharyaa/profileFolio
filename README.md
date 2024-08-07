@@ -20,7 +20,14 @@ ProfileFolio simplifies professional profile management by generating customized
 <details>
 <summary><strong>Install Manually</strong></summary>
 
-- Open Mongodb atlas in localhost:27017
+> [!IMPORTANT]  
+> These installation steps assume you already have Go, MongoDB and NodeJS installed on your machine.
+> * Node JS - https://nodejs.org/en
+> * GO      - https://go.dev/doc/install
+> * MongoDB - https://www.mongodb.com/try/download/shell
+
+
+ Open Mongodb atlas in localhost:27017
   Create `profileFolio` db and
 
 1.  Add this sample data in collection `users`
@@ -177,10 +184,36 @@ ProfileFolio simplifies professional profile management by generating customized
   }
 ]
 ```
+3. Copy the .env files for both Go and NextJS
 
 ```bash
 cp ./backend/.env.sample ./backend/.env
 ```
+
+```bash
+cp ./frontend/.env.sample ./frontend/.env
+```
+
+> NOTE 
+
+For windows based system use the following command
+
+```cmd
+xcopy .\frontend\.env.sample .\frontend\.env
+```
+
+```cmd
+xcopy .\backend\.env.sample .\backend\.env
+```
+
+4. Launch the backend server
+
+```bash
+go run main.go
+```
+
+5. Launch the frontend application
+
 
 ```bash
 npm run installer
