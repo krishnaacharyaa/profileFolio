@@ -67,7 +67,7 @@ const WorkSchema = z
 
 const EducationSchema = z
   .object({
-    institution: z.string({ required_error: 'Institution name is required' }),
+    institution: z.string({ required_error: 'Institution name is required' }).min(1, { message: 'Institution name cannot be empty' }),
     url: z.string().url('Invalid URL format').nullable().default(''),
     area: z
       .string({ required_error: 'Area of study is required' })
@@ -77,8 +77,8 @@ const EducationSchema = z
     }),
     startDate: z.string(),
     endDate: z.union([z.string(), z.undefined()]),
-    score: z.string().nullable().default(''),
-    courses: z.array(z.string()).optional(),
+    score: z.string().min(1, { message: 'Score cannot be empty' }),
+    courses: z.array(z.string()).min(1, { message: 'Courses cannot be empty' }),
   })
   .refine(
     (data) => data.endDate === undefined || new Date(data.endDate) > new Date(data.startDate),
@@ -164,7 +164,7 @@ const UserSchema = z.object({
           const digitsOnly = value.replace(/\D/g, '');
 
           // Check if the number of digits is between 7 and 15
-          return digitsOnly.length >= 7 && digitsOnly.length <= 15;
+          return digitsOnly.length >= 8 && digitsOnly.length <= 16;
         },
         { message: 'Phone number must be 7-15 digits' }
       )

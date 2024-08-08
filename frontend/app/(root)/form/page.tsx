@@ -33,15 +33,8 @@ function FormComponent() {
     resolver: zodResolver(UserSchema),
     mode: 'onChange',
     delayError: 1000,
+    reValidateMode: "onSubmit"
   });
-  const watchedValues = useWatch({
-    control: methods.control,
-  });
-
-  useEffect(() => {
-    console.log('Watched values:', watchedValues);
-    console.log(methods.formState.errors);
-  }, [watchedValues]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -145,22 +138,19 @@ function FormComponent() {
   };
 
   return (
-    <div className="flex flex-col justify-center w-full min-h-screen">
-      <div className="flex justify-between items-center w-full h-[60px] bg-black text-white px-5 font-bold text-xl">
-        <div>Logo</div>
-        <div>Profile pic</div>
-      </div>
-      <div className="flex justify-center items-start w-full flex-grow py-4">
+    <div className="flex flex-col justify-start items-center w-full min-h-screen overflow-hidden my-6">
+      <div className="flex justify-center items-start w-full py-4">
         <StepIndicator steps={steps} currentStep={currentStep} />
       </div>
 
-      <div className="flex justify-center items-start flex-grow py-4">
+      <div className="flex justify-center items-start py-4 w-3/4 h-screen mb-2 overflow-y-auto overflow-s">
         <FormProvider {...methods}>
           <form
             onSubmit={methods.handleSubmit(onSubmit)}
-            className="flex justify-center items-center w-full flex-grow flex-col px-10"
+            className="flex justify-between items-center flex-col px-10 w-full h-3/4"
           >
             {stepForms[currentStep - 1]}
+            <div className="flex gap-4 justify-start items-center mt-6 w-4/5">
             <FormNavigation
               currentStep={currentStep}
               setCurrentStep={setCurrentStep}
@@ -172,6 +162,7 @@ function FormComponent() {
                 Submit
               </Button>
             )}
+            </div>
           </form>
         </FormProvider>
       </div>

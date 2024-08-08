@@ -41,7 +41,7 @@ const Step4Form = () => {
       )) ||
     skills?.message;
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-3/4">
       <Accordion type="multiple" className="w-full" defaultValue={['item-1', 'item-2']}>
         <AccordionItem value="item-1">
           <AccordionTrigger>

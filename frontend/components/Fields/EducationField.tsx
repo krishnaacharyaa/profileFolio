@@ -69,12 +69,12 @@ const EducationField = () => {
 
   const handleAddCourse = (index: number) => {
     if(course[index] && course[index].length != 0){
-      trigger(`education.educationArr.${index}.courses`);
       const currentCourses = getValues(`education.educationArr.${index}.courses`) || [];
       setValue(`education.educationArr.${index}.courses`, [...currentCourses, course[index]]);
       let updatedCourses = [...course];
       updatedCourses[index] = ''; // Clear input after adding
       setCourse(updatedCourses);
+      trigger(`education.educationArr.${index}.courses`);
     }
   };
   return (
@@ -119,7 +119,7 @@ const EducationField = () => {
               </FormControl>
               <FormMessage>{errors?.education?.educationArr?.[index]?.area?.message}</FormMessage>
             </FormItem>
-            <FormItem className="flex flex-col mx-2 justify-center">
+            <FormItem className="flex flex-col justify-start col-span-1 m-2 my-4 gap-2">
               <FormLabel>Study Type</FormLabel>
               <FormControl>
                 <Controller
@@ -180,7 +180,7 @@ const EducationField = () => {
                 {errors?.education?.educationArr?.[index]?.studyType?.message}
               </FormMessage>{' '}
             </FormItem>
-            <div className="mx-2 my-2">
+            <div className="flex flex-col justify-start col-span-1 my-4 m-2 gap-2">
               <FormLabel>Start Date</FormLabel>
               <Controller
                 name={`education.educationArr.${index}.startDate`}
@@ -224,7 +224,7 @@ const EducationField = () => {
                 )}
               />
             </div>
-            <div className="flex flex-col justify-center mx-2 my-2">
+            <div className="flex flex-col justify-start col-span-1 my-4 m-2 gap-2">
               <FormLabel>End Date</FormLabel>
               <Controller
                 name={`education.educationArr.${index}.endDate`}
@@ -320,14 +320,11 @@ const EducationField = () => {
                           onChange={(e) => {
                             let updatedCourses = [...course];
                             updatedCourses[index] = e.target.value;
-                            console.log(updatedCourses);
-                            console.log(e.target.value);
-                            console.log(index);
                             setCourse(updatedCourses);
                           }}
                           placeholder="CS101 - Introduction to Computer Science"
                         />
-                        <Button type="button" onClick={() => handleAddCourse(index)}>
+                        <Button type="button" className='mx-2' onClick={() => handleAddCourse(index)}>
                           <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
                         </Button>
                       </div>
@@ -338,10 +335,12 @@ const EducationField = () => {
                               {Course}
                               <button
                                 className="m-2"
+                                type="button"
                                 onClick={() => {
                                   const currentCourses =
                                     getValues(`education.educationArr.${index}.courses`) || [];
                                   currentCourses.splice(CIndex, 1);
+                                  trigger(`education.educationArr.${index}.courses`);
                                   setValue(
                                     `education.educationArr.${index}.courses`,
                                     currentCourses

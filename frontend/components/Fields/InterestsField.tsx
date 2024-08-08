@@ -86,7 +86,7 @@ const InterestsField = () => {
                             }}
                             placeholder="Add a keyword"
                           />
-                          <Button type="button" onClick={() => handleAddKeyword(index)}>
+                          <Button className='mx-2' type="button" onClick={() => handleAddKeyword(index)}>
                             <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
                           </Button>
                         </div>
@@ -96,11 +96,13 @@ const InterestsField = () => {
                               {kw}
                               <button
                                 className="m-2"
+                                type="button"
                                 onClick={() => {
                                   const currentKeywords =
                                     getValues(`basics.interests.${index}.keywords`) || [];
                                   currentKeywords.splice(kwIndex, 1);
                                   setValue(`basics.interests.${index}.keywords`, currentKeywords);
+                                  trigger(`basics.interests.${index}.keywords`)
                                 }}
                               >
                                 X

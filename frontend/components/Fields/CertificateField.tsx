@@ -54,7 +54,7 @@ const CertificateField = () => {
               </FormControl>
               <FormMessage>{errors?.education?.certificates?.[index]?.name?.message}</FormMessage>
             </FormItem>
-            <div className="my-2">
+            <div className="flex flex-col justify-start col-span-1 my-4 m-2 gap-2">
               <FormLabel>Issuance Date</FormLabel>
               <Controller
                 name={`education.certificates.${index}.date`}

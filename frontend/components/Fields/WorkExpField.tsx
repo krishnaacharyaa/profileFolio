@@ -61,9 +61,9 @@ const WorkExp = () => {
     <div className="flex flex-col w-full">
       <div className="text-2xl font-bold mb-4">Work Experience</div>
       {fields.map((item, index) => (
-        <div key={item.id}>
+        <div key={item.id} className='mb-4'>
           <div className="grid grid-cols-3 w-full mb-4">
-            <FormItem className="m-2">
+            <FormItem className="m-2 col-span-1">
               <FormLabel>Company Name</FormLabel>
               <FormControl>
                 <Controller
@@ -74,7 +74,7 @@ const WorkExp = () => {
               </FormControl>
               <FormMessage>{errors?.work?.[index]?.name?.message}</FormMessage>
             </FormItem>
-            <FormItem className="m-2">
+            <FormItem className="m-2 col-span-1">
               <FormLabel>Position</FormLabel>
               <FormControl>
                 <Controller
@@ -85,7 +85,7 @@ const WorkExp = () => {
               </FormControl>
               <FormMessage>{errors?.work?.[index]?.position?.message}</FormMessage>
             </FormItem>
-            <FormItem className="m-2">
+            <FormItem className="m-2 col-span-1">
               <FormLabel>Company Website</FormLabel>
               <FormControl>
                 <Controller
@@ -96,7 +96,7 @@ const WorkExp = () => {
               </FormControl>
               <FormMessage>{errors?.work?.[index]?.url?.message}</FormMessage>
             </FormItem>
-            <div className="my-2">
+            <div className="flex flex-col justify-start col-span-1 my-4 m-2 gap-2">
               <FormLabel>Start Date</FormLabel>
               <Controller
                 name={`work.${index}.startDate`}
@@ -135,7 +135,7 @@ const WorkExp = () => {
                 )}
               />
             </div>
-            <div className="flex flex-col justify-center mx-2 my-2">
+            <div className="flex flex-col justify-start col-span-1 my-4 m-2 gap-2">
               <FormLabel>End Date</FormLabel>
               <Controller
                 name={`work.${index}.endDate`}
@@ -196,7 +196,7 @@ const WorkExp = () => {
                 </label>
               </div>
             </div>
-            <FormItem className="m-2">
+            <FormItem className="m-2 col-span-1">
               <FormLabel>Summary</FormLabel>
               <FormControl>
                 <Controller
@@ -211,7 +211,7 @@ const WorkExp = () => {
                 {errors.work?.[index]?.summary?.message}
               </FormMessage>
             </FormItem>
-            <FormItem className="m-2">
+            <FormItem className="m-2 col-span-1">
               <FormLabel>Highlights</FormLabel>
               <FormControl>
                 <Controller
@@ -246,6 +246,7 @@ const WorkExp = () => {
                             {hl}
                             <button
                               className="m-2"
+                              type="button"
                               onClick={() => {
                                 const currentHighlights =
                                   getValues(`work.${index}.highlights`) || [];
@@ -272,8 +273,8 @@ const WorkExp = () => {
           </Button>
         </div>
       ))}
-      <Button type="button" onClick={handleAddField} className="mt-2">
-        Add Work Experience
+      <Button type="button" onClick={handleAddField} className="mt-2 max-w-20">
+      <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
       </Button>
     </div>
   );

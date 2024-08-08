@@ -63,7 +63,6 @@ const ProjectsField = () => {
           value: skill.id,
           label: skill.name,
         }));
-        console.log(skillsData);
         setOptions(formattedOptions);
       } catch (error) {
         console.error('Failed to fetch skills data', error);
@@ -103,7 +102,7 @@ const ProjectsField = () => {
               </FormControl>
               <FormMessage>{errors?.projects?.projectsArr?.[index]?.name?.message}</FormMessage>
             </FormItem>
-            <div className="my-2">
+            <div className="flex flex-col justify-start col-span-1 my-4 m-2 gap-2">
               <FormLabel>Start Date</FormLabel>
               <Controller
                 name={`projects.projectsArr.${index}.startDate`}
@@ -147,7 +146,7 @@ const ProjectsField = () => {
                 )}
               />
             </div>
-            <div className="my-2">
+            <div className="flex flex-col justify-start col-span-1 my-4 m-2 gap-2">
               <FormLabel>End Date</FormLabel>
               <Controller
                 name={`projects.projectsArr.${index}.endDate`}
@@ -249,8 +248,9 @@ const ProjectsField = () => {
                       options={options}
                       onValueChange={(value) => {
                         setValue(`projects.projectsArr.${index}.techStack`, value);
+                        trigger(`projects.projectsArr.${index}.techStack`);
                       }}
-                      defaultValue={[]}
+                      defaultValue={getValues(`projects.projectsArr.${index}.techStack`) || []}
                       placeholder="Select stack"
                       variant="inverted"
                       animation={2}
@@ -278,14 +278,11 @@ const ProjectsField = () => {
                           onChange={(e) => {
                             let updatedHighlights = [...highlight];
                             updatedHighlights[index] = e.target.value;
-                            console.log(updatedHighlights);
-                            console.log(e.target.value);
-                            console.log(index);
                             setHighlight(updatedHighlights);
                           }}
                           placeholder="Add a highlight"
                         />
-                        <Button type="button" onClick={() => handleAddHighlight(index)}>
+                        <Button type="button" className='mx-2' onClick={() => handleAddHighlight(index)}>
                           <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
                         </Button>
                       </div>
@@ -296,6 +293,7 @@ const ProjectsField = () => {
                               {hl}
                               <button
                                 className="m-2"
+                                type="button"
                                 onClick={() => {
                                   const currentHighlights =
                                     getValues(`projects.projectsArr.${index}.highlights`) || [];

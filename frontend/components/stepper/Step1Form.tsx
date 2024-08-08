@@ -61,7 +61,7 @@ const Step1Form = () => {
     );
 
   return (
-    <div className="flex flex-col w-[3/4] my-6">
+    <div className="flex flex-col my-6 w-3/4">
       <Accordion type="multiple" className="w-full" defaultValue={['item-1', 'item-2']}>
         <AccordionItem value="item-1">
           <AccordionTrigger>
