@@ -99,9 +99,9 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
   };
 
   return (
-    <div className="flex flex-col justify-center items-start">
+    <div className="flex flex-col justify-center items-start w-full">
       {currentStep === 2 && (
-        <div className="flex justify-center items-center w-full mb-4">
+        <div className="flex justify-start items-center w-full mb-4">
           <Checkbox
             id="terms"
             onCheckedChange={(checked) => {
@@ -119,7 +119,7 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
           </Label>
         </div>
       )}
-      <div className="flex justify-start items-center gap-4">
+      <div className="flex justify-between items-center gap-4 w-full">
         <Button
           type="button"
           className="bg-black text-white"
