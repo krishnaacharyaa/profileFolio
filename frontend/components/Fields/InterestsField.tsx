@@ -39,12 +39,14 @@ const InterestsField = () => {
   };
 
   const handleAddKeyword = (index: number) => {
-    const currentKeywords = getValues(`basics.interests.${index}.keywords`) || [];
-    setValue(`basics.interests.${index}.keywords`, [...currentKeywords, keyword[index]]);
-    let updatedKeywords = [...keyword];
-    trigger(`basics.interests.${index}.keywords`);
-    updatedKeywords[index] = ''; // Clear input after adding
-    setKeyword(updatedKeywords);
+    if(keyword[index] && keyword[index].length != 0){
+      const currentKeywords = getValues(`basics.interests.${index}.keywords`) || [];
+      setValue(`basics.interests.${index}.keywords`, [...currentKeywords, keyword[index]]);
+      let updatedKeywords = [...keyword];
+      trigger(`basics.interests.${index}.keywords`);
+      updatedKeywords[index] = ''; // Clear input after adding
+      setKeyword(updatedKeywords);
+    }
   };
 
   return (
@@ -84,7 +86,7 @@ const InterestsField = () => {
                             }}
                             placeholder="Add a keyword"
                           />
-                          <Button type="button" onClick={() => handleAddKeyword(index)}>
+                          <Button className='mx-2' type="button" onClick={() => handleAddKeyword(index)}>
                             <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
                           </Button>
                         </div>
@@ -94,11 +96,13 @@ const InterestsField = () => {
                               {kw}
                               <button
                                 className="m-2"
+                                type="button"
                                 onClick={() => {
                                   const currentKeywords =
                                     getValues(`basics.interests.${index}.keywords`) || [];
                                   currentKeywords.splice(kwIndex, 1);
                                   setValue(`basics.interests.${index}.keywords`, currentKeywords);
+                                  trigger(`basics.interests.${index}.keywords`)
                                 }}
                               >
                                 X

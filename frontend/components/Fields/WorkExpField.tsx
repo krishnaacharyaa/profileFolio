@@ -48,20 +48,22 @@ const WorkExp = () => {
     remove(index);
   };
   const handleAddHighlight = (index: number) => {
-    trigger(`work.${index}.highlights`);
-    const currentHighlights = getValues(`work.${index}.highlights`) || [];
-    setValue(`work.${index}.highlights`, [...currentHighlights, highlight[index]]);
-    let updatedHighlights = [...highlight];
-    updatedHighlights[index] = ''; // Clear input after adding
-    setHighlight(updatedHighlights);
+    if(highlight[index] && highlight[index].length != 0){
+      trigger(`work.${index}.highlights`);
+      const currentHighlights = getValues(`work.${index}.highlights`) || [];
+      setValue(`work.${index}.highlights`, [...currentHighlights, highlight[index]]);
+      let updatedHighlights = [...highlight];
+      updatedHighlights[index] = ''; // Clear input after adding
+      setHighlight(updatedHighlights);
+      }
   };
   return (
     <div className="flex flex-col w-full">
       <div className="text-2xl font-bold mb-4">Work Experience</div>
       {fields.map((item, index) => (
-        <div key={item.id}>
+        <div key={item.id} className='mb-4'>
           <div className="grid grid-cols-3 w-full mb-4">
-            <FormItem className="m-2">
+            <FormItem className="m-2 col-span-1">
               <FormLabel>Company Name</FormLabel>
               <FormControl>
                 <Controller
@@ -72,7 +74,7 @@ const WorkExp = () => {
               </FormControl>
               <FormMessage>{errors?.work?.[index]?.name?.message}</FormMessage>
             </FormItem>
-            <FormItem className="m-2">
+            <FormItem className="m-2 col-span-1">
               <FormLabel>Position</FormLabel>
               <FormControl>
                 <Controller
@@ -83,7 +85,7 @@ const WorkExp = () => {
               </FormControl>
               <FormMessage>{errors?.work?.[index]?.position?.message}</FormMessage>
             </FormItem>
-            <FormItem className="m-2">
+            <FormItem className="m-2 col-span-1">
               <FormLabel>Company Website</FormLabel>
               <FormControl>
                 <Controller
@@ -94,7 +96,7 @@ const WorkExp = () => {
               </FormControl>
               <FormMessage>{errors?.work?.[index]?.url?.message}</FormMessage>
             </FormItem>
-            <div className="my-2">
+            <div className="flex flex-col justify-start col-span-1 my-4 m-2 gap-2">
               <FormLabel>Start Date</FormLabel>
               <Controller
                 name={`work.${index}.startDate`}
@@ -102,44 +104,38 @@ const WorkExp = () => {
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
+                        <PopoverTrigger asChild>
                           <Button
-                            variant={'outline'}
-                            className={cn(
-                              'w-[240px] pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground'
-                            )}
+                            variant={"outline"}
+                            className={cn("w-[240px] justify-start text-left font-normal", !field.value && "text-muted-foreground")}
                           >
-                            {field.value ? (
-                              format(new Date(field.value), 'PPP')
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                           </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value ? new Date(field.value) : undefined}
-                          onSelect={(date) => {
-                            date &&
-                              setValue(`work.${index}.startDate`, new Date(date).toISOString());
-                            trigger(`work.${index}.endDate`);
-                          }}
-                          disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                        </PopoverTrigger>
+                        <PopoverContent align="start" className=" w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            selected={field.value ? new Date(field.value) : undefined}
+                            onSelect={(date) => {
+                              date &&
+                                setValue(`work.${index}.startDate`, new Date(date).toISOString());
+                              trigger(`work.${index}.endDate`);
+                            }}
+                            disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                            initialFocus
+                            fromYear={1960}
+                            toYear={2030}
+                            captionLayout="dropdown-buttons"
+                          />
+                        </PopoverContent>
+                      </Popover>
                     <FormMessage>{errors.work?.[index]?.startDate?.message}</FormMessage>
                   </FormItem>
                 )}
               />
             </div>
-            <div className="flex flex-col justify-center mx-2 my-2">
+            <div className="flex flex-col justify-start col-span-1 my-4 m-2 gap-2">
               <FormLabel>End Date</FormLabel>
               <Controller
                 name={`work.${index}.endDate`}
@@ -147,37 +143,31 @@ const WorkExp = () => {
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
+                        <PopoverTrigger asChild>
                           <Button
-                            variant={'outline'}
-                            className={cn(
-                              'w-[240px] pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground'
-                            )}
+                            variant={"outline"}
+                            className={cn("w-[240px] justify-start text-left font-normal", !field.value && "text-muted-foreground")}
                           >
-                            {field.value ? (
-                              format(new Date(field.value), 'PPP')
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                           </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value ? new Date(field.value) : undefined}
-                          onSelect={(date) => {
-                            date && setValue(`work.${index}.endDate`, new Date(date).toISOString());
-                            setNoEnd(false);
-                          }}
-                          disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                        </PopoverTrigger>
+                        <PopoverContent align="start" className=" w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            selected={field.value ? new Date(field.value) : undefined}
+                            onSelect={(date) => {
+                              date && setValue(`work.${index}.endDate`, new Date(date).toISOString());
+                              setNoEnd(false);
+                            }}
+                            disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                            initialFocus
+                            fromYear={1960}
+                            toYear={2030}
+                            captionLayout="dropdown-buttons"
+                          />
+                        </PopoverContent>
+                      </Popover>
                     {!noEnd && <FormMessage>{errors.work?.[index]?.endDate?.message}</FormMessage>}
                   </FormItem>
                 )}
@@ -206,7 +196,7 @@ const WorkExp = () => {
                 </label>
               </div>
             </div>
-            <FormItem className="m-2">
+            <FormItem className="m-2 col-span-1">
               <FormLabel>Summary</FormLabel>
               <FormControl>
                 <Controller
@@ -221,7 +211,7 @@ const WorkExp = () => {
                 {errors.work?.[index]?.summary?.message}
               </FormMessage>
             </FormItem>
-            <FormItem className="m-2">
+            <FormItem className="m-2 col-span-1">
               <FormLabel>Highlights</FormLabel>
               <FormControl>
                 <Controller
@@ -256,6 +246,7 @@ const WorkExp = () => {
                             {hl}
                             <button
                               className="m-2"
+                              type="button"
                               onClick={() => {
                                 const currentHighlights =
                                   getValues(`work.${index}.highlights`) || [];
@@ -282,8 +273,8 @@ const WorkExp = () => {
           </Button>
         </div>
       ))}
-      <Button type="button" onClick={handleAddField} className="mt-2">
-        Add Work Experience
+      <Button type="button" onClick={handleAddField} className="mt-2 max-w-20">
+      <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
       </Button>
     </div>
   );

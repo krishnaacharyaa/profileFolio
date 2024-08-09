@@ -68,12 +68,14 @@ const EducationField = () => {
   };
 
   const handleAddCourse = (index: number) => {
-    trigger(`education.educationArr.${index}.courses`);
-    const currentCourses = getValues(`education.educationArr.${index}.courses`) || [];
-    setValue(`education.educationArr.${index}.courses`, [...currentCourses, course[index]]);
-    let updatedCourses = [...course];
-    updatedCourses[index] = ''; // Clear input after adding
-    setCourse(updatedCourses);
+    if(course[index] && course[index].length != 0){
+      const currentCourses = getValues(`education.educationArr.${index}.courses`) || [];
+      setValue(`education.educationArr.${index}.courses`, [...currentCourses, course[index]]);
+      let updatedCourses = [...course];
+      updatedCourses[index] = ''; // Clear input after adding
+      setCourse(updatedCourses);
+      trigger(`education.educationArr.${index}.courses`);
+    }
   };
   return (
     <div className="flex flex-col w-full">
@@ -117,7 +119,7 @@ const EducationField = () => {
               </FormControl>
               <FormMessage>{errors?.education?.educationArr?.[index]?.area?.message}</FormMessage>
             </FormItem>
-            <FormItem className="flex flex-col mx-2 justify-center">
+            <FormItem className="flex flex-col justify-start col-span-1 m-2 my-4 gap-2">
               <FormLabel>Study Type</FormLabel>
               <FormControl>
                 <Controller
@@ -178,7 +180,7 @@ const EducationField = () => {
                 {errors?.education?.educationArr?.[index]?.studyType?.message}
               </FormMessage>{' '}
             </FormItem>
-            <div className="mx-2 my-2">
+            <div className="flex flex-col justify-start col-span-1 my-4 m-2 gap-2">
               <FormLabel>Start Date</FormLabel>
               <Controller
                 name={`education.educationArr.${index}.startDate`}
@@ -186,41 +188,35 @@ const EducationField = () => {
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
+                        <PopoverTrigger asChild>
                           <Button
-                            variant={'outline'}
-                            className={cn(
-                              'w-[240px] pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground'
-                            )}
+                            variant={"outline"}
+                            className={cn("w-[240px] justify-start text-left font-normal", !field.value && "text-muted-foreground")}
                           >
-                            {field.value ? (
-                              format(new Date(field.value), 'PPP')
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                           </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value ? new Date(field.value) : undefined}
-                          onSelect={(date) => {
-                            date &&
-                              setValue(
-                                `education.educationArr.${index}.startDate`,
-                                new Date(date).toISOString()
-                              );
-                            trigger(`education.educationArr.${index}.endDate`);
-                          }}
-                          disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                        </PopoverTrigger>
+                        <PopoverContent align="start" className=" w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            fromYear={1960}
+                            toYear={2030}
+                            captionLayout="dropdown-buttons"
+                            selected={field.value ? new Date(field.value) : undefined}
+                            onSelect={(date) => {
+                              date &&
+                                setValue(
+                                  `education.educationArr.${index}.startDate`,
+                                  new Date(date).toISOString()
+                                );
+                              trigger(`education.educationArr.${index}.endDate`);
+                            }}
+                            disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
                     <FormMessage>
                       {errors.education?.educationArr?.[index]?.startDate?.message}
                     </FormMessage>
@@ -228,7 +224,7 @@ const EducationField = () => {
                 )}
               />
             </div>
-            <div className="flex flex-col justify-center mx-2 my-2">
+            <div className="flex flex-col justify-start col-span-1 my-4 m-2 gap-2">
               <FormLabel>End Date</FormLabel>
               <Controller
                 name={`education.educationArr.${index}.endDate`}
@@ -236,41 +232,35 @@ const EducationField = () => {
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
+                        <PopoverTrigger asChild>
                           <Button
-                            variant={'outline'}
-                            className={cn(
-                              'w-[240px] pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground'
-                            )}
+                            variant={"outline"}
+                            className={cn("w-[240px] justify-start text-left font-normal", !field.value && "text-muted-foreground")}
                           >
-                            {field.value ? (
-                              format(new Date(field.value), 'PPP')
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                           </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value ? new Date(field.value) : undefined}
-                          onSelect={(date) => {
-                            date &&
-                              setValue(
-                                `education.educationArr.${index}.endDate`,
-                                new Date(date).toISOString()
-                              );
-                            setNoEnd(false);
-                          }}
-                          disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                        </PopoverTrigger>
+                        <PopoverContent align="start" className=" w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            selected={field.value ? new Date(field.value) : undefined}
+                            fromYear={1960}
+                            toYear={2030}
+                            captionLayout="dropdown-buttons"
+                            onSelect={(date) => {
+                              date &&
+                                setValue(
+                                  `education.educationArr.${index}.endDate`,
+                                  new Date(date).toISOString()
+                                );
+                              setNoEnd(false);
+                            }}
+                            disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
                     <FormMessage>
                       {errors.education?.educationArr?.[index]?.endDate?.message}
                     </FormMessage>
@@ -330,14 +320,11 @@ const EducationField = () => {
                           onChange={(e) => {
                             let updatedCourses = [...course];
                             updatedCourses[index] = e.target.value;
-                            console.log(updatedCourses);
-                            console.log(e.target.value);
-                            console.log(index);
                             setCourse(updatedCourses);
                           }}
                           placeholder="CS101 - Introduction to Computer Science"
                         />
-                        <Button type="button" onClick={() => handleAddCourse(index)}>
+                        <Button type="button" className='mx-2' onClick={() => handleAddCourse(index)}>
                           <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
                         </Button>
                       </div>
@@ -348,10 +335,12 @@ const EducationField = () => {
                               {Course}
                               <button
                                 className="m-2"
+                                type="button"
                                 onClick={() => {
                                   const currentCourses =
                                     getValues(`education.educationArr.${index}.courses`) || [];
                                   currentCourses.splice(CIndex, 1);
+                                  trigger(`education.educationArr.${index}.courses`);
                                   setValue(
                                     `education.educationArr.${index}.courses`,
                                     currentCourses

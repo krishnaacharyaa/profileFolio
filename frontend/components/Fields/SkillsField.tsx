@@ -34,6 +34,7 @@ const SkillsField = () => {
     setValue,
     getValues,
     clearErrors,
+    trigger
   } = useFormContext<FormData>();
   const [keyword, setKeyword] = useState<string[]>([]);
   const [options, setOptions] = useState<Option[]>([]);
@@ -165,10 +166,10 @@ const SkillsField = () => {
                     <MultiSelect
                       options={options}
                       onValueChange={(value) => {
-                        console.log(value);
                         setValue(`projects.skills.${index}.keywords`, value);
+                        trigger(`projects.skills.${index}.keywords`);
                       }}
-                      defaultValue={[]}
+                      defaultValue={getValues(`projects.skills.${index}.keywords`) || []}
                       placeholder="Select Keywords"
                       variant="inverted"
                       animation={2}
@@ -178,7 +179,7 @@ const SkillsField = () => {
                 />
               </FormControl>
               <FormMessage>
-                {errors?.projects?.projectsArr?.[index]?.techStack?.message}
+                {errors?.projects?.skills?.[index]?.keywords?.message}
               </FormMessage>
             </FormItem>
           </div>

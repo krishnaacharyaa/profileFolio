@@ -62,8 +62,6 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
 
   const handleNext = async () => {
     const isStepValid = await validateStepFields(currentStep);
-    console.log(notExp);
-    console.log(isStepValid);
 
     const isWorkFilled = workFields && Object.values(workFields).some((field) => field);
     if (currentStep != 2 && isStepValid) {
@@ -101,16 +99,16 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className="flex flex-col justify-center items-start w-full">
       {currentStep === 2 && (
-        <div className="flex justify-center items-center w-full m-4">
+        <div className="flex justify-start items-center w-full mb-4">
           <Checkbox
             id="terms"
             onCheckedChange={(checked) => {
-              console.log('Checkbox changed: ', checked);
               setNotExp(checked === true);
             }}
             checked={notExp}
+            className='mx-2'
             disabled={getValues('work') && getValues('work').length != 0}
           />
           <Label
@@ -121,7 +119,7 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
           </Label>
         </div>
       )}
-      <div className="flex justify-between items-center w-full">
+      <div className="flex justify-between items-center gap-4 w-full">
         <Button
           type="button"
           className="bg-black text-white"

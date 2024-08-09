@@ -108,3 +108,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* for date picker */
+.rdp-vhidden {
+  @apply hidden;
+}

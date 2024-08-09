@@ -57,11 +57,11 @@ const Step1Form = () => {
     Array.isArray(interests) &&
     interests.some(
       (interest) =>
-        interest?.name?.message || interest?.keywords?.some((keyword: any) => keyword?.message)
+        interest?.name?.message || interest?.keywords?.message
     );
 
   return (
-    <div className="flex flex-col w-[3/4] my-6">
+    <div className="flex flex-col my-6 w-3/4">
       <Accordion type="multiple" className="w-full" defaultValue={['item-1', 'item-2']}>
         <AccordionItem value="item-1">
           <AccordionTrigger>

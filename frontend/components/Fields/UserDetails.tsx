@@ -15,12 +15,13 @@ const UserDetails = () => {
     formState: { errors },
     trigger,
     setValue,
+    clearErrors,
     getValues,
   } = useFormContext<FormData>();
   return (
     <div className="flex flex-col w-full">
-      <div className="grid grid-cols-3 w-full">
-        <FormItem className="m-2">
+      <div className="grid grid-cols-3 w-full mb-4">
+        <FormItem className="m-2 col-span-1">
           <FormLabel>Name</FormLabel>
           <FormControl>
             <Controller
@@ -31,7 +32,7 @@ const UserDetails = () => {
           </FormControl>
           <FormMessage className="text-red-500">{errors.basics?.name?.message}</FormMessage>
         </FormItem>
-        <FormItem className="m-2">
+        <FormItem className="m-2 col-span-1">
           <FormLabel>Role</FormLabel>
           <FormControl>
             <Controller
@@ -44,7 +45,7 @@ const UserDetails = () => {
           </FormControl>
           <FormMessage className="text-red-500">{errors.basics?.current_role?.message}</FormMessage>
         </FormItem>
-        <FormItem className="m-2">
+        <FormItem className="m-2 col-span-1">
           <FormLabel>Image Url</FormLabel>
           <FormControl>
             <Controller
@@ -55,7 +56,7 @@ const UserDetails = () => {
           </FormControl>
           <FormMessage className="text-red-500">{errors.basics?.image?.message}</FormMessage>
         </FormItem>
-        <FormItem className="m-2">
+        <FormItem className="m-2 col-span-1">
           <FormLabel>Phone</FormLabel>
           <FormControl>
             <Controller
@@ -64,6 +65,7 @@ const UserDetails = () => {
               render={({ field }) => (
                 <PhoneInput
                   value={field.value}
+                  onCountryChange={() => {clearErrors('basics.phone')}}
                   onChange={(number) => {
                     setValue('basics.phone', number);
                     setTimeout(() => {
@@ -79,7 +81,7 @@ const UserDetails = () => {
           </FormControl>
           <FormMessage className="text-red-500">{errors.basics?.phone?.message}</FormMessage>
         </FormItem>
-        <FormItem className="m-2">
+        <FormItem className="m-2 col-span-1">
           <FormLabel>Tell us about yourself</FormLabel>
           <FormControl>
             <Controller

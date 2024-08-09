@@ -118,7 +118,7 @@ function LanguageInputs({ index }: { index: number }) {
         <SelectContent>
           <SelectItem value="fluent">Fluent</SelectItem>
           <SelectItem value="intermediate">Intermediate</SelectItem>
-          <SelectItem value="expert">Expart</SelectItem>
+          <SelectItem value="expert">Expert</SelectItem>
         </SelectContent>
       </Select>
     </div>

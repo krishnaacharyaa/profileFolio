@@ -72,7 +72,7 @@ const LanguagesField = () => {
                     {errors?.basics?.languages?.[index]?.language?.message}
                   </FormMessage>
                 </FormItem>
-                <FormItem className="flex flex-col mx-2 justify-center">
+                <FormItem className="m-2">
                   <FormLabel>Fluency</FormLabel>
                   <FormControl>
                     <Controller

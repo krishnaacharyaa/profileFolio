@@ -63,7 +63,6 @@ const ProjectsField = () => {
           value: skill.id,
           label: skill.name,
         }));
-        console.log(skillsData);
         setOptions(formattedOptions);
       } catch (error) {
         console.error('Failed to fetch skills data', error);
@@ -78,12 +77,14 @@ const ProjectsField = () => {
   };
 
   const handleAddHighlight = (index: number) => {
-    trigger(`projects.projectsArr.${index}.highlights`);
-    const currentHighlights = getValues(`projects.projectsArr.${index}.highlights`) || [];
-    setValue(`projects.projectsArr.${index}.highlights`, [...currentHighlights, highlight[index]]);
-    let updatedHighlights = [...highlight];
-    updatedHighlights[index] = ''; // Clear input after adding
-    setHighlight(updatedHighlights);
+    if(highlight[index] && highlight[index].length != 0){
+      trigger(`projects.projectsArr.${index}.highlights`);
+      const currentHighlights = getValues(`projects.projectsArr.${index}.highlights`) || [];
+      setValue(`projects.projectsArr.${index}.highlights`, [...currentHighlights, highlight[index]]);
+      let updatedHighlights = [...highlight];
+      updatedHighlights[index] = ''; // Clear input after adding
+      setHighlight(updatedHighlights);
+    }
   };
   return (
     <div className="flex flex-col w-full">
@@ -101,7 +102,7 @@ const ProjectsField = () => {
               </FormControl>
               <FormMessage>{errors?.projects?.projectsArr?.[index]?.name?.message}</FormMessage>
             </FormItem>
-            <div className="my-2">
+            <div className="flex flex-col justify-start col-span-1 my-4 m-2 gap-2">
               <FormLabel>Start Date</FormLabel>
               <Controller
                 name={`projects.projectsArr.${index}.startDate`}
@@ -109,41 +110,35 @@ const ProjectsField = () => {
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
+                        <PopoverTrigger asChild>
                           <Button
-                            variant={'outline'}
-                            className={cn(
-                              'w-[240px] pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground'
-                            )}
+                            variant={"outline"}
+                            className={cn("w-[240px] justify-start text-left font-normal", !field.value && "text-muted-foreground")}
                           >
-                            {field.value ? (
-                              format(new Date(field.value), 'PPP')
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                           </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value ? new Date(field.value) : undefined}
-                          onSelect={(date) => {
-                            date &&
-                              setValue(
-                                `projects.projectsArr.${index}.startDate`,
-                                new Date(date).toISOString()
-                              );
-                            trigger(`projects.projectsArr.${index}.endDate`);
-                          }}
-                          disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                        </PopoverTrigger>
+                        <PopoverContent align="start" className=" w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            selected={field.value ? new Date(field.value) : undefined}
+                            onSelect={(date) => {
+                              date &&
+                                setValue(
+                                  `projects.projectsArr.${index}.startDate`,
+                                  new Date(date).toISOString()
+                                );
+                              trigger(`projects.projectsArr.${index}.endDate`);
+                            }}
+                            disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                            initialFocus
+                            fromYear={1960}
+                            toYear={2030}
+                            captionLayout="dropdown-buttons"
+                          />
+                        </PopoverContent>
+                      </Popover>
                     <FormMessage>
                       {errors.projects?.projectsArr?.[index]?.startDate?.message}
                     </FormMessage>
@@ -151,7 +146,7 @@ const ProjectsField = () => {
                 )}
               />
             </div>
-            <div className="my-2">
+            <div className="flex flex-col justify-start col-span-1 my-4 m-2 gap-2">
               <FormLabel>End Date</FormLabel>
               <Controller
                 name={`projects.projectsArr.${index}.endDate`}
@@ -159,40 +154,34 @@ const ProjectsField = () => {
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
+                        <PopoverTrigger asChild>
                           <Button
-                            variant={'outline'}
-                            className={cn(
-                              'w-[240px] pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground'
-                            )}
+                            variant={"outline"}
+                            className={cn("w-[240px] justify-start text-left font-normal", !field.value && "text-muted-foreground")}
                           >
-                            {field.value ? (
-                              format(new Date(field.value), 'PPP')
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                           </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value ? new Date(field.value) : undefined}
-                          onSelect={(date) => {
-                            date &&
-                              setValue(
-                                `projects.projectsArr.${index}.endDate`,
-                                new Date(date).toISOString()
-                              );
-                          }}
-                          disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                        </PopoverTrigger>
+                        <PopoverContent align="start" className=" w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            selected={field.value ? new Date(field.value) : undefined}
+                            onSelect={(date) => {
+                              date &&
+                                setValue(
+                                  `projects.projectsArr.${index}.endDate`,
+                                  new Date(date).toISOString()
+                                );
+                            }}
+                            disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                            initialFocus
+                            fromYear={1960}
+                            toYear={2030}
+                            captionLayout="dropdown-buttons"
+                          />
+                        </PopoverContent>
+                      </Popover>
                     <FormMessage>
                       {errors.projects?.projectsArr?.[index]?.endDate?.message}
                     </FormMessage>
@@ -259,8 +248,9 @@ const ProjectsField = () => {
                       options={options}
                       onValueChange={(value) => {
                         setValue(`projects.projectsArr.${index}.techStack`, value);
+                        trigger(`projects.projectsArr.${index}.techStack`);
                       }}
-                      defaultValue={[]}
+                      defaultValue={getValues(`projects.projectsArr.${index}.techStack`) || []}
                       placeholder="Select stack"
                       variant="inverted"
                       animation={2}
@@ -288,14 +278,11 @@ const ProjectsField = () => {
                           onChange={(e) => {
                             let updatedHighlights = [...highlight];
                             updatedHighlights[index] = e.target.value;
-                            console.log(updatedHighlights);
-                            console.log(e.target.value);
-                            console.log(index);
                             setHighlight(updatedHighlights);
                           }}
                           placeholder="Add a highlight"
                         />
-                        <Button type="button" onClick={() => handleAddHighlight(index)}>
+                        <Button type="button" className='mx-2' onClick={() => handleAddHighlight(index)}>
                           <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
                         </Button>
                       </div>
@@ -306,6 +293,7 @@ const ProjectsField = () => {
                               {hl}
                               <button
                                 className="m-2"
+                                type="button"
                                 onClick={() => {
                                   const currentHighlights =
                                     getValues(`projects.projectsArr.${index}.highlights`) || [];
