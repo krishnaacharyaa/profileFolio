@@ -138,15 +138,15 @@ function FormComponent() {
 
   return (
     <div className="flex flex-col justify-start items-center w-full min-h-screen overflow-hidden my-6">
-      <div className="flex justify-center items-start w-full py-4">
+      <div className="flex justify-center items-start w-3/4">
         <StepIndicator steps={steps} currentStep={currentStep} />
       </div>
 
-      <div className="flex justify-center items-start py-4 w-3/4 h-screen mb-2 overflow-y-auto overflow-s">
+      <div className="flex justify-center items-start py-4 w-3/4 min-h-screen mb-2">
         <FormProvider {...methods}>
           <form
             onSubmit={methods.handleSubmit(onSubmit)}
-            className="flex justify-between items-center flex-col px-10 w-full h-3/4"
+            className="flex justify-between items-center overflow-y-visible flex-col w-full min-h-screen-75"
           >
             {stepForms[currentStep - 1]}
             <div className="flex gap-4 flex-col justify-center items-start mt-6 w-4/5">

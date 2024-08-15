@@ -24,7 +24,10 @@ const config = {
       fontFamily: {
         sans: ['var(--font-sans)', ...fontFamily.sans],
       },
-
+      minHeight: {
+        'custom': '350px', // Your custom min-height value
+        'screen-75': '75vh', // Example: 75% of the viewport height
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

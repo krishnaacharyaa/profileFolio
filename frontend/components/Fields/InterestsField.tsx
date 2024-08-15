@@ -7,6 +7,7 @@ import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import Image from 'next/image';
 import z from 'zod';
 import { Badge } from '../ui/badge';
+import TWButton from '../ui/tailwbutton';
 
 type FormData = z.infer<typeof UserSchema>;
 
@@ -50,7 +51,7 @@ const InterestsField = () => {
   };
 
   return (
-    <div className="flex flex-col w-full px-4">
+    <div className="flex flex-col w-full">
       <div className="flex flex-col justify-center items-start w-full flex-grow">
         {interestFields.map((item, index) => (
           <div key={item.id} className="flex justify-center items-start my-2">
@@ -86,8 +87,8 @@ const InterestsField = () => {
                             }}
                             placeholder="Add a keyword"
                           />
-                          <Button className='mx-2' type="button" onClick={() => handleAddKeyword(index)}>
-                            <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
+                          <Button className='mx-2 text-lg' type="button" onClick={() => handleAddKeyword(index)}>
+                            +
                           </Button>
                         </div>
                         <div className="flex justify-start items-center flex-wrap mt-2">
@@ -124,9 +125,9 @@ const InterestsField = () => {
             </Button>
           </div>
         ))}
-        <Button type="button" onClick={handleAddInterest} className="mt-2">
-          <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
-        </Button>
+        <TWButton onClick={handleAddInterest}>
+          <span className="text-4xl">+</span>
+        </TWButton>
       </div>
     </div>
   );

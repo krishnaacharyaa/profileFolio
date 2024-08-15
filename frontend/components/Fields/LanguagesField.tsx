@@ -17,6 +17,7 @@ import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import z from 'zod';
+import TWButton from '../ui/tailwbutton';
 
 type FormData = z.infer<typeof UserSchema>;
 type Fluency = 'Beginner' | 'Intermediate' | 'Advanced' | 'Native';
@@ -53,7 +54,7 @@ const LanguagesField = () => {
     removeLanguage(index);
   };
   return (
-    <div className="flex flex-col w-full px-4">
+    <div className="flex flex-col w-full">
       <div className="w-full">
         {languageFields &&
           languageFields.map((item, index) => (
@@ -139,9 +140,9 @@ const LanguagesField = () => {
               </Button>
             </div>
           ))}
-        <Button type="button" onClick={handleAddLanguage} className="mt-2">
-          <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
-        </Button>
+        <TWButton onClick={handleAddLanguage}>
+          <span className="text-4xl">+</span>
+        </TWButton>
       </div>
     </div>
   );

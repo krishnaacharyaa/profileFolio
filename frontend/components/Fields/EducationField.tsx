@@ -21,6 +21,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Checkbox } from '../ui/checkbox';
 import Image from 'next/image';
 import { Badge } from '../ui/badge';
+import TWButton from '../ui/tailwbutton';
 
 type FormData = z.infer<typeof UserSchema>;
 
@@ -80,8 +81,8 @@ const EducationField = () => {
   return (
     <div className="flex flex-col w-full">
       {educationFields.map((item, index) => (
-        <div key={item.id}>
-          <div className="grid grid-cols-3 w-full mb-4">
+        <div key={item.id} className='my-4'>
+          <div className="grid grid-cols-3 w-full">
             <FormItem className="m-2">
               <FormLabel>Instituion name</FormLabel>
               <FormControl>
@@ -324,8 +325,8 @@ const EducationField = () => {
                           }}
                           placeholder="CS101 - Introduction to Computer Science"
                         />
-                        <Button type="button" className='mx-2' onClick={() => handleAddCourse(index)}>
-                          <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
+                        <Button type="button" className='mx-2 text-lg' onClick={() => handleAddCourse(index)}>
+                          +
                         </Button>
                       </div>
                       <div className="flex justify-start items-center flex-wrap mt-2">
@@ -363,14 +364,14 @@ const EducationField = () => {
             </FormItem>
           </div>
 
-          <Button type="button" onClick={() => handleRemoveEducation(index)} className="mt-2 mx-4 ">
+          <Button type="button" onClick={() => handleRemoveEducation(index)} className="mt-2">
             <Image src="./delete.svg" alt="svg" width={20} height={20}></Image>
           </Button>
         </div>
       ))}
-      <Button type="button" onClick={handleAddEducation} className="mt-2 mx-4 max-w-20">
-        <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
-      </Button>
+      <TWButton onClick={handleAddEducation}>
+          <span className="text-4xl">+</span>
+        </TWButton>
     </div>
   );
 };

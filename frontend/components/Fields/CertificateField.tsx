@@ -11,6 +11,7 @@ import Image from 'next/image';
 import React from 'react';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import z from 'zod';
+import TWButton from '../ui/tailwbutton';
 
 type FormData = z.infer<typeof UserSchema>;
 
@@ -41,7 +42,7 @@ const CertificateField = () => {
   return (
     <div className="flex flex-col w-full">
       {certificateFields.map((item, index) => (
-        <div key={item.id}>
+        <div key={item.id} className="my-4">
           <div className="grid grid-cols-3 w-full mb-4">
             <FormItem className="m-2">
               <FormLabel>Certificate Name</FormLabel>
@@ -130,15 +131,15 @@ const CertificateField = () => {
           <Button
             type="button"
             onClick={() => handleRemoveCertificates(index)}
-            className="mt-2 mx-4 "
+            className="mt-2"
           >
             <Image src="./delete.svg" alt="svg" width={20} height={20}></Image>
           </Button>
         </div>
       ))}
-      <Button type="button" onClick={handleAddCertificates} className="mt-2 mx-4 max-w-20">
-        <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
-      </Button>
+      <TWButton onClick={handleAddCertificates}>
+          <span className="text-4xl">+</span>
+        </TWButton>
     </div>
   );
 };

@@ -14,6 +14,7 @@ import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/f
 import { cn } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
+import TWButton from '../ui/tailwbutton';
 
 type FormData = z.infer<typeof UserSchema>;
 
@@ -59,7 +60,6 @@ const WorkExp = () => {
   };
   return (
     <div className="flex flex-col w-full">
-      <div className="text-2xl font-bold mb-4">Work Experience</div>
       {fields.map((item, index) => (
         <div key={item.id} className='mb-4'>
           <div className="grid grid-cols-3 w-full mb-4">
@@ -234,10 +234,10 @@ const WorkExp = () => {
                         />
                         <Button
                           type="button"
-                          className="mx-2"
+                          className="mx-2 text-lg"
                           onClick={() => handleAddHighlight(index)}
                         >
-                          <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
+                          +
                         </Button>
                       </div>
                       <div className="flex flex-wrap mt-2 justify-start items-start w-full">
@@ -273,9 +273,10 @@ const WorkExp = () => {
           </Button>
         </div>
       ))}
-      <Button type="button" onClick={handleAddField} className="mt-2 max-w-20">
-      <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
-      </Button>
+      <TWButton onClick={handleAddField}>
+          <span className="text-4xl">+</span>
+        </TWButton>
+        
     </div>
   );
 };

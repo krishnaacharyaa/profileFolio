@@ -95,6 +95,13 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
       console.log(
         `Step ${currentStep} validation failed. Cannot proceed. ${JSON.stringify(errors)}`
       );
+      toast.error(
+        'Please fill all the fields with appropriate input',
+        {
+          position: 'bottom-right',
+          duration: 4000,
+        }
+      );
     }
   };
 
@@ -122,17 +129,15 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
       <div className="flex justify-between items-center gap-4 w-full">
         <Button
           type="button"
-          className="bg-black text-white"
+          className={`bg-black text-white ${currentStep == 1 ? "invisible": ""}`}
           onClick={handleBack}
-          disabled={currentStep === 1}
         >
           Back
         </Button>
         <Button
           type="button"
-          className="bg-black text-white"
+          className={`bg-black text-white ${currentStep === totalSteps ? "invisible": ""}`}
           onClick={handleNext}
-          disabled={currentStep === totalSteps}
         >
           Next
         </Button>

@@ -16,6 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { getSkillsData } from '@/app/actions/user-actions';
 import { SkillRef } from '@/types/skillRef';
 import { MultiSelect } from '../ui/multi-select';
+import TWButton from '../ui/tailwbutton';
 
 type FormData = z.infer<typeof UserSchema>;
 type Option = {
@@ -89,7 +90,7 @@ const ProjectsField = () => {
   return (
     <div className="flex flex-col w-full">
       {projectFields.map((item, index) => (
-        <div key={item.id}>
+        <div key={item.id} className='my-4'>
           <div className="grid grid-cols-3 w-full mb-4">
             <FormItem className="m-2">
               <FormLabel>Project Name</FormLabel>
@@ -282,8 +283,8 @@ const ProjectsField = () => {
                           }}
                           placeholder="Add a highlight"
                         />
-                        <Button type="button" className='mx-2' onClick={() => handleAddHighlight(index)}>
-                          <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
+                        <Button type="button" className='mx-2 text-lg' onClick={() => handleAddHighlight(index)}>
+                          +
                         </Button>
                       </div>
                       <div className="flex justify-start items-center flex-wrap mt-2">
@@ -319,14 +320,14 @@ const ProjectsField = () => {
               </FormMessage>
             </FormItem>
           </div>
-          <Button type="button" onClick={() => handleRemoveProject(index)} className="mt-2 mx-4">
+          <Button type="button" onClick={() => handleRemoveProject(index)} className="mt-2">
             <Image src="./delete.svg" alt="svg" width={20} height={20}></Image>
           </Button>
         </div>
       ))}
-      <Button type="button" onClick={handleAddProject} className="mt-2 mx-4 max-w-20">
-        <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
-      </Button>
+      <TWButton onClick={handleAddProject}>
+          <span className="text-4xl">+</span>
+        </TWButton>
     </div>
   );
 };

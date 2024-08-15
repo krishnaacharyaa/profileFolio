@@ -2,6 +2,7 @@ import { UserSchema } from '@/app/zod/user-zod';
 import React, { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import z from 'zod';
+import TWButton from '@/components/ui/tailwbutton'
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -188,9 +189,9 @@ const SkillsField = () => {
           </Button>
         </div>
       ))}
-      <Button type="button" onClick={handleAddSkill} className="mx-4 mt-2 max-w-20">
-        <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
-      </Button>
+      <TWButton onClick={handleAddSkill}>
+          <span className="text-4xl">+</span>
+        </TWButton>
     </div>
   );
 };

@@ -4,16 +4,10 @@ import AddressField from '@/components/Fields/AddressField';
 import Profiles from '@/components/Fields/ProfilesField';
 import LanguagesField from '@/components/Fields/LanguagesField';
 import InterestsField from '@/components/Fields/InterestsField';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
-import { Badge } from '../ui/badge';
 import { useFormContext } from 'react-hook-form';
 import z from 'zod';
 import { UserSchema } from '@/app/zod/user-zod';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
 type FormData = z.infer<typeof UserSchema>;
 
@@ -24,6 +18,7 @@ const Step1Form = () => {
 
   // Check if there are any errors in the UserDetails fields
   const hasUserDetailsErrors = !!(
+    errors.basics?.message ||
     errors.basics?.name ||
     errors.basics?.current_role ||
     errors.basics?.image ||
@@ -32,6 +27,7 @@ const Step1Form = () => {
   );
   // Check if there are any errors in the Address fields
   const hasAddressErrors = !!(
+    errors?.basics?.location?.message ||
     errors?.basics?.location?.address?.message ||
     errors?.basics?.location?.postalCode?.message ||
     errors?.basics?.location?.city?.message ||
@@ -42,14 +38,14 @@ const Step1Form = () => {
   const hasProfilesErrors =
     Array.isArray(profiles) &&
     profiles.filter(
-      (profile) => profile?.network?.message || profile?.username?.message || profile?.url?.message
+      (profile) => profile?.network?.message || profile?.username?.message || profile?.url?.message || profile?.message
     ).length > 0;
 
   // Check if there are any errors in the Languages fields
   const languages = errors?.basics?.languages;
   const hasLanguagesErrors =
     Array.isArray(languages) &&
-    languages.some((language) => language?.language?.message || language?.fluency?.message);
+    languages.some((language) => language?.language?.message || language?.fluency?.message || language?.message);
 
   // Check if there are any errors in the Interests fields
   const interests = errors?.basics?.interests;
@@ -57,72 +53,25 @@ const Step1Form = () => {
     Array.isArray(interests) &&
     interests.some(
       (interest) =>
-        interest?.name?.message || interest?.keywords?.message
+        interest?.name?.message || interest?.keywords?.message || interest?.message
     );
 
   return (
-    <div className="flex flex-col my-6 w-3/4">
-      <Accordion type="multiple" className="w-full" defaultValue={['item-1', 'item-2']}>
-        <AccordionItem value="item-1">
-          <AccordionTrigger>
-            <div className="flex w-full justify-between items-center px-4">
-              <div className="flex justify-center items-center text-2xl font-bold">
-                User Details <span className="text-sm text-red-500">{'*'}</span>
-              </div>
-              {hasUserDetailsErrors && <Badge variant={'destructive'}>Error</Badge>}
-            </div>
-          </AccordionTrigger>
-          <AccordionContent>
-            <UserDetails />
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="item-2">
-          <AccordionTrigger>
-            <div className="flex w-full justify-between items-center px-4">
-              <div className="flex justify-center items-center text-2xl font-bold">
-                Address <span className="text-sm text-red-500">{'*'}</span>
-              </div>
-              {hasAddressErrors && <Badge variant={'destructive'}>Error</Badge>}
-            </div>
-          </AccordionTrigger>
-          <AccordionContent>
-            <AddressField />
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="item-3">
-          <AccordionTrigger>
-            <div className="flex w-full justify-between items-center px-4">
-              <div className="text-2xl font-bold">Profiles</div>
-              {hasProfilesErrors && <Badge variant={'destructive'}>Error</Badge>}
-            </div>
-          </AccordionTrigger>
-          <AccordionContent>
-            <Profiles />
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="item-4">
-          <AccordionTrigger>
-            <div className="flex w-full justify-between items-center px-4">
-              <div className="text-2xl font-bold">Languages</div>
-              {hasLanguagesErrors && <Badge variant={'destructive'}>Error</Badge>}
-            </div>
-          </AccordionTrigger>
-          <AccordionContent>
-            <LanguagesField />
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="item-5">
-          <AccordionTrigger>
-            <div className="flex w-full justify-between items-center px-4">
-              <div className="text-2xl font-bold">Interests</div>
-              {hasInterestsErrors && <Badge variant={'destructive'}>Error</Badge>}
-            </div>
-          </AccordionTrigger>
-          <AccordionContent>
-            <InterestsField />
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+    <div className="flex flex-col my-6 w-4/5">
+      <Tabs defaultValue="user" className="w-full p-2">
+        <TabsList>
+          <TabsTrigger value="user" className={`${hasUserDetailsErrors && "bg-red-200"}`}>User Details <span className='text-red-500 mx-[1px]'>*</span></TabsTrigger>
+          <TabsTrigger value="address" className={`${hasAddressErrors && "bg-red-200"}`}>Address <span className='text-red-500 mx-[1px]'>*</span></TabsTrigger>
+          <TabsTrigger value="profiles" className={`${hasProfilesErrors && "bg-red-200"}`}>Profiles</TabsTrigger>
+          <TabsTrigger value="languages" className={`${hasLanguagesErrors && "bg-red-200"}`}>Languages</TabsTrigger>
+          <TabsTrigger value="interests" className={`${hasInterestsErrors && "bg-red-200"}`}>Interests</TabsTrigger>
+        </TabsList>
+        <TabsContent value="user"><UserDetails /></TabsContent>
+        <TabsContent value="address"><AddressField /></TabsContent>
+        <TabsContent value="profiles"><Profiles /></TabsContent>
+        <TabsContent value="languages"><LanguagesField /></TabsContent>
+        <TabsContent value="interests"><InterestsField /></TabsContent>
+      </Tabs>
     </div>
   );
 };

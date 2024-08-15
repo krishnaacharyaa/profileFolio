@@ -1,15 +1,9 @@
 import ProjectsField from '@/components/Fields/ProjectsField';
 import SkillsField from '@/components/Fields/SkillsField';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
-import { Badge } from '../ui/badge';
 import { useFormContext } from 'react-hook-form';
 import z from 'zod';
 import { UserSchema } from '@/app/zod/user-zod';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
 type FormData = z.infer<typeof UserSchema>;
 
@@ -41,35 +35,15 @@ const Step4Form = () => {
       )) ||
     skills?.message;
   return (
-    <div className="flex flex-col w-3/4">
-      <Accordion type="multiple" className="w-full" defaultValue={['item-1', 'item-2']}>
-        <AccordionItem value="item-1">
-          <AccordionTrigger>
-            <div className="flex w-full justify-between items-center px-4">
-              <div className="flex justify-center items-center text-2xl font-bold">
-                Projects<span className="text-sm text-red-500">{'*'}</span>
-              </div>
-              {hasProjectsErrors && <Badge variant={'destructive'}>Error</Badge>}
-            </div>
-          </AccordionTrigger>
-          <AccordionContent>
-            <ProjectsField />
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="item-2">
-          <AccordionTrigger>
-            <div className="flex w-full justify-between items-center px-4">
-              <div className="flex justify-center items-center text-2xl font-bold">
-                Skills<span className="text-sm text-red-500">{'*'}</span>
-              </div>
-              {hasSkillsErrors && <Badge variant={'destructive'}>Error</Badge>}
-            </div>
-          </AccordionTrigger>
-          <AccordionContent>
-            <SkillsField />
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+    <div className="flex flex-col my-6 w-4/5">
+      <Tabs defaultValue="projects" className="w-full p-2">
+        <TabsList>
+          <TabsTrigger value="projects" className={`${hasProjectsErrors && "bg-red-200"}`}>Projects <span className='text-red-500 mx-[1px]'>*</span></TabsTrigger>
+          <TabsTrigger value="skills" className={`${hasSkillsErrors && "bg-red-200"}`}>Skills <span className='text-red-500 mx-[1px]'>*</span></TabsTrigger>
+        </TabsList>
+        <TabsContent value="projects"><ProjectsField /></TabsContent>
+        <TabsContent value="skills"><SkillsField /></TabsContent>
+      </Tabs>
     </div>
   );
 };
