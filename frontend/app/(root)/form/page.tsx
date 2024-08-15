@@ -10,11 +10,13 @@ import Step3Form from '@/components/stepper/Step3Form';
 import Step4Form from '@/components/stepper/Step4Form';
 import { Button } from '@/components/ui/button';
 import FormNavigation from '@/components/stepper/FormNavigation';
+import { toast } from 'sonner';
 import { useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import z from 'zod';
+import { error } from 'console';
 
 interface AnyObject {
   [key: string]: any;
@@ -24,6 +26,7 @@ type FormData = z.infer<typeof UserSchema>;
 
 function FormComponent() {
   const searchParams = useSearchParams();
+  const [isLoading, setIsLoading] = useState(false);
   const id = searchParams?.get('id') || '';
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
@@ -34,6 +37,24 @@ function FormComponent() {
     mode: 'onChange',
     delayError: 1000
   });
+  
+  const storedvalue = useWatch({ control: methods.control});
+  useEffect(() => {
+    if(localStorage.getItem("localValue") != null){
+      const resetValue = localStorage.getItem("localValue")|| "";
+      methods.reset(JSON.parse(resetValue))
+    }
+  }, [])
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      localStorage.setItem('localValue', JSON.stringify(storedvalue));
+    }, 700); // 700ms delay
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [storedvalue]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -157,8 +178,21 @@ function FormComponent() {
               steps={steps}
             />
             {currentStep === steps.length && (
-              <Button type="submit" className="bg-black text-white">
-                Submit
+              <Button type="submit" className="bg-black text-white" onClick={() => {
+                if(!methods.formState.isValid){
+                  toast.error(
+                    'Please fill all the fields with appropriate input',
+                    {
+                      position: 'bottom-right',
+                      duration: 4000,
+                    }
+                  );
+                }else{
+                  localStorage.removeItem('localValue')
+                  setIsLoading(true);
+                }
+              }}>
+                {isLoading ? "Loading.." : "Submit"}
               </Button>
             )}
             </div>

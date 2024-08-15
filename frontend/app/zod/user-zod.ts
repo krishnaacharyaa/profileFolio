@@ -188,7 +188,7 @@ const UserSchema = z.object({
   work: z.array(WorkSchema),
   education: z.object({
     educationArr: z.array(EducationSchema).nonempty(),
-    certificates: z.array(CertificateSchema).nullable(),
+    certificates: z.array(CertificateSchema).optional(),
   }),
   projects: z.object({
     projectsArr: z.array(ProjectSchema).nonempty(),
