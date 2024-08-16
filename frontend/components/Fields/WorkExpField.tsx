@@ -18,7 +18,11 @@ import TWButton from '../ui/tailwbutton';
 
 type FormData = z.infer<typeof UserSchema>;
 
-const WorkExp = () => {
+interface WorkExpFieldProps{
+  notExp : boolean
+}
+
+const WorkExp:React.FC<WorkExpFieldProps> = ({notExp}) => {
   const {
     control,
     formState: { errors },
@@ -273,9 +277,9 @@ const WorkExp = () => {
           </Button>
         </div>
       ))}
-      <TWButton onClick={handleAddField}>
+      {!notExp && <TWButton onClick={handleAddField}>
           <span className="text-4xl">+</span>
-        </TWButton>
+        </TWButton>}
         
     </div>
   );

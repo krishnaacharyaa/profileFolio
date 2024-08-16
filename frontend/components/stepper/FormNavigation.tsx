@@ -12,6 +12,8 @@ interface FormNavigationProps {
   totalSteps: number;
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
   steps: Steps[];
+  notExp: boolean;
+  setNotExp: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 type Steps = {
@@ -24,8 +26,9 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
   totalSteps,
   setCurrentStep,
   steps,
+  notExp,
+  setNotExp
 }) => {
-  const [notExp, setNotExp] = useState<boolean>(false);
   const [errValidation, setErrValidation] = useState<boolean>();
   const {
     control,
@@ -108,7 +111,7 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
   return (
     <div className="flex flex-col justify-center items-start w-full">
       {currentStep === 2 && (
-        <div className="flex justify-start items-center w-full mb-4">
+        <div className={`flex justify-start items-center w-full mb-4 ${getValues('work') && getValues('work').length != 0 ? "invisible" : ""}`}>
           <Checkbox
             id="terms"
             onCheckedChange={(checked) => {
@@ -116,7 +119,6 @@ const FormNavigation: React.FC<FormNavigationProps> = ({
             }}
             checked={notExp}
             className='mx-2'
-            disabled={getValues('work') && getValues('work').length != 0}
           />
           <Label
             htmlFor="terms"

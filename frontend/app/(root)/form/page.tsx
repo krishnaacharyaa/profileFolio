@@ -27,6 +27,7 @@ type FormData = z.infer<typeof UserSchema>;
 function FormComponent() {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
+  const [notExp, setNotExp] = useState(false);
   const id = searchParams?.get('id') || '';
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
@@ -117,7 +118,7 @@ function FormComponent() {
 
   const stepForms = [
     <Step1Form key={1} />,
-    <Step2Form key={2} />,
+    <Step2Form key={2} notExp={notExp}/>,
     <Step3Form key={3} />,
     <Step4Form key={4} />,
   ];
@@ -172,6 +173,8 @@ function FormComponent() {
             {stepForms[currentStep - 1]}
             <div className="flex gap-4 flex-col justify-center items-start mt-6 w-4/5">
             <FormNavigation
+              notExp={notExp}
+              setNotExp={setNotExp}
               currentStep={currentStep}
               setCurrentStep={setCurrentStep}
               totalSteps={steps.length}
