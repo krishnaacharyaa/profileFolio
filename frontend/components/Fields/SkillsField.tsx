@@ -83,9 +83,9 @@ const SkillsField = () => {
   return (
     <div className="flex flex-col w-full">
       {skillFields.map((item, index) => (
-        <div key={item.id} className="flex justify-start items-center my-2">
+        <div key={item.id} className="flex justify-start items-start my-2">
           <div className="grid grid-cols-3 w-full flex-1 mb-4 justify-center items-center">
-            <FormItem className="m-2">
+            <FormItem className="">
               <FormLabel>Skill Name <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
@@ -96,7 +96,7 @@ const SkillsField = () => {
               </FormControl>
               <FormMessage>{errors?.projects?.skills?.[index]?.name?.message}</FormMessage>
             </FormItem>
-            <FormItem className="flex flex-col mx-2 justify-center">
+            <FormItem className="flex flex-col mx-4 mt-2 justify-center">
               <FormLabel>Skill Level <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
@@ -157,7 +157,7 @@ const SkillsField = () => {
                 {errors?.projects?.skills?.[index]?.level?.message}
               </FormMessage>
             </FormItem>
-            <FormItem className="m-2">
+            <FormItem className="">
               <FormLabel>Skills <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
@@ -183,7 +183,7 @@ const SkillsField = () => {
               </FormMessage>
             </FormItem>
           </div>
-          <Button type="button" onClick={() => handleRemoveSkill(index)} className="mt-4 mx-4">
+          <Button type="button" onClick={() => handleRemoveSkill(index)} className="mt-[24px] mx-2">
             <Image src="./delete.svg" alt="svg" width={20} height={20}></Image>
           </Button>
         </div>
