@@ -85,9 +85,9 @@ const InterestsField = () => {
                               updatedKeywords[index] = e.target.value;
                               setKeyword(updatedKeywords);
                             }}
-                            placeholder="Add a keyword"
+                            placeholder="Add keywords (max 5)"
                           />
-                          <Button className='mx-2 text-lg' type="button" onClick={() => handleAddKeyword(index)}>
+                          <Button className='mx-2 text-lg' type="button" onClick={() => handleAddKeyword(index)} disabled={getValues(`basics.interests.${index}.keywords`).length > 4}>
                             +
                           </Button>
                         </div>

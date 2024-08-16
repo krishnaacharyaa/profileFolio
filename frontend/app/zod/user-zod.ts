@@ -98,7 +98,7 @@ const CertificateSchema = z.object({
   issuer: z
     .string({ required_error: 'Issuer is required' })
     .min(1, { message: 'Issuer name cannot be empty' }),
-  url: z.union([z.string().url('Invalid URL format'), z.string().length(0)]).nullable().optional(),
+  url: z.union([z.string().url('Invalid URL format'), z.string().length(0)]).optional(),
 });
 
 const SkillSchema = z.object({
@@ -137,9 +137,9 @@ const ProjectSchema = z
     description: z
       .string({ required_error: 'Description is required' })
       .min(1, { message: 'Description cannot be empty' }),
-    highlights: z.array(z.string()).nullable(),
+    highlights: z.array(z.string()).optional(),
     githubUrl: githubUrl,
-    deployedUrl: z.union([z.string().url('Invalid URL format'), z.string().length(0)]).nullable().optional(),
+    deployedUrl: z.union([z.string().url('Invalid URL format'), z.string().length(0)]).optional(),
     techStack: z.array(z.string()).min(1, { message: 'Tech stack cannot be empty' }),
   })
   .refine((data) => new Date(data.endDate) > new Date(data.startDate), {
@@ -183,9 +183,9 @@ const UserSchema = z.object({
       .min(1, { message: 'Summary cannot be empty' })
       .max(80, { message: `can't exceed 80 characters` }),
     location: LocationSchema,
-    profiles: z.array(ProfileSchema).nullable().optional(),
-    languages: z.array(LanguageSchema).nullable().optional(),
-    interests: z.array(InterestSchema).nullable().optional(),
+    profiles: z.array(ProfileSchema).optional(),
+    languages: z.array(LanguageSchema).optional(),
+    interests: z.array(InterestSchema).optional(),
   }),
   work: z.array(WorkSchema),
   education: z.object({
