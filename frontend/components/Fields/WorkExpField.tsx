@@ -68,7 +68,7 @@ const WorkExp:React.FC<WorkExpFieldProps> = ({notExp}) => {
         <div key={item.id} className='mb-4'>
           <div className="grid grid-cols-3 w-full mb-4">
             <FormItem className="m-2 col-span-1">
-              <FormLabel>Company Name</FormLabel>
+              <FormLabel>Company Name <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`work.${index}.name`}
@@ -79,7 +79,7 @@ const WorkExp:React.FC<WorkExpFieldProps> = ({notExp}) => {
               <FormMessage>{errors?.work?.[index]?.name?.message}</FormMessage>
             </FormItem>
             <FormItem className="m-2 col-span-1">
-              <FormLabel>Position</FormLabel>
+              <FormLabel>Position <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`work.${index}.position`}
@@ -90,7 +90,7 @@ const WorkExp:React.FC<WorkExpFieldProps> = ({notExp}) => {
               <FormMessage>{errors?.work?.[index]?.position?.message}</FormMessage>
             </FormItem>
             <FormItem className="m-2 col-span-1">
-              <FormLabel>Company Website</FormLabel>
+              <FormLabel>Company Website <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`work.${index}.url`}
@@ -101,7 +101,7 @@ const WorkExp:React.FC<WorkExpFieldProps> = ({notExp}) => {
               <FormMessage>{errors?.work?.[index]?.url?.message}</FormMessage>
             </FormItem>
             <div className="flex flex-col justify-start col-span-1 my-4 m-2 gap-2">
-              <FormLabel>Start Date</FormLabel>
+              <FormLabel>Start Date <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <Controller
                 name={`work.${index}.startDate`}
                 control={control}
@@ -150,6 +150,7 @@ const WorkExp:React.FC<WorkExpFieldProps> = ({notExp}) => {
                         <PopoverTrigger asChild>
                           <Button
                             variant={"outline"}
+                            disabled={noEnd}
                             className={cn("w-[240px] justify-start text-left font-normal", !field.value && "text-muted-foreground")}
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
@@ -164,10 +165,10 @@ const WorkExp:React.FC<WorkExpFieldProps> = ({notExp}) => {
                               date && setValue(`work.${index}.endDate`, new Date(date).toISOString());
                               setNoEnd(false);
                             }}
-                            disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                            disabled={noEnd}
                             initialFocus
                             fromYear={1960}
-                            toYear={2030}
+                            toYear={2050}
                             captionLayout="dropdown-buttons"
                           />
                         </PopoverContent>
@@ -196,12 +197,12 @@ const WorkExp:React.FC<WorkExpFieldProps> = ({notExp}) => {
                   htmlFor="noEnd"
                   className="text-sm mx-2 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  Working till date
+                  Currently Working
                 </label>
               </div>
             </div>
             <FormItem className="m-2 col-span-1">
-              <FormLabel>Summary</FormLabel>
+              <FormLabel>Summary <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`work.${index}.summary`}
@@ -216,7 +217,7 @@ const WorkExp:React.FC<WorkExpFieldProps> = ({notExp}) => {
               </FormMessage>
             </FormItem>
             <FormItem className="m-2 col-span-1">
-              <FormLabel>Highlights</FormLabel>
+              <FormLabel>Highlights </FormLabel>
               <FormControl>
                 <Controller
                   name={`work.${index}.highlights`}

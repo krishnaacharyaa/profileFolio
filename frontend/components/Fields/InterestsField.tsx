@@ -54,10 +54,10 @@ const InterestsField = () => {
     <div className="flex flex-col w-full">
       <div className="flex flex-col justify-center items-start w-full flex-grow">
         {interestFields.map((item, index) => (
-          <div key={item.id} className="flex justify-center items-start my-2">
-            <div className="flex-1 grid grid-cols-3 mb-4">
+          <div key={item.id} className="flex justify-center items-start my-2 w-3/4">
+            <div className="flex-1 grid grid-cols-2 gap-2 mb-4">
               <FormItem className="m-2">
-                <FormLabel>Interest</FormLabel>
+                <FormLabel>Interest <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
                 <FormControl>
                   <Controller
                     name={`basics.interests.${index}.name`}
@@ -70,7 +70,7 @@ const InterestsField = () => {
                 </FormMessage>
               </FormItem>
               <FormItem className="m-2">
-                <FormLabel>Keywords</FormLabel>
+                <FormLabel>Keywords <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
                 <FormControl>
                   <Controller
                     name={`basics.interests.${index}.keywords`}
@@ -120,7 +120,7 @@ const InterestsField = () => {
                 </FormMessage>
               </FormItem>
             </div>
-            <Button type="button" onClick={() => handleRemoveInterest(index)} className="mt-2">
+            <Button type="button" onClick={() => handleRemoveInterest(index)} className="static mt-[29px]">
               <Image src="./delete.svg" alt="svg" width={20} height={20}></Image>
             </Button>
           </div>

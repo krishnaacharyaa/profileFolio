@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { useRouter } from 'next/navigation';
 import {
   Dialog,
   DialogContent,
@@ -87,6 +88,8 @@ interface UserData {
 }
 
 export default function RadialProfileCard() {
+  const router = useRouter();
+  const sessionData = useSession();
   const { data: session } = useSession();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [completionPercentage, setCompletionPercentage] = useState(0);
@@ -363,6 +366,14 @@ export default function RadialProfileCard() {
               />
             </span>
             Get Profile Link
+          </Button>
+          <Button
+            onClick={() => {
+              router.push(`/form?id=${sessionData?.data?.user?.id}`);
+              console.log(sessionData)
+            }}
+          >
+            Edit your Info
           </Button>
         </CardFooter>
       </Card>

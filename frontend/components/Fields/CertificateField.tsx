@@ -45,7 +45,7 @@ const CertificateField = () => {
         <div key={item.id} className="my-4">
           <div className="grid grid-cols-3 w-full mb-4">
             <FormItem className="m-2">
-              <FormLabel>Certificate Name</FormLabel>
+              <FormLabel>Certificate Name <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`education.certificates.${index}.name`}
@@ -56,7 +56,7 @@ const CertificateField = () => {
               <FormMessage>{errors?.education?.certificates?.[index]?.name?.message}</FormMessage>
             </FormItem>
             <div className="flex flex-col justify-start col-span-1 my-4 m-2 gap-2">
-              <FormLabel>Issuance Date</FormLabel>
+              <FormLabel>Issuance Date <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <Controller
                 name={`education.certificates.${index}.date`}
                 control={control}
@@ -99,7 +99,7 @@ const CertificateField = () => {
               />
             </div>
             <FormItem className="m-2">
-              <FormLabel>Issuer</FormLabel>
+              <FormLabel>Issuer <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`education.certificates.${index}.issuer`}
@@ -110,7 +110,7 @@ const CertificateField = () => {
               <FormMessage>{errors?.education?.certificates?.[index]?.issuer?.message}</FormMessage>
             </FormItem>
             <FormItem className="m-2">
-              <FormLabel>Issuer Website</FormLabel>
+              <FormLabel>Certificate link</FormLabel>
               <FormControl>
                 <Controller
                   name={`education.certificates.${index}.url`}

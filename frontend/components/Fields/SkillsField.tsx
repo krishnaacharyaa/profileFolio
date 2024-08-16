@@ -86,7 +86,7 @@ const SkillsField = () => {
         <div key={item.id} className="flex justify-start items-center my-2">
           <div className="grid grid-cols-3 w-full flex-1 mb-4 justify-center items-center">
             <FormItem className="m-2">
-              <FormLabel>Skill Name</FormLabel>
+              <FormLabel>Skill Name <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`projects.skills.${index}.name`}
@@ -97,7 +97,7 @@ const SkillsField = () => {
               <FormMessage>{errors?.projects?.skills?.[index]?.name?.message}</FormMessage>
             </FormItem>
             <FormItem className="flex flex-col mx-2 justify-center">
-              <FormLabel>Skill Level</FormLabel>
+              <FormLabel>Skill Level <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`projects.skills.${index}.level`}
@@ -125,7 +125,7 @@ const SkillsField = () => {
                       <PopoverContent className="w-[200px] p-0">
                         <Command>
                           <CommandInput placeholder="Search Study types..." />
-                          <CommandEmpty>No Study Options found.</CommandEmpty>
+                          <CommandEmpty>No Skill Options found.</CommandEmpty>
                           <CommandList>
                             <CommandGroup>
                               {SkillOptions.map((level) => (
@@ -158,7 +158,7 @@ const SkillsField = () => {
               </FormMessage>
             </FormItem>
             <FormItem className="m-2">
-              <FormLabel>Skills</FormLabel>
+              <FormLabel>Skills <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`projects.skills.${index}.keywords`}
@@ -173,7 +173,6 @@ const SkillsField = () => {
                       defaultValue={getValues(`projects.skills.${index}.keywords`) || []}
                       placeholder="Select Keywords"
                       variant="inverted"
-                      animation={2}
                       maxCount={3}
                     />
                   )}

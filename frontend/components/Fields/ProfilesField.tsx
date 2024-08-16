@@ -39,10 +39,10 @@ const Profiles = () => {
     <div className="flex flex-col w-full">
       <div className="w-full">
         {profileFields.map((item, index) => (
-          <div key={item.id} className="flex justify-start items-center my-2">
+          <div key={item.id} className="flex justify-start items-start my-2">
             <div className="grid grid-cols-3 mb-4 flex-1">
               <FormItem className="m-2">
-                <FormLabel>Platform</FormLabel>
+                <FormLabel>Platform <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
                 <FormControl>
                   <Controller
                     name={`basics.profiles.${index}.network`}
@@ -55,7 +55,7 @@ const Profiles = () => {
                 </FormMessage>
               </FormItem>
               <FormItem className="m-2">
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Username <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
                 <FormControl>
                   <Controller
                     name={`basics.profiles.${index}.username`}
@@ -70,7 +70,7 @@ const Profiles = () => {
                 </FormMessage>
               </FormItem>
               <FormItem className="m-2">
-                <FormLabel>Link</FormLabel>
+                <FormLabel>Link <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
                 <FormControl>
                   <Controller
                     name={`basics.profiles.${index}.url`}
@@ -89,7 +89,7 @@ const Profiles = () => {
                 </FormMessage>
               </FormItem>
             </div>
-            <Button onClick={() => handleRemoveProfile(index)}>
+            <Button onClick={() => handleRemoveProfile(index)} className='mt-[29px]'>
               <Image src="./delete.svg" alt="svg" width={20} height={20}></Image>
             </Button>
           </div>
