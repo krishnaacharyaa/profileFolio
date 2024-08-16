@@ -30,13 +30,14 @@ ProfileFolio simplifies professional profile management by generating customized
  Open Mongodb atlas in localhost:27017
   Create `profileFolio` db and
 
-1.  Add this sample data in collection `users`
-
+**1.  Add this sample data in collection `users`**
+___
 ```json
 {
   "_id": { "$oid": "667b885950aa1b4215433ff4" },
   "basics": {
     "name": "Jane Smith",
+    "username": "jsmith49",
     "label": "Software Engineer",
     "image": "https://janesmith.com/photo.jpg",
     "email": "jane.smith@gmail.com",
@@ -92,6 +93,7 @@ ProfileFolio simplifies professional profile management by generating customized
         "$date": "2014-06-01T00:00:00Z"
       },
       "score": "3.8",
+      "scoreType": "CGPA",
       "courses": [
         "CS101 - Introduction to Computer Science",
         "CS202 - Data Structures",
@@ -160,7 +162,8 @@ ProfileFolio simplifies professional profile management by generating customized
 }
 ```
 
-2. Add this sample data in collection `skills`
+**2. Add this sample data in collection `skills`**
+___
 
 ```json
 [
@@ -168,23 +171,31 @@ ProfileFolio simplifies professional profile management by generating customized
     "_id": {
       "$oid": "667b888850aa1b4215433ff8"
     },
-    "name": "typescript"
+    "name": "typescript",
+    "level": "intermediate",
+    "keywords": [""]
   },
   {
     "_id": {
       "$oid": "667b888850aa1b4215433ff9"
     },
-    "name": "javascript"
+    "name": "javascript",
+    "level": "intermediate",
+    "keywords": [""]
   },
   {
     "_id": {
       "$oid": "667b888850aa1b4215433ffa"
     },
-    "name": "node"
+    "name": "node",
+    "level": "intermediate",
+    "keywords": [""]
   }
 ]
 ```
-3. Copy the .env files for both Go and NextJS
+
+**3. Copy the .env files for both Go and NextJS**
+___
 
 ```bash
 cp ./backend/.env.sample ./backend/.env
@@ -197,23 +208,25 @@ cp ./frontend/.env.sample ./frontend/.env
 > NOTE 
 
 For windows based system use the following command
+___
 
 ```cmd
-xcopy .\frontend\.env.sample .\frontend\.env
+copy /Y frontend\.env.sample frontend\.env
 ```
 
 ```cmd
-xcopy .\backend\.env.sample .\backend\.env
+copy /Y backend\.env.sample backend\.env
 ```
 
-4. Launch the backend server
+**4. Launch the backend server**
+___
 
 ```bash
-go run main.go
+go build && go run main.go
 ```
 
-5. Launch the frontend application
-
+**5. Launch the frontend application**
+___
 
 ```bash
 npm run installer
@@ -223,7 +236,10 @@ npm run installer
 npm start
 ```
 
-- Access the Application - Frontend: http://localhost:3000 - Backend: http://localhost:8080/api/user
+- Access the Application 
+  - Frontend: http://localhost:3000 
+  - Backend: http://localhost:8080/api/user
+
 </details>
 <hr>
 <details>
