@@ -2,6 +2,7 @@
   "_id": { "$oid": "667b885950aa1b4215433ff4" },
   "basics": {
     "name": "Jane Smith",
+    "username": "jsmith49",
     "label": "Software Engineer",
     "image": "https://janesmith.com/photo.jpg",
     "email": "jane.smith@gmail.com",
@@ -28,6 +29,44 @@
       }
     ]
   },
+  "resumes" : [
+    {
+      "_id": {
+      "$oid": "667b988850aa1b4215433ffe"
+    },
+    "name": "Resume 1",
+    "isDefault": false,
+    "basics": {
+      "name": "Jane Smith",
+      "username": "jsmith49",
+      "label": "Software Engineer",
+      "image": "https://janesmith.com/photo.jpg",
+      "email": "jane.smith@gmail.com",
+      "phone": "(123) 456-7890",
+      "url": "https://janesmith.com",
+      "summary": "Experienced software engineer with a passion for developing innovative programs.",
+      "location": {
+        "address": "123 Main St",
+        "postalCode": "12345",
+        "city": "Metropolis",
+        "countryCode": "US",
+        "region": "NY"
+      },
+      "profiles": [
+        {
+          "network": "LinkedIn",
+          "username": "janesmith",
+          "url": "https://linkedin.com/in/janesmith"
+        },
+        {
+          "network": "GitHub",
+          "username": "janesmith",
+          "url": "https://github.com/janesmith"
+        }
+      ]
+    }
+    }
+  ],
   "work": [
     {
       "name": "TechCorp",
@@ -57,6 +96,7 @@
         "$date": "2014-06-01T00:00:00Z"
       },
       "score": "3.8",
+      "scoreType": "CGPA",
       "courses": [
         "CS101 - Introduction to Computer Science",
         "CS202 - Data Structures",

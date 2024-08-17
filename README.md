@@ -2,7 +2,7 @@
 
 ProfileFolio simplifies professional profile management by generating customized resumes, portfolios, and GitHub readmes tailored to user data and job descriptions. Empower your career journey with precision-crafted application materials, all in one place.
 
-## Installation
+## Getting Started
 
 <details>
 <summary><strong>Install Using Docker</strong></summary>
@@ -15,22 +15,27 @@ ProfileFolio simplifies professional profile management by generating customized
     ```bash
     docker-compose up --build
     ```
-3.  Access the Application - Frontend: http://localhost:3000 - Backend: http://localhost:8080/api/user
+3.  Access the Application 
+    - Frontend : http://localhost:3000 
+    - Backend  : http://localhost:8080/api/test
+
 </details>
+
+> [!NOTE]   
+> The manual installation steps below assume you already have Go, MongoDB and NodeJS installed on your machine. Please find links below to install any missing components.
+> * Node JS - https://nodejs.org/en
+> * GO      - https://go.dev/doc/install
+> * MongoDB - https://www.mongodb.com/try/download/community 
+>
+> If you are using a window system, run the `setup.bat` file by double clicking it, this will execute the manual installation steps for you.
+
 <details>
 <summary><strong>Install Manually</strong></summary>
 
-> [!IMPORTANT]  
-> These installation steps assume you already have Go, MongoDB and NodeJS installed on your machine.
-> * Node JS - https://nodejs.org/en
-> * GO      - https://go.dev/doc/install
-> * MongoDB - https://www.mongodb.com/try/download/shell
+**1.  Fork and Clone the Repository**
 
-
- Open Mongodb atlas in localhost:27017
-  Create `profileFolio` db and
-
-**1.  Add this sample data in collection `users`**
+**2.  Open Mongodb atlas on localhost:27017,
+  Create the `profileFolio` database and add this sample data to the `users` collection**
 ___
 ```json
 {
@@ -64,6 +69,44 @@ ___
       }
     ]
   },
+ "resumes" : [
+    {
+      "_id": {
+      "$oid": "667b988850aa1b4215433ffe"
+    },
+    "name": "Resume 1",
+    "isDefault": false,
+    "basics": {
+      "name": "Jane Smith",
+      "username": "jsmith49",
+      "label": "Software Engineer",
+      "image": "https://janesmith.com/photo.jpg",
+      "email": "jane.smith@gmail.com",
+      "phone": "(123) 456-7890",
+      "url": "https://janesmith.com",
+      "summary": "Experienced software engineer with a passion for developing innovative programs.",
+      "location": {
+        "address": "123 Main St",
+        "postalCode": "12345",
+        "city": "Metropolis",
+        "countryCode": "US",
+        "region": "NY"
+      },
+      "profiles": [
+        {
+          "network": "LinkedIn",
+          "username": "janesmith",
+          "url": "https://linkedin.com/in/janesmith"
+        },
+        {
+          "network": "GitHub",
+          "username": "janesmith",
+          "url": "https://github.com/janesmith"
+        }
+      ]
+    }
+    }
+  ],
   "work": [
     {
       "name": "TechCorp",
@@ -159,10 +202,11 @@ ___
       ]
     }
   ]
+
 }
 ```
 
-**2. Add this sample data in collection `skills`**
+**3. Add this sample data to the `skills` collection**
 ___
 
 ```json
@@ -172,29 +216,26 @@ ___
       "$oid": "667b888850aa1b4215433ff8"
     },
     "name": "typescript",
-    "level": "intermediate",
-    "keywords": [""]
+    "level": "intermediate"
   },
   {
     "_id": {
       "$oid": "667b888850aa1b4215433ff9"
     },
     "name": "javascript",
-    "level": "intermediate",
-    "keywords": [""]
+    "level": "intermediate"
   },
   {
     "_id": {
       "$oid": "667b888850aa1b4215433ffa"
     },
     "name": "node",
-    "level": "intermediate",
-    "keywords": [""]
+    "level": "intermediate"
   }
 ]
 ```
 
-**3. Copy the .env files for both Go and NextJS**
+**4. Copy the `.env` files for both Go and NextJS**
 ___
 
 ```bash
@@ -205,9 +246,7 @@ cp ./backend/.env.sample ./backend/.env
 cp ./frontend/.env.sample ./frontend/.env
 ```
 
-> NOTE 
-
-For windows based system use the following command
+  For a windows based system use the following commands
 ___
 
 ```cmd
@@ -218,30 +257,34 @@ copy /Y frontend\.env.sample frontend\.env
 copy /Y backend\.env.sample backend\.env
 ```
 
-**4. Launch the backend server**
-___
-
-```bash
-go build && go run main.go
-```
-
-**5. Launch the frontend application**
+**5. Install necesaary dependecies for both frontend and backend**
 ___
 
 ```bash
 npm run installer
 ```
 
+**6. Launch the backend server**
+___
+
 ```bash
-npm start
+npm run start-backend
+```
+
+**7. Launch the frontend application**
+___
+
+```bash
+npm run start-frontend
 ```
 
 - Access the Application 
-  - Frontend: http://localhost:3000 
-  - Backend: http://localhost:8080/api/user
+  - Frontend  : http://localhost:3000 
+  - Backend   : http://localhost:8080/api/test
 
 </details>
 <hr>
+
 <details>
 <summary><strong>Steps to Start Contributing</strong></summary>
 

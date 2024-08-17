@@ -1,20 +1,23 @@
 [
-    {
-      "_id": {
-        "$oid": "667b888850aa1b4215433ff8"
-      },
-      "name": "typescript"
+  {
+    "_id": {
+      "$oid": "667b888850aa1b4215433ff8"
     },
-    {
-      "_id": {
-        "$oid": "667b888850aa1b4215433ff9"
-      },
-      "name": "javascript"
+    "name": "typescript",
+    "level": "intermediate"
+  },
+  {
+    "_id": {
+      "$oid": "667b888850aa1b4215433ff9"
     },
-    {
-      "_id": {
-        "$oid": "667b888850aa1b4215433ffa"
-      },
-      "name": "node"
-    }
+    "name": "javascript",
+    "level": "intermediate"
+  },
+  {
+    "_id": {
+      "$oid": "667b888850aa1b4215433ffa"
+    },
+    "name": "node",
+    "level": "intermediate"
+  }
 ]

@@ -7,11 +7,10 @@ set "MONGODB_INSTALLED=0"
 set "MONGOIMPORT_INSTALLED=0"
 
 :: GO BUILD SETTINGS
-set "START=cd backend && go build && go run main.go"
+set "START=cd backend && go mod tidy && go run main.go"
 
 :: NEXT JS COMMANDS
 set "INSTALL_AND_RUN=cd frontend && npm install && npm run dev"
-set "RUN_FRONTEND =cd frontend && npm run dev"
 
 :: MONGOIMPORT COMMANDS
 set "INSERT_USER_INFO=mongoimport --db profileFolio --collection users --file users.json"
@@ -31,34 +30,34 @@ set "COPY_ENV_FRONTEND=copy /Y frontend\.env.sample frontend\.env"
 
 ::CHECK IF ALL NECESSARY DEPENDENCIES ARE SETUP
 
-REM Check if Go is installed
+::Check if Go is installed
 go version >nul 2>&1
 IF NOT ERRORLEVEL 1 (
     set GO_INSTALLED=1
 )
 
-REM Check if Node.js is installed
+::Check if Node.js is installed
 node --version >nul 2>&1
 IF NOT ERRORLEVEL 1 (
     set NODE_INSTALLED=1
 )
 
-REM Check if MongoDB is installed
+::Check if MongoDB is installed
 mongod --version >nul 2>&1
 IF NOT ERRORLEVEL 1 (
     set MONGO_INSTALLED=1
 )
 
-REM Check if mongoimport is installed by checking the version
+::Check if mongoimport is installed by checking the version
 mongoimport --version >nul 2>&1
 
-REM If the command succeeds, set MONGOIMPORT_INSTALLED to 1
+::If the command succeeds, set MONGOIMPORT_INSTALLED to 1
 IF NOT ERRORLEVEL 1 (
     set "MONGOIMPORT_INSTALLED=1"
 )
 
 
-REM Check the results and provide feedback
+::Check the results and provide feedback
 IF %GO_INSTALLED%==0 (
     echo Go is not installed on this system.
     echo Please install Go from https://go.dev/doc/install
@@ -157,6 +156,6 @@ start cmd /k "%START_MONGO%"
         exit /b 0
     )
 
-REM If the script gets here, something went wrong
+::If the script gets here, something went wrong
 echo Unable to start the mongo server !!!
 PAUSE
