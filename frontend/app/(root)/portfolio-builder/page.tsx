@@ -1,18 +1,19 @@
+'use client'
+
 import Sidebar from '@/components/common/Sidebar';
 import PortfolioView from '@/components/portfolio-builder/PortfolioView';
 import { FormProviders } from '@/lib/form-provider';
+import { useState } from 'react';
 
 const Page = () => {
+  const [isLoading, setIsLoading] = useState(false);
   return (
     <div className="h-full px-12">
       <FormProviders>
         <div className="mt-7 flex justify-between h-full">
-          <Sidebar />
+          <Sidebar isLoading={isLoading} />
           <PortfolioView />
         </div>
-        <button type="submit" className="border-2 border-black rounded-md p-4">
-          Submit
-        </button>
       </FormProviders>
     </div>
   );
