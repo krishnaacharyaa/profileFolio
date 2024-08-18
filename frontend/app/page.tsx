@@ -1,7 +1,25 @@
-import { Button } from '@/components/ui/button';
-import { ArrowRight, Check } from 'lucide-react';
+'use client'
 
-export default async function Home() {
+import { Button } from '@/components/ui/button';
+import { ArrowRight, Check, Loader2 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
+export default function Home() {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+  function handleClick() {
+    setIsLoading(true);
+    if (session?.user?.id) {
+      router.push('/dashboard');
+    } else {
+      router.push('/signin');
+    }
+  }
+
   return (
     <div className="bg-gradient-to-b from-gray-50 to-white min-h-screen">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -17,8 +35,16 @@ export default async function Home() {
             A free and open-source profile builder that takes care of your portfolio, resume, and
             GitHub README — all in one place.
           </p>
-          <Button size="lg" className="px-8 py-3 text-lg font-semibold">
-            Get Started <ArrowRight className="ml-2 h-5 w-5" />
+          <Button size="lg" className="px-8 py-3 text-lg font-semibold" onClick={handleClick} disabled={isLoading}>
+            {isLoading ? (
+              <>
+                Redirect to {session?.user?.id ? 'dashboard' : 'sign in'} <Loader2 className="animate-spin h-5 w-5" />
+              </>
+            ) : (
+              <>
+                Get Started <ArrowRight className="ml-2 h-5 w-5" />
+              </>
+            )}
           </Button>
         </section>
 
