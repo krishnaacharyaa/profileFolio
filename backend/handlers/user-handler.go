@@ -237,13 +237,20 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	defaultResume := models.Resume{
+		Basics: models.Basics{
+			Email: authUser.Email,
+		},
+	}
+
 	// Create a new User object with only email
 	user = models.User{
 		Basics: models.Basics{
 			Username: authUser.Username,
 			Email:    authUser.Email,
 		},
-		Resumes:      []models.Resume{},
+		Resumes: []models.Resume{defaultResume},
+
 		Work:         []models.WorkExperience{},
 		Education:    []models.EducationDetail{},
 		Certificates: []models.Certificate{},
