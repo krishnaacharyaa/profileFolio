@@ -101,7 +101,7 @@ type ResumeSkill struct {
 }
 
 type Resume struct {
-	ID           primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	ID           primitive.ObjectID `bson:"_id" json:"_id"`
 	Name         string             `json:"name,omitempty"`
 	IsDefault    bool               `json:"isDefault,omitempty"`
 	TemplateID   string             `json:"templateId,omitempty"`

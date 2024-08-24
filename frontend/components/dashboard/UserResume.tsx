@@ -126,7 +126,7 @@ export default function UserResume({ resumes, setRefresh }: ResumeProps) {
         <div className="justify-self-end" onClick={handlePortfolio}>
           <h3 className="text-xl font-semibold mb-4 md:mb-6">Portfolio</h3>
           <div className="grid grid-cols-1 md:grid-cols-1 gap-4 md:gap-6 lg:gap-8">
-            <div className="relative w-[12vw] justify-self-end overflow-hidden rounded-lg p-2 shadow-lg group hover:shadow-xl ">
+            <div className="relative w-[12vw] justify-self-end overflow-hidden rounded-lg p-2 shadow-lg group hover:shadow-xl cursor-pointer hover:scale-105 transition-transform duration-300">
               <Link href="#" className="absolute z-10" prefetch={false}>
                 <span className="sr-only">View</span>
               </Link>

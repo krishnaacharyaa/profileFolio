@@ -3,10 +3,8 @@ package handlers
 import (
 	"backend/middleware"
 	"backend/models"
-
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -47,7 +45,6 @@ func GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
@@ -190,11 +187,6 @@ func UpdateUserByUsernameHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SignUpHandler(w http.ResponseWriter, r *http.Request) {
-	// client := shared.GetClient()
-	// if client == nil {
-	// 	http.Error(w, "Database connection not established", http.StatusInternalServerError)
-	// 	return
-	// }
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
@@ -245,12 +237,27 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	defaultResume := models.Resume{
+		Basics: models.Basics{
+			Email: authUser.Email,
+		},
+	}
+
 	// Create a new User object with only email
 	user = models.User{
 		Basics: models.Basics{
 			Username: authUser.Username,
 			Email:    authUser.Email,
 		},
+		Resumes: []models.Resume{defaultResume},
+
+		Work:         []models.WorkExperience{},
+		Education:    []models.EducationDetail{},
+		Certificates: []models.Certificate{},
+		Skills:       []models.Skill{},
+		Languages:    []models.Language{},
+		Interests:    []models.Interest{},
+		Projects:     []models.Project{},
 	}
 
 	// Insert into users collection
@@ -277,20 +284,15 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	response := map[string]interface{}{
-		"message": "User created successfully",
-		"id": new_user.ID,
+		"message":     "User created successfully",
+		"id":          new_user.ID,
 		"accessToken": token,
-		"user":    new_user,
+		"user":        new_user,
 	}
 	json.NewEncoder(w).Encode(response)
 }
 
 func SignInHandler(w http.ResponseWriter, r *http.Request) {
-	// client := shared.GetClient()
-	// if client == nil {
-	// 	http.Error(w, "Database connection not established", http.StatusInternalServerError)
-	// 	return
-	// }
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
@@ -341,8 +343,8 @@ func SignInHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := map[string]interface{}{
-		"id" : user.ID,
-		"user":user.Basics,
+		"id":          user.ID,
+		"user":        user.Basics,
 		"accessToken": token,
 	}
 
@@ -361,9 +363,6 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-func TestHandler(w http.ResponseWriter, r *http.Request){
-	fmt.Fprintf(w, "This is a dummy handler for db.go")
-}
 func GetSkillsHandler(w http.ResponseWriter, r *http.Request) {
 	collection := client.Database("profileFolio").Collection("skills")
 	var skills []models.SkillCollection

@@ -34,10 +34,10 @@ export default function ResumeHeader({ setResumeName, resumeName }: HeaderProps)
             <Input
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              className="w-40"
+              className="w-60 border-b-2 border-t-0 border-r-0 border-l-0 border-black text-lg rounded-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
             />
             <Check
-              size={20}
+              size={25}
               cursor={'pointer'}
               className="text-green-500"
               onClick={handleCheckClick}
