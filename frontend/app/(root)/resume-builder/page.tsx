@@ -4,13 +4,14 @@ import Sidebar from '@/components/common/Sidebar';
 import ResumeHeader from '@/components/resume-builder/ResumeHeader';
 import ResumeView from '@/components/resume-builder/ResumeView';
 import { useForm, FormProvider, FieldValues } from 'react-hook-form';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import useApi from '@/hooks/useClientHook';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 import { toast } from 'sonner';
 
 function PageContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const resumeId = searchParams?.get('resumeId');
   const { data: session } = useSession();
@@ -21,6 +22,7 @@ function PageContent() {
 
   const [currentResume, setCurrentResume] = useState<any>(null);
   const [resumeName, setResumeName] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (user && user.resumes && resumeId) {
@@ -50,6 +52,7 @@ function PageContent() {
 
   const onSubmit = async (data: FieldValues) => {
     try {
+      setIsLoading(true)
       const config = {
         headers: { Authorization: `Bearer ${token}` },
       };
@@ -72,7 +75,10 @@ function PageContent() {
       toast.success(response.data?.message, {
         position: 'top-center',
       });
+
+      router.push('/dashboard')
     } catch (error: any) {
+      setIsLoading(false)
       toast.error(error?.response?.data || error.message, {
         position: 'top-center',
       });
@@ -86,7 +92,7 @@ function PageContent() {
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)} className="h-full">
           <div className="mt-7 flex justify-between h-full gap-8">
-            <Sidebar />
+            <Sidebar isLoading={isLoading} />
             <ResumeView />
           </div>
         </form>

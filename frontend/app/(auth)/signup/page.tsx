@@ -13,6 +13,7 @@ import { signUpSchema, TSignUpSchema } from '@/app/zod/signup-zod';
 import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
 
@@ -34,9 +35,12 @@ function Signup() {
   });
 
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [cnfPassVisible, setCnfPassVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (data: FieldValues) => {
     try {
+      setIsLoading(true)
       const res = await axios.post(`${backendUrl}/api/signup`, data);
       if (res.status === 201) {
         const response = await signIn('credentials', {
@@ -55,33 +59,16 @@ function Signup() {
             position: 'top-center',
           });
           reset();
-          router.replace('/form');
+          router.push('/form');
         }
       }
     } catch (error: any) {
+      setIsLoading(false)
       toast.error(error?.response?.data, {
         position: 'top-center',
       });
     }
   };
-
-  const EyeIcon = (props: any) => (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
 
   return (
     <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
@@ -143,7 +130,13 @@ function Signup() {
                   className="absolute right-2 top-1/2 -translate-y-1/2"
                   onClick={() => setPasswordVisible(!passwordVisible)}
                 >
-                  <EyeIcon className="h-5 w-5" />
+                  {
+                    passwordVisible ? (
+                      <EyeOff className='h-5 w-5' />
+                    ) : (
+                      <Eye className='h-5 w-5' />
+                    )
+                  }
                 </Button>
               </div>
               <p className="px-2 text-xs text-red-500">{errors.password?.message}</p>
@@ -155,7 +148,7 @@ function Signup() {
                 <Input
                   {...register('confirmPassword', { required: true })}
                   id="confirmPassword"
-                  type={passwordVisible ? 'text' : 'password'}
+                  type={cnfPassVisible ? 'text' : 'password'}
                   placeholder="Confirm Password"
                 />
                 <Button
@@ -163,16 +156,30 @@ function Signup() {
                   size="icon"
                   type="button"
                   className="absolute right-2 top-1/2 -translate-y-1/2"
-                  onClick={() => setPasswordVisible(!passwordVisible)}
+                  onClick={() => setCnfPassVisible(!cnfPassVisible)}
                 >
-                  <EyeIcon className="h-5 w-5" />
+                  {
+                    cnfPassVisible ? (
+                      <EyeOff className='h-5 w-5' />
+                    ) : (
+                      <Eye className='h-5 w-5' />
+                    )
+                  }
                 </Button>
               </div>
               <p className="px-2 text-xs text-red-500">{errors.confirmPassword?.message}</p>
             </div>
 
             <Button disabled={isSubmitting} type="submit" className="w-full">
-              Sign Up
+              {
+                isLoading ? (
+                  <>
+                    redirect to dashboard {' '} <Loader2 className="animate-spin h-5 w-5" />
+                  </>
+                ) : (
+                  'Sign up'
+                )
+              }
             </Button>
           </form>
           <div className="mt-4 text-center text-sm text-muted-foreground">
