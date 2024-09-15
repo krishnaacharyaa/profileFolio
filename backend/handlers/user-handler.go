@@ -241,6 +241,8 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 		Basics: models.Basics{
 			Email: authUser.Email,
 		},
+		Name: authUser.Username + " resume",
+		IsDefault: true,
 	}
 
 	// Create a new User object with only email
