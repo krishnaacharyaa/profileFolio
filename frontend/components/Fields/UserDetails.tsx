@@ -22,7 +22,7 @@ const UserDetails = () => {
     <div className="flex flex-col w-full">
       <div className="grid grid-cols-3 w-full mb-4">
         <FormItem className="m-2 col-span-1">
-          <FormLabel>Name</FormLabel>
+          <FormLabel>Name <span className='text-red-500'>*</span></FormLabel>
           <FormControl>
             <Controller
               name="basics.name"
@@ -33,7 +33,7 @@ const UserDetails = () => {
           <FormMessage className="text-red-500">{errors.basics?.name?.message}</FormMessage>
         </FormItem>
         <FormItem className="m-2 col-span-1">
-          <FormLabel>Role</FormLabel>
+          <FormLabel>Role <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
           <FormControl>
             <Controller
               name="basics.current_role"
@@ -46,7 +46,7 @@ const UserDetails = () => {
           <FormMessage className="text-red-500">{errors.basics?.current_role?.message}</FormMessage>
         </FormItem>
         <FormItem className="m-2 col-span-1">
-          <FormLabel>Image Url</FormLabel>
+          <FormLabel>Image Url <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
           <FormControl>
             <Controller
               name="basics.image"
@@ -57,7 +57,7 @@ const UserDetails = () => {
           <FormMessage className="text-red-500">{errors.basics?.image?.message}</FormMessage>
         </FormItem>
         <FormItem className="m-2 col-span-1">
-          <FormLabel>Phone</FormLabel>
+          <FormLabel>Phone <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
           <FormControl>
             <Controller
               name="basics.phone"
@@ -82,7 +82,7 @@ const UserDetails = () => {
           <FormMessage className="text-red-500">{errors.basics?.phone?.message}</FormMessage>
         </FormItem>
         <FormItem className="m-2 col-span-1">
-          <FormLabel>Tell us about yourself</FormLabel>
+          <FormLabel>Tell us about yourself <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
           <FormControl>
             <Controller
               name="basics.summary"

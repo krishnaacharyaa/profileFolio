@@ -2,6 +2,7 @@ import { UserSchema } from '@/app/zod/user-zod';
 import React, { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import z from 'zod';
+import TWButton from '@/components/ui/tailwbutton'
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -82,10 +83,10 @@ const SkillsField = () => {
   return (
     <div className="flex flex-col w-full">
       {skillFields.map((item, index) => (
-        <div key={item.id} className="flex justify-start items-center my-2">
+        <div key={item.id} className="flex justify-start items-start my-2">
           <div className="grid grid-cols-3 w-full flex-1 mb-4 justify-center items-center">
-            <FormItem className="m-2">
-              <FormLabel>Skill Name</FormLabel>
+            <FormItem className="">
+              <FormLabel>Skill Name <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`projects.skills.${index}.name`}
@@ -95,8 +96,8 @@ const SkillsField = () => {
               </FormControl>
               <FormMessage>{errors?.projects?.skills?.[index]?.name?.message}</FormMessage>
             </FormItem>
-            <FormItem className="flex flex-col mx-2 justify-center">
-              <FormLabel>Skill Level</FormLabel>
+            <FormItem className="flex flex-col mx-4 mt-2 justify-center">
+              <FormLabel>Skill Level <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`projects.skills.${index}.level`}
@@ -124,7 +125,7 @@ const SkillsField = () => {
                       <PopoverContent className="w-[200px] p-0">
                         <Command>
                           <CommandInput placeholder="Search Study types..." />
-                          <CommandEmpty>No Study Options found.</CommandEmpty>
+                          <CommandEmpty>No Skill Options found.</CommandEmpty>
                           <CommandList>
                             <CommandGroup>
                               {SkillOptions.map((level) => (
@@ -156,8 +157,8 @@ const SkillsField = () => {
                 {errors?.projects?.skills?.[index]?.level?.message}
               </FormMessage>
             </FormItem>
-            <FormItem className="m-2">
-              <FormLabel>Skills</FormLabel>
+            <FormItem className="">
+              <FormLabel>Skills <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`projects.skills.${index}.keywords`}
@@ -172,7 +173,6 @@ const SkillsField = () => {
                       defaultValue={getValues(`projects.skills.${index}.keywords`) || []}
                       placeholder="Select Keywords"
                       variant="inverted"
-                      animation={2}
                       maxCount={3}
                     />
                   )}
@@ -183,14 +183,14 @@ const SkillsField = () => {
               </FormMessage>
             </FormItem>
           </div>
-          <Button type="button" onClick={() => handleRemoveSkill(index)} className="mt-4 mx-4">
+          <Button type="button" onClick={() => handleRemoveSkill(index)} className="mt-[24px] mx-2">
             <Image src="./delete.svg" alt="svg" width={20} height={20}></Image>
           </Button>
         </div>
       ))}
-      <Button type="button" onClick={handleAddSkill} className="mx-4 mt-2 max-w-20">
-        <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
-      </Button>
+      <TWButton onClick={handleAddSkill}>
+          <span className="text-4xl">+</span>
+        </TWButton>
     </div>
   );
 };

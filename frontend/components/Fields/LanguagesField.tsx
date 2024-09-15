@@ -17,6 +17,7 @@ import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import z from 'zod';
+import TWButton from '../ui/tailwbutton';
 
 type FormData = z.infer<typeof UserSchema>;
 type Fluency = 'Beginner' | 'Intermediate' | 'Advanced' | 'Native';
@@ -53,14 +54,14 @@ const LanguagesField = () => {
     removeLanguage(index);
   };
   return (
-    <div className="flex flex-col w-full px-4">
-      <div className="w-full">
+    <div className="flex flex-col w-full">
+      <div className="w-3/4">
         {languageFields &&
           languageFields.map((item, index) => (
             <div key={item.id} className="flex justify-center items-start my-2">
-              <div className="flex-1 grid grid-cols-3 items-center">
+              <div className="flex-1 grid grid-cols-2 items-start gap-2">
                 <FormItem className="m-2">
-                  <FormLabel>Language</FormLabel>
+                  <FormLabel>Language <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
                   <FormControl>
                     <Controller
                       name={`basics.languages.${index}.language`}
@@ -72,8 +73,8 @@ const LanguagesField = () => {
                     {errors?.basics?.languages?.[index]?.language?.message}
                   </FormMessage>
                 </FormItem>
-                <FormItem className="m-2">
-                  <FormLabel>Fluency</FormLabel>
+                <FormItem className="flex flex-col justify-center items-start mt-4">
+                  <FormLabel>Fluency <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
                   <FormControl>
                     <Controller
                       name={`basics.languages.${index}.fluency`}
@@ -100,8 +101,6 @@ const LanguagesField = () => {
                           </PopoverTrigger>
                           <PopoverContent className="w-[200px] p-0">
                             <Command>
-                              <CommandInput placeholder="Search fluency..." />
-                              <CommandEmpty>No fluency found.</CommandEmpty>
                               <CommandList>
                                 <CommandGroup>
                                   {fluencyOptions.map((fl) => (
@@ -134,14 +133,14 @@ const LanguagesField = () => {
                   </FormMessage>{' '}
                 </FormItem>
               </div>
-              <Button type="button" onClick={() => handleRemoveLanguage(index)} className="mt-2">
+              <Button type="button" onClick={() => handleRemoveLanguage(index)} className="mt-[27px]">
                 <Image src="./delete.svg" alt="svg" width={20} height={20}></Image>
               </Button>
             </div>
           ))}
-        <Button type="button" onClick={handleAddLanguage} className="mt-2">
-          <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
-        </Button>
+        <TWButton onClick={handleAddLanguage}>
+          <span className="text-4xl">+</span>
+        </TWButton>
       </div>
     </div>
   );

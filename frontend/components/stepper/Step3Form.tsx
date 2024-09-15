@@ -1,15 +1,9 @@
 import CertificateField from '@/components/Fields/CertificateField';
 import EducationField from '@/components/Fields/EducationField';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
-import { Badge } from '../ui/badge';
 import { useFormContext } from 'react-hook-form';
 import z from 'zod';
 import { UserSchema } from '@/app/zod/user-zod';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
 type FormData = z.infer<typeof UserSchema>;
 
@@ -46,35 +40,15 @@ const Step3Form = () => {
         certificate?.issuer?.message
     );
   return (
-    <div className="flex flex-col w-3/4 my-6">
-      <Accordion type="multiple" className="w-full" defaultValue={['item-1', 'item-2']}>
-        <AccordionItem value="item-1">
-          <AccordionTrigger>
-            <div className="flex w-full justify-between items-center px-4">
-              <div className="flex justify-center items-center text-2xl font-bold">
-                Education<span className="text-sm text-red-500">{'*'}</span>
-              </div>
-              {hasEducationErrors && <Badge variant={'destructive'}>Error</Badge>}
-            </div>
-          </AccordionTrigger>
-          <AccordionContent>
-            <EducationField />
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="item-2">
-          <AccordionTrigger>
-            <div className="flex w-full justify-between items-center px-4">
-              <div className="flex justify-center items-center text-2xl font-bold">
-                Certificates
-              </div>
-              {hasCertificatesErrors && <Badge variant={'destructive'}>Error</Badge>}
-            </div>
-          </AccordionTrigger>
-          <AccordionContent>
-            <CertificateField />
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+    <div className="flex flex-col my-6 w-4/5">
+      <Tabs defaultValue="education" className="w-full">
+        <TabsList>
+          <TabsTrigger value="education" className={`${hasEducationErrors && "bg-red-200"}`}>Education <span className='text-red-500 mx-[1px]'>*</span></TabsTrigger>
+          <TabsTrigger value="certificates" className={`${hasCertificatesErrors && "bg-red-200"}`}>Certificates</TabsTrigger>
+        </TabsList>
+        <TabsContent value="education"><EducationField /></TabsContent>
+        <TabsContent value="certificates"><CertificateField /></TabsContent>
+      </Tabs>
     </div>
   );
 };

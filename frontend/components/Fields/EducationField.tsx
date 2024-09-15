@@ -21,6 +21,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Checkbox } from '../ui/checkbox';
 import Image from 'next/image';
 import { Badge } from '../ui/badge';
+import TWButton from '../ui/tailwbutton';
 
 type FormData = z.infer<typeof UserSchema>;
 
@@ -43,7 +44,6 @@ const EducationField = () => {
     control,
     name: 'education.educationArr',
   });
-  const [noEnd, setNoEnd] = useState(true);
   const [course, setCourse] = useState<string[]>([]);
   const StudyOptions: { value: StudyType; label: string }[] = [
     { value: 'Remote', label: 'Remote' },
@@ -53,10 +53,10 @@ const EducationField = () => {
   const handleAddEducation = () => {
     appendEducation({
       institution: '',
-      url: '',
       area: '',
       studyType: 'In-premise',
       startDate: new Date().toISOString(),
+      endDate: new Date().toISOString(),
       score: '',
       courses: [],
     });
@@ -80,10 +80,10 @@ const EducationField = () => {
   return (
     <div className="flex flex-col w-full">
       {educationFields.map((item, index) => (
-        <div key={item.id}>
-          <div className="grid grid-cols-3 w-full mb-4">
+        <div key={item.id} className='my-4'>
+          <div className="grid grid-cols-3 w-full">
             <FormItem className="m-2">
-              <FormLabel>Instituion name</FormLabel>
+              <FormLabel>Instituion name <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`education.educationArr.${index}.institution`}
@@ -96,20 +96,7 @@ const EducationField = () => {
               </FormMessage>
             </FormItem>
             <FormItem className="m-2">
-              <FormLabel>Institution Website</FormLabel>
-              <FormControl>
-                <Controller
-                  name={`education.educationArr.${index}.url`}
-                  control={control}
-                  render={({ field }) => (
-                    <Input {...field} placeholder="URL" type="url" value={field.value || ''} />
-                  )}
-                />
-              </FormControl>
-              <FormMessage>{errors?.education?.educationArr?.[index]?.url?.message}</FormMessage>
-            </FormItem>
-            <FormItem className="m-2">
-              <FormLabel>Area of study</FormLabel>
+              <FormLabel>Area of study <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`education.educationArr.${index}.area`}
@@ -120,7 +107,7 @@ const EducationField = () => {
               <FormMessage>{errors?.education?.educationArr?.[index]?.area?.message}</FormMessage>
             </FormItem>
             <FormItem className="flex flex-col justify-start col-span-1 m-2 my-4 gap-2">
-              <FormLabel>Study Type</FormLabel>
+              <FormLabel>Study Type <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`education.educationArr.${index}.studyType`}
@@ -147,8 +134,6 @@ const EducationField = () => {
                       </PopoverTrigger>
                       <PopoverContent className="w-[200px] p-0">
                         <Command>
-                          <CommandInput placeholder="Search Study types..." />
-                          <CommandEmpty>No Study Options found.</CommandEmpty>
                           <CommandList>
                             <CommandGroup>
                               {StudyOptions.map((ST) => (
@@ -181,7 +166,7 @@ const EducationField = () => {
               </FormMessage>{' '}
             </FormItem>
             <div className="flex flex-col justify-start col-span-1 my-4 m-2 gap-2">
-              <FormLabel>Start Date</FormLabel>
+              <FormLabel>Start Date <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <Controller
                 name={`education.educationArr.${index}.startDate`}
                 control={control}
@@ -225,7 +210,7 @@ const EducationField = () => {
               />
             </div>
             <div className="flex flex-col justify-start col-span-1 my-4 m-2 gap-2">
-              <FormLabel>End Date</FormLabel>
+              <FormLabel>End Date <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <Controller
                 name={`education.educationArr.${index}.endDate`}
                 control={control}
@@ -246,7 +231,7 @@ const EducationField = () => {
                             mode="single"
                             selected={field.value ? new Date(field.value) : undefined}
                             fromYear={1960}
-                            toYear={2030}
+                            toYear={2050}
                             captionLayout="dropdown-buttons"
                             onSelect={(date) => {
                               date &&
@@ -254,9 +239,8 @@ const EducationField = () => {
                                   `education.educationArr.${index}.endDate`,
                                   new Date(date).toISOString()
                                 );
-                              setNoEnd(false);
                             }}
-                            disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                            disabled={(date) =>  date < new Date('1900-01-01')}
                             initialFocus
                           />
                         </PopoverContent>
@@ -267,29 +251,6 @@ const EducationField = () => {
                   </FormItem>
                 )}
               />
-              <div className="flex mt-2">
-                <Checkbox
-                  id="noEnd"
-                  checked={noEnd}
-                  onCheckedChange={() => {
-                    console.log(noEnd);
-                    setValue(
-                      `education.educationArr.${index}.endDate`,
-                      noEnd
-                        ? new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
-                        : undefined
-                    );
-                    setNoEnd(!noEnd);
-                    clearErrors(`education.educationArr.${index}.endDate`);
-                  }}
-                />
-                <label
-                  htmlFor="noEnd"
-                  className="text-sm mx-2 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  Enrolled till date
-                </label>
-              </div>
             </div>
             <FormItem className="m-2">
               <FormLabel>Score</FormLabel>
@@ -324,8 +285,8 @@ const EducationField = () => {
                           }}
                           placeholder="CS101 - Introduction to Computer Science"
                         />
-                        <Button type="button" className='mx-2' onClick={() => handleAddCourse(index)}>
-                          <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
+                        <Button type="button" className='mx-2 text-lg' onClick={() => handleAddCourse(index)}>
+                          +
                         </Button>
                       </div>
                       <div className="flex justify-start items-center flex-wrap mt-2">
@@ -363,14 +324,14 @@ const EducationField = () => {
             </FormItem>
           </div>
 
-          <Button type="button" onClick={() => handleRemoveEducation(index)} className="mt-2 mx-4 ">
+          <Button type="button" onClick={() => handleRemoveEducation(index)} className="mt-2">
             <Image src="./delete.svg" alt="svg" width={20} height={20}></Image>
           </Button>
         </div>
       ))}
-      <Button type="button" onClick={handleAddEducation} className="mt-2 mx-4 max-w-20">
-        <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
-      </Button>
+      <TWButton onClick={handleAddEducation}>
+          <span className="text-4xl">+</span>
+        </TWButton>
     </div>
   );
 };

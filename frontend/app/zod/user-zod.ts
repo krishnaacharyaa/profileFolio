@@ -11,9 +11,12 @@ const isoDateString = z.string().refine(
   }
 );
 
-const githubUrl = z.string().url('Invalid URL format').refine(url => url.includes('github.com'), {
-  message: 'URL must be a GitHub link',
-});
+const githubUrl = z.union([
+  z.string().url('Invalid URL format').refine(url => url.includes('github.com'), {
+    message: 'URL must be a GitHub link',
+  }),
+  z.string().length(0),
+]).optional();
 
 const LocationSchema = z.object({
   address: z
@@ -68,7 +71,6 @@ const WorkSchema = z
 const EducationSchema = z
   .object({
     institution: z.string({ required_error: 'Institution name is required' }).min(1, { message: 'Institution name cannot be empty' }),
-    url: z.string().url('Invalid URL format').nullable().default(''),
     area: z
       .string({ required_error: 'Area of study is required' })
       .min(1, { message: 'Area cannot be empty' }),
@@ -76,9 +78,9 @@ const EducationSchema = z
       required_error: 'Study type must be either "Remote" or "In-premise"',
     }),
     startDate: z.string(),
-    endDate: z.union([z.string(), z.undefined()]),
-    score: z.string().min(1, { message: 'Score cannot be empty' }),
-    courses: z.array(z.string()).min(1, { message: 'Courses cannot be empty' }),
+    endDate: z.string(),
+    score: z.string().optional(),
+    courses: z.array(z.string()).optional(),
   })
   .refine(
     (data) => data.endDate === undefined || new Date(data.endDate) > new Date(data.startDate),
@@ -96,7 +98,7 @@ const CertificateSchema = z.object({
   issuer: z
     .string({ required_error: 'Issuer is required' })
     .min(1, { message: 'Issuer name cannot be empty' }),
-  url: z.string().url('Invalid URL format').nullable(),
+  url: z.union([z.string().url('Invalid URL format'), z.string().length(0)]).optional(),
 });
 
 const SkillSchema = z.object({
@@ -135,9 +137,9 @@ const ProjectSchema = z
     description: z
       .string({ required_error: 'Description is required' })
       .min(1, { message: 'Description cannot be empty' }),
-    highlights: z.array(z.string()).nullable(),
+    highlights: z.array(z.string()).optional(),
     githubUrl: githubUrl,
-    deployedUrl: z.string().url('Invalid URL format').nullable().optional(),
+    deployedUrl: z.union([z.string().url('Invalid URL format'), z.string().length(0)]).optional(),
     techStack: z.array(z.string()).min(1, { message: 'Tech stack cannot be empty' }),
   })
   .refine((data) => new Date(data.endDate) > new Date(data.startDate), {
@@ -181,14 +183,14 @@ const UserSchema = z.object({
       .min(1, { message: 'Summary cannot be empty' })
       .max(80, { message: `can't exceed 80 characters` }),
     location: LocationSchema,
-    profiles: z.array(ProfileSchema).nullable().optional(),
-    languages: z.array(LanguageSchema).nullable().optional(),
-    interests: z.array(InterestSchema).nullable().optional(),
+    profiles: z.array(ProfileSchema).optional(),
+    languages: z.array(LanguageSchema).optional(),
+    interests: z.array(InterestSchema).optional(),
   }),
   work: z.array(WorkSchema),
   education: z.object({
     educationArr: z.array(EducationSchema).nonempty(),
-    certificates: z.array(CertificateSchema).nullable(),
+    certificates: z.array(CertificateSchema).optional(),
   }),
   projects: z.object({
     projectsArr: z.array(ProjectSchema).nonempty(),

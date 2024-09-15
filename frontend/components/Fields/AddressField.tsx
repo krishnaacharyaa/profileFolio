@@ -19,7 +19,7 @@ const AddressField = () => {
     <div className="flex flex-col w-full">
       <div className="grid grid-cols-3 w-full">
         <FormItem className="m-2">
-          <FormLabel>Address</FormLabel>
+          <FormLabel>Address <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
           <FormControl>
             <Controller
               name="basics.location.address"
@@ -34,7 +34,7 @@ const AddressField = () => {
           </FormMessage>
         </FormItem>
         <FormItem className="m-2">
-          <FormLabel>Postal code</FormLabel>
+          <FormLabel>Postal code <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
           <FormControl>
             <Controller
               name="basics.location.postalCode"
@@ -47,7 +47,7 @@ const AddressField = () => {
           </FormMessage>
         </FormItem>
         <FormItem className="m-2">
-          <FormLabel>City</FormLabel>
+          <FormLabel>City <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
           <FormControl>
             <Controller
               name="basics.location.city"
@@ -60,7 +60,7 @@ const AddressField = () => {
           </FormMessage>
         </FormItem>
         <FormItem className="m-2">
-          <FormLabel>Region</FormLabel>
+          <FormLabel>Region <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
           <FormControl>
             <Controller
               name="basics.location.region"

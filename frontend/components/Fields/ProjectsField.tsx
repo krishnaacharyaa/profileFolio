@@ -16,6 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { getSkillsData } from '@/app/actions/user-actions';
 import { SkillRef } from '@/types/skillRef';
 import { MultiSelect } from '../ui/multi-select';
+import TWButton from '../ui/tailwbutton';
 
 type FormData = z.infer<typeof UserSchema>;
 type Option = {
@@ -89,10 +90,10 @@ const ProjectsField = () => {
   return (
     <div className="flex flex-col w-full">
       {projectFields.map((item, index) => (
-        <div key={item.id}>
+        <div key={item.id} className='my-4'>
           <div className="grid grid-cols-3 w-full mb-4">
             <FormItem className="m-2">
-              <FormLabel>Project Name</FormLabel>
+              <FormLabel>Project Name <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`projects.projectsArr.${index}.name`}
@@ -103,7 +104,7 @@ const ProjectsField = () => {
               <FormMessage>{errors?.projects?.projectsArr?.[index]?.name?.message}</FormMessage>
             </FormItem>
             <div className="flex flex-col justify-start col-span-1 my-4 m-2 gap-2">
-              <FormLabel>Start Date</FormLabel>
+              <FormLabel>Start Date <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <Controller
                 name={`projects.projectsArr.${index}.startDate`}
                 control={control}
@@ -147,7 +148,7 @@ const ProjectsField = () => {
               />
             </div>
             <div className="flex flex-col justify-start col-span-1 my-4 m-2 gap-2">
-              <FormLabel>End Date</FormLabel>
+              <FormLabel>End Date <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <Controller
                 name={`projects.projectsArr.${index}.endDate`}
                 control={control}
@@ -190,7 +191,7 @@ const ProjectsField = () => {
               />
             </div>
             <FormItem className="m-2">
-              <FormLabel>Description</FormLabel>
+              <FormLabel>Description <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`projects.projectsArr.${index}.description`}
@@ -208,7 +209,7 @@ const ProjectsField = () => {
               </FormMessage>
             </FormItem>
             <FormItem className="m-2">
-              <FormLabel>Github link</FormLabel>
+              <FormLabel>Github link <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`projects.projectsArr.${index}.githubUrl`}
@@ -223,7 +224,7 @@ const ProjectsField = () => {
               </FormMessage>
             </FormItem>
             <FormItem className="m-2">
-              <FormLabel>Deployment link</FormLabel>
+              <FormLabel>Deployment link <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`projects.projectsArr.${index}.deployedUrl`}
@@ -238,7 +239,7 @@ const ProjectsField = () => {
               </FormMessage>
             </FormItem>
             <FormItem className="m-2">
-              <FormLabel>Tech Stack</FormLabel>
+              <FormLabel>Tech Stack <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`projects.projectsArr.${index}.techStack`}
@@ -253,7 +254,6 @@ const ProjectsField = () => {
                       defaultValue={getValues(`projects.projectsArr.${index}.techStack`) || []}
                       placeholder="Select stack"
                       variant="inverted"
-                      animation={2}
                       maxCount={3}
                       onChange={() => {}}
                     />
@@ -265,7 +265,7 @@ const ProjectsField = () => {
               </FormMessage>
             </FormItem>
             <FormItem className="m-2">
-              <FormLabel>Highlights</FormLabel>
+              <FormLabel>Highlights </FormLabel>
               <FormControl>
                 <Controller
                   name={`projects.projectsArr.${index}.highlights`}
@@ -282,8 +282,8 @@ const ProjectsField = () => {
                           }}
                           placeholder="Add a highlight"
                         />
-                        <Button type="button" className='mx-2' onClick={() => handleAddHighlight(index)}>
-                          <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
+                        <Button type="button" className='mx-2 text-lg' onClick={() => handleAddHighlight(index)}>
+                          +
                         </Button>
                       </div>
                       <div className="flex justify-start items-center flex-wrap mt-2">
@@ -319,14 +319,14 @@ const ProjectsField = () => {
               </FormMessage>
             </FormItem>
           </div>
-          <Button type="button" onClick={() => handleRemoveProject(index)} className="mt-2 mx-4">
+          <Button type="button" onClick={() => handleRemoveProject(index)} className="mt-2">
             <Image src="./delete.svg" alt="svg" width={20} height={20}></Image>
           </Button>
         </div>
       ))}
-      <Button type="button" onClick={handleAddProject} className="mt-2 mx-4 max-w-20">
-        <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
-      </Button>
+      <TWButton onClick={handleAddProject}>
+          <span className="text-4xl">+</span>
+        </TWButton>
     </div>
   );
 };

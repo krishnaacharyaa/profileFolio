@@ -1,5 +1,6 @@
 import { UserSchema } from '@/app/zod/user-zod';
-import { Button } from '@/components/ui/button';
+import TWButton  from '@/components/ui/tailwbutton';
+import {Button}  from '@/components/ui/button';
 import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import React from 'react';
@@ -35,13 +36,13 @@ const Profiles = () => {
     removeProfile(index);
   };
   return (
-    <div className="flex flex-col w-full px-4">
+    <div className="flex flex-col w-full">
       <div className="w-full">
         {profileFields.map((item, index) => (
-          <div key={item.id} className="flex justify-start items-center my-2">
+          <div key={item.id} className="flex justify-start items-start my-2">
             <div className="grid grid-cols-3 mb-4 flex-1">
               <FormItem className="m-2">
-                <FormLabel>Platform</FormLabel>
+                <FormLabel>Platform <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
                 <FormControl>
                   <Controller
                     name={`basics.profiles.${index}.network`}
@@ -54,7 +55,7 @@ const Profiles = () => {
                 </FormMessage>
               </FormItem>
               <FormItem className="m-2">
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Username <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
                 <FormControl>
                   <Controller
                     name={`basics.profiles.${index}.username`}
@@ -69,7 +70,7 @@ const Profiles = () => {
                 </FormMessage>
               </FormItem>
               <FormItem className="m-2">
-                <FormLabel>Link</FormLabel>
+                <FormLabel>Link <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
                 <FormControl>
                   <Controller
                     name={`basics.profiles.${index}.url`}
@@ -88,14 +89,14 @@ const Profiles = () => {
                 </FormMessage>
               </FormItem>
             </div>
-            <Button type="button" onClick={() => handleRemoveProfile(index)} className="mt-2">
+            <Button onClick={() => handleRemoveProfile(index)} className='mt-[29px]'>
               <Image src="./delete.svg" alt="svg" width={20} height={20}></Image>
             </Button>
           </div>
         ))}
-        <Button type="button" onClick={handleAddProfile} className="mt-2">
-          <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
-        </Button>
+        <TWButton onClick={handleAddProfile}>
+          <span className="text-4xl">+</span>
+        </TWButton>
       </div>
     </div>
   );

@@ -14,10 +14,15 @@ import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/f
 import { cn } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
+import TWButton from '../ui/tailwbutton';
 
 type FormData = z.infer<typeof UserSchema>;
 
-const WorkExp = () => {
+interface WorkExpFieldProps{
+  notExp : boolean
+}
+
+const WorkExp:React.FC<WorkExpFieldProps> = ({notExp}) => {
   const {
     control,
     formState: { errors },
@@ -59,12 +64,11 @@ const WorkExp = () => {
   };
   return (
     <div className="flex flex-col w-full">
-      <div className="text-2xl font-bold mb-4">Work Experience</div>
       {fields.map((item, index) => (
         <div key={item.id} className='mb-4'>
           <div className="grid grid-cols-3 w-full mb-4">
             <FormItem className="m-2 col-span-1">
-              <FormLabel>Company Name</FormLabel>
+              <FormLabel>Company Name <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`work.${index}.name`}
@@ -75,7 +79,7 @@ const WorkExp = () => {
               <FormMessage>{errors?.work?.[index]?.name?.message}</FormMessage>
             </FormItem>
             <FormItem className="m-2 col-span-1">
-              <FormLabel>Position</FormLabel>
+              <FormLabel>Position <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`work.${index}.position`}
@@ -86,7 +90,7 @@ const WorkExp = () => {
               <FormMessage>{errors?.work?.[index]?.position?.message}</FormMessage>
             </FormItem>
             <FormItem className="m-2 col-span-1">
-              <FormLabel>Company Website</FormLabel>
+              <FormLabel>Company Website <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`work.${index}.url`}
@@ -97,7 +101,7 @@ const WorkExp = () => {
               <FormMessage>{errors?.work?.[index]?.url?.message}</FormMessage>
             </FormItem>
             <div className="flex flex-col justify-start col-span-1 my-4 m-2 gap-2">
-              <FormLabel>Start Date</FormLabel>
+              <FormLabel>Start Date <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <Controller
                 name={`work.${index}.startDate`}
                 control={control}
@@ -146,6 +150,7 @@ const WorkExp = () => {
                         <PopoverTrigger asChild>
                           <Button
                             variant={"outline"}
+                            disabled={noEnd}
                             className={cn("w-[240px] justify-start text-left font-normal", !field.value && "text-muted-foreground")}
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
@@ -160,10 +165,10 @@ const WorkExp = () => {
                               date && setValue(`work.${index}.endDate`, new Date(date).toISOString());
                               setNoEnd(false);
                             }}
-                            disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                            disabled={noEnd}
                             initialFocus
                             fromYear={1960}
-                            toYear={2030}
+                            toYear={2050}
                             captionLayout="dropdown-buttons"
                           />
                         </PopoverContent>
@@ -192,12 +197,12 @@ const WorkExp = () => {
                   htmlFor="noEnd"
                   className="text-sm mx-2 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  Working till date
+                  Currently Working
                 </label>
               </div>
             </div>
             <FormItem className="m-2 col-span-1">
-              <FormLabel>Summary</FormLabel>
+              <FormLabel>Summary <span className='text-red-500 mx-[1px]'>*</span></FormLabel>
               <FormControl>
                 <Controller
                   name={`work.${index}.summary`}
@@ -212,7 +217,7 @@ const WorkExp = () => {
               </FormMessage>
             </FormItem>
             <FormItem className="m-2 col-span-1">
-              <FormLabel>Highlights</FormLabel>
+              <FormLabel>Highlights </FormLabel>
               <FormControl>
                 <Controller
                   name={`work.${index}.highlights`}
@@ -234,10 +239,10 @@ const WorkExp = () => {
                         />
                         <Button
                           type="button"
-                          className="mx-2"
+                          className="mx-2 text-lg"
                           onClick={() => handleAddHighlight(index)}
                         >
-                          <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
+                          +
                         </Button>
                       </div>
                       <div className="flex flex-wrap mt-2 justify-start items-start w-full">
@@ -273,9 +278,10 @@ const WorkExp = () => {
           </Button>
         </div>
       ))}
-      <Button type="button" onClick={handleAddField} className="mt-2 max-w-20">
-      <Image src="./add.svg" alt="svg" width={20} height={20}></Image>
-      </Button>
+      {!notExp && <TWButton onClick={handleAddField}>
+          <span className="text-4xl">+</span>
+        </TWButton>}
+        
     </div>
   );
 };
