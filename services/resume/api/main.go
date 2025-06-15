@@ -1,5 +1,5 @@
 // api/resumes.go
-package main
+package handler
 
 import (
 	"encoding/json"
