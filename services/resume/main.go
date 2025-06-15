@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -12,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -23,14 +25,15 @@ import (
 )
 
 type RoastAnalysis struct {
-	Name              string   `json:"name"`                // Candidate's name (if extractable)
-	AIRiskPercentage  int      `json:"ai_risk_percentage"`  // 0-100% how replaceable by AI
-	TechScore         int      `json:"tech_score"`          // 1-10 technical skills
-	GPTOverlap        int      `json:"gpt_overlap"`         // 1-10 how much GPT could do this job
-	BuzzwordBingo     int      `json:"buzzword_bingo"`      // 1-10 intensity of buzzwords
-	WhatsNotTerrible  []string `json:"whats_not_terrible"`  // 3 positive points
-	RedFlags          []string `json:"red_flags"`           // 3 warning signs
-	Roast             string   `json:"roast"`               // Snarky summary
+	Id               int64    `json:"id"`
+	Name             string   `json:"name"`               // Candidate's name (if extractable)
+	AIRisk           int      `json:"ai_risk"`            // 0-100% how replaceable by AI
+	TechScore        int      `json:"tech_score"`         // 1-10 technical skills
+	GPTOverlap       int      `json:"gpt_overlap"`        // 1-10 how much GPT could do this job
+	BuzzwordBingo    int      `json:"buzzword_bingo"`     // 1-10 intensity of buzzwords
+	WhatsNotTerrible []string `json:"whats_not_terrible"` // 3 positive points
+	RedFlags         []string `json:"red_flags"`          // 3 warning signs
+	Roast            string   `json:"roast"`              // Snarky summary
 }
 
 type ResumeRoaster struct {
@@ -39,12 +42,11 @@ type ResumeRoaster struct {
 }
 
 type ResumeAnalysisRecord struct {
-	ID             int       `json:"id"`
-	Name           string    `json:"name"`
-	AIRisk         int       `json:"ai_risk"`
-	Roast          string    `json:"roast"`
-	AnalysisDate   time.Time `json:"analysis_date"`
-	OriginalResume string    `json:"original_resume,omitempty"`
+	Id           int       `json:"id"`
+	Name         string    `json:"name"`
+	AIRisk       int       `json:"ai_risk"`
+	Roast        string    `json:"roast"`
+	AnalysisDate time.Time `json:"analysis_date"`
 }
 
 func NewResumeRoaster(apiKey string, db *sql.DB) (*ResumeRoaster, error) {
@@ -95,14 +97,36 @@ func connectToPostgres() (*sql.DB, error) {
 	return db, nil
 }
 
-func (rr *ResumeRoaster) saveAnalysisToDB(name string, aiRisk int, roast string) error {
-	_, err := rr.db.Exec(
-		"INSERT INTO resume_analyses (name, ai_risk, roast) VALUES ($1, $2, $3)",
+func (rr *ResumeRoaster) saveAnalysisToDB(name string, aiRisk int, roast string) (int64, error) {
+	var id int64
+	err := rr.db.QueryRow(
+		"INSERT INTO resume_analyses (name, ai_risk, roast) VALUES ($1, $2, $3) RETURNING id",
 		name,
 		aiRisk,
 		roast,
-	)
-	return err
+	).Scan(&id)
+
+	if err != nil {
+		return 0, err
+	}
+
+	fmt.Printf("Inserted record ID: %d\n", id)
+	return id, nil
+}
+
+func (rr *ResumeRoaster) getAnalysisFromDB(id int64) (*RoastAnalysis, error) {
+	var analysis RoastAnalysis
+	err := rr.db.QueryRow(
+		"SELECT id, name, ai_risk, roast FROM resume_analyses WHERE id = $1",
+		id,
+	).Scan(&analysis.Id, &analysis.Name, &analysis.AIRisk, &analysis.Roast)
+
+	if err != nil {
+		fmt.Printf("Error %+v", err)
+		return nil, err
+	}
+
+	return &analysis, nil
 }
 
 func (rr *ResumeRoaster) RoastResume(ctx context.Context, resumeText string) (*RoastAnalysis, error) {
@@ -117,7 +141,7 @@ Analyze the following resume and respond ONLY in **valid JSON**. No extra text, 
 
 🎯 **Metrics to return**:
 - "name": (string) Try to extract the candidate's name from the resume.
-- "ai_risk_percentage": (int, 0-100) — How easily could AI replace this person?
+- "ai_risk": (int, 0-100) — How easily could AI replace this person?
 - "tech_score": (int, 1-10) — Actual technical skill level.
 - "gpt_overlap": (int, 1-10) — How much of this job could ChatGPT already do?
 - "buzzword_bingo": (int, 1-10) — Corporate jargon and filler words overload.
@@ -158,7 +182,7 @@ Analyze the following resume and respond ONLY in **valid JSON**. No extra text, 
 	}
 
 	// Save to database
-	err = rr.saveAnalysisToDB(result.Name, result.AIRiskPercentage, result.Roast)
+	id, err := rr.saveAnalysisToDB(result.Name, result.AIRisk, result.Roast)
 	if err != nil {
 		log.Printf("Failed to save analysis to DB: %v", err)
 		// We'll continue even if DB save fails
@@ -174,14 +198,14 @@ Analyze the following resume and respond ONLY in **valid JSON**. No extra text, 
 		"Red Flags: %v\n"+
 		"Roast: %s\n",
 		result.Name,
-		result.AIRiskPercentage,
+		result.AIRisk,
 		result.TechScore,
 		result.GPTOverlap,
 		result.BuzzwordBingo,
 		result.WhatsNotTerrible,
 		result.RedFlags,
 		result.Roast)
-
+	result.Id = id
 	return &result, nil
 }
 
@@ -198,8 +222,8 @@ func extractTextFromFile(filepath string, contentType string) (string, error) {
 		// For PDF, we'll extract basic text (this is simplified)
 		// In production, you'd want to use a proper PDF parser like github.com/ledongthuc/pdf
 		return extractTextFromPDF(content)
-	case strings.Contains(contentType, "application/msword") || 
-		 strings.Contains(contentType, "application/vnd.openxmlformats-officedocument.wordprocessingml.document"):
+	case strings.Contains(contentType, "application/msword") ||
+		strings.Contains(contentType, "application/vnd.openxmlformats-officedocument.wordprocessingml.document"):
 		// For DOCX, we'll extract basic text (simplified)
 		// In production, you'd want to use a proper DOCX parser
 		return extractTextFromDOCX(content)
@@ -213,15 +237,15 @@ func extractTextFromPDF(content []byte) (string, error) {
 	// This is a very basic PDF text extraction
 	// For production use, implement proper PDF parsing with github.com/ledongthuc/pdf
 	text := string(content)
-	
+
 	// Remove binary characters and extract readable text
 	re := regexp.MustCompile(`[^\x20-\x7E\n\r\t]`)
 	text = re.ReplaceAllString(text, " ")
-	
+
 	// Clean up multiple spaces
 	re = regexp.MustCompile(`\s+`)
 	text = re.ReplaceAllString(text, " ")
-	
+
 	return strings.TrimSpace(text), nil
 }
 
@@ -229,15 +253,15 @@ func extractTextFromDOCX(content []byte) (string, error) {
 	// This is a very basic DOCX text extraction
 	// For production use, implement proper DOCX parsing with github.com/unidoc/unioffice
 	text := string(content)
-	
+
 	// Remove binary characters and extract readable text
 	re := regexp.MustCompile(`[^\x20-\x7E\n\r\t]`)
 	text = re.ReplaceAllString(text, " ")
-	
+
 	// Clean up multiple spaces
 	re = regexp.MustCompile(`\s+`)
 	text = re.ReplaceAllString(text, " ")
-	
+
 	return strings.TrimSpace(text), nil
 }
 
@@ -328,7 +352,7 @@ func main() {
 		var analyses []ResumeAnalysisRecord
 		for rows.Next() {
 			var analysis ResumeAnalysisRecord
-			err := rows.Scan(&analysis.ID, &analysis.Name, &analysis.AIRisk, &analysis.Roast, &analysis.AnalysisDate)
+			err := rows.Scan(&analysis.Id, &analysis.Name, &analysis.AIRisk, &analysis.Roast, &analysis.AnalysisDate)
 			if err != nil {
 				log.Printf("Error scanning row: %v", err)
 				continue
@@ -339,6 +363,30 @@ func main() {
 		c.JSON(http.StatusOK, analyses)
 	})
 
+	// Add this route in your Gin router setup
+	r.GET("/api/analyses/:id", func(c *gin.Context) {
+		// Get the ID from URL parameter
+		idStr := c.Param("id")
+		id, err := strconv.ParseInt(idStr, 10, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
+			return
+		}
+
+		// Call your database function
+		analysis, err := roaster.getAnalysisFromDB(id)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				c.JSON(http.StatusNotFound, gin.H{"error": "Analysis not found"})
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+			}
+			return
+		}
+
+		// Return the analysis as JSON
+		c.JSON(http.StatusOK, analysis)
+	})
 	r.GET("/health", func(c *gin.Context) {
 		// Check database connection as part of health check
 		err := db.Ping()

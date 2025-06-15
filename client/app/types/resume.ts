@@ -14,8 +14,9 @@ export interface AnalysisResultsProps {
 }
 
 export interface RoastAnalysis {
+    id: string,
     name: string;
-    ai_risk_percentage: number;
+    ai_risk: number;
     tech_score: number;
     gpt_overlap: number;
     buzzword_bingo: number;

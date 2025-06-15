@@ -13,7 +13,7 @@ import {
 	Brain,
 } from 'lucide-react';
 import { RoastAnalysis } from '../types/resume';
-
+import { log } from 'console';
 
 interface ResultsPageProps {
 	analysis: RoastAnalysis;
@@ -24,7 +24,8 @@ const ResultsPage = ({ analysis, onReset }: ResultsPageProps) => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [showShareOptions, setShowShareOptions] = useState(false);
 
-	const shareUrl = `${window.location.origin}/roast/abc123def456`;
+	console.log({ analysis });
+	const shareUrl = `${window.location.origin}/roast/${analysis.id}`;
 
 	const copyToClipboard = () => {
 		navigator.clipboard.writeText(shareUrl);
@@ -32,94 +33,14 @@ const ResultsPage = ({ analysis, onReset }: ResultsPageProps) => {
 	};
 
 	const shareOnTwitter = () => {
-		const text = `I just got roasted by AI and I'm ${analysis?.ai_risk_percentage}% replaceable 💀 Can you do worse?`;
+		const text = `I just got roasted by AI and I'm ${analysis?.ai_risk}% replaceable 💀 Can you do worse?`;
 		window.open(
 			`https://twitter.com/intent/tweet?text=${encodeURIComponent(
 				text
 			)}&url=${encodeURIComponent(shareUrl)}`,
 			'_blank'
-		);
+		);  
 	};
-
-	if (!isLoading) {
-		return (
-			<div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-pink-900 flex items-center justify-center relative overflow-hidden">
-				{/* Animated background particles */}
-				<div className="absolute inset-0 overflow-hidden pointer-events-none">
-					{[...Array(30)].map((_, i) => (
-						<motion.div
-							key={i}
-							className="absolute w-1 h-1 bg-white/20 rounded-full"
-							animate={{
-								x: [0, Math.random() * 200 - 100],
-								y: [0, Math.random() * 200 - 100],
-								opacity: [0, 1, 0],
-							}}
-							transition={{
-								duration: 4 + Math.random() * 2,
-								repeat: Infinity,
-								delay: Math.random() * 2,
-							}}
-							style={{
-								left: `${Math.random() * 100}%`,
-								top: `${Math.random() * 100}%`,
-							}}
-						/>
-					))}
-				</div>
-
-				<motion.div
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					className="text-center space-y-8 relative z-10"
-				>
-					<motion.div
-						animate={{
-							rotate: 360,
-							scale: [1, 1.2, 1],
-						}}
-						transition={{
-							rotate: { duration: 3, repeat: Infinity, ease: 'linear' },
-							scale: { duration: 2, repeat: Infinity },
-						}}
-						className="text-8xl mb-8"
-					>
-						🤖
-					</motion.div>
-
-					<div className="space-y-4">
-						<motion.h2
-							className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-red-400"
-							animate={{
-								backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-							}}
-							transition={{ duration: 3, repeat: Infinity }}
-							style={{ backgroundSize: '200% 200%' }}
-						>
-							Analyzing your career choices...
-						</motion.h2>
-						<motion.p
-							className="text-gray-300 text-xl"
-							animate={{ opacity: [0.5, 1, 0.5] }}
-							transition={{ duration: 1.5, repeat: Infinity }}
-						>
-							This might hurt more than your last performance review
-						</motion.p>
-					</div>
-
-					{/* Enhanced loading bar */}
-					<motion.div className="w-80 h-3 bg-gray-800 rounded-full mx-auto overflow-hidden border border-purple-500/30">
-						<motion.div
-							className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-full"
-							initial={{ width: 0 }}
-							animate={{ width: '100%' }}
-							transition={{ duration: 3, ease: 'easeInOut' }}
-						/>
-					</motion.div>
-				</motion.div>
-			</div>
-		);
-	}
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-pink-900 relative overflow-hidden">
@@ -224,7 +145,7 @@ const ResultsPage = ({ analysis, onReset }: ResultsPageProps) => {
 									initial={{ strokeDasharray: '0 251.2' }}
 									animate={{
 										strokeDasharray: `${
-											analysis!.ai_risk_percentage * 2.512
+											analysis!.ai_risk * 2.512
 										} 251.2`,
 									}}
 									transition={{ delay: 1, duration: 2.5, ease: 'easeOut' }}
@@ -241,7 +162,7 @@ const ResultsPage = ({ analysis, onReset }: ResultsPageProps) => {
 										animate={{ opacity: 1 }}
 										transition={{ delay: 1.5 }}
 									>
-										{analysis!.ai_risk_percentage}%
+										{analysis!.ai_risk}%
 									</motion.div>
 									<div className="text-gray-400 font-semibold">
 										AI Replaceable

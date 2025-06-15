@@ -235,141 +235,219 @@ export const ResumeAnalyzer = () => {
 				</motion.div>
 
 				{/* Enhanced Upload Component */}
-				<motion.div
-					initial={{ opacity: 0, y: 30 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ delay: 0.4 }}
-					className="max-w-lg mx-auto mb-16"
-				>
+				{!loading ? (
 					<motion.div
-						className={`relative border-2 border-dashed rounded-3xl p-12 text-center transition-all duration-500 group ${
-							dragActive
-								? 'border-purple-400 bg-purple-500/20 shadow-2xl shadow-purple-500/25'
-								: 'border-gray-600 hover:border-purple-500 bg-white/5 backdrop-blur-xl hover:bg-white/10'
-						}`}
-						onDragEnter={handleDrag}
-						onDragLeave={handleDrag}
-						onDragOver={handleDrag}
-						onDrop={handleDrop}
-						whileHover={{
-							scale: 1.02,
-							boxShadow: '0 25px 50px rgba(147, 51, 234, 0.25)',
-						}}
-						whileTap={{ scale: 0.98 }}
+						initial={{ opacity: 0, y: 30 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ delay: 0.4 }}
+						className="max-w-lg mx-auto mb-16"
 					>
-						{/* Animated border effect */}
 						<motion.div
-							className="absolute inset-0 rounded-3xl bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500"
-							animate={{
-								rotate: [0, 360],
+							className={`relative border-2 border-dashed rounded-3xl p-12 text-center transition-all duration-500 group ${
+								dragActive
+									? 'border-purple-400 bg-purple-500/20 shadow-2xl shadow-purple-500/25'
+									: 'border-gray-600 hover:border-purple-500 bg-white/5 backdrop-blur-xl hover:bg-white/10'
+							}`}
+							onDragEnter={handleDrag}
+							onDragLeave={handleDrag}
+							onDragOver={handleDrag}
+							onDrop={handleDrop}
+							whileHover={{
+								scale: 1.02,
+								boxShadow: '0 25px 50px rgba(147, 51, 234, 0.25)',
 							}}
-							transition={{
-								duration: 8,
-								repeat: Infinity,
-								ease: 'linear',
-							}}
-						/>
-
-						<motion.div
-							animate={{
-								y: [0, -10, 0],
-								rotate: [0, 5, -5, 0],
-							}}
-							transition={{ duration: 2, repeat: Infinity }}
-							className="text-6xl mb-6"
+							whileTap={{ scale: 0.98 }}
 						>
-							{file ? '📑' : '📄'}
+							{/* Animated border effect */}
+							<motion.div
+								className="absolute inset-0 rounded-3xl bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500"
+								animate={{
+									rotate: [0, 360],
+								}}
+								transition={{
+									duration: 8,
+									repeat: Infinity,
+									ease: 'linear',
+								}}
+							/>
+
+							<motion.div
+								animate={{
+									y: [0, -10, 0],
+									rotate: [0, 5, -5, 0],
+								}}
+								transition={{ duration: 2, repeat: Infinity }}
+								className="text-6xl mb-6"
+							>
+								{file ? '📑' : '📄'}
+							</motion.div>
+
+							{file ? (
+								<>
+									<motion.p
+										className="text-white font-black text-xl mb-3"
+										initial={{ scale: 0.9 }}
+										animate={{ scale: 1 }}
+									>
+										{file.name}
+									</motion.p>
+									<p className="text-gray-400 text-base mb-6">
+										Ready for brutal honesty
+									</p>
+								</>
+							) : (
+								<>
+									<motion.p
+										className="text-white font-black text-xl mb-3"
+										animate={{
+											scale: [1, 1.05, 1],
+										}}
+										transition={{ duration: 2, repeat: Infinity }}
+									>
+										Drop your resume here
+									</motion.p>
+									<p className="text-gray-400 text-base mb-6">
+										or click to browse{' '}
+										<span className="text-purple-400 font-semibold">
+											(PDF only — we have standards)
+										</span>
+									</p>
+								</>
+							)}
+
+							{error && (
+								<motion.div
+									className="mt-4 p-4 bg-red-900/50 border border-red-700 rounded-xl flex items-center justify-center"
+									initial={{ opacity: 0, y: 20 }}
+									animate={{ opacity: 1, y: 0 }}
+								>
+									<AlertCircle className="w-5 h-5 text-red-400 mr-2" />
+									<span className="text-red-200">{error}</span>
+								</motion.div>
+							)}
+
+							<motion.button
+								onClick={
+									file ? handleAnalyze : () => fileInputRef.current?.click()
+								}
+								disabled={loading}
+								className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white px-8 py-4 rounded-2xl font-black text-lg shadow-2xl group-hover:shadow-purple-500/50 transition-all duration-300 mt-6 w-full"
+								whileHover={{
+									scale: 1.05,
+									boxShadow: '0 20px 40px rgba(147, 51, 234, 0.4)',
+								}}
+								whileTap={{ scale: 0.95 }}
+							>
+								{loading ? (
+									<>
+										<Loader2 className="w-5 h-5 mr-2 animate-spin inline" />
+										Analyzing...
+									</>
+								) : file ? (
+									'🔥 Roast My Resume'
+								) : (
+									'💥 Choose File & Get Wrecked'
+								)}
+							</motion.button>
+
+							<input
+								ref={fileInputRef}
+								type="file"
+								accept=".pdf"
+								onChange={handleFileChange}
+								className="hidden"
+							/>
 						</motion.div>
 
-						{file ? (
-							<>
-								<motion.p
-									className="text-white font-black text-xl mb-3"
-									initial={{ scale: 0.9 }}
-									animate={{ scale: 1 }}
-								>
-									{file.name}
-								</motion.p>
-								<p className="text-gray-400 text-base mb-6">
-									Ready for brutal honesty
-								</p>
-							</>
-						) : (
-							<>
-								<motion.p
-									className="text-white font-black text-xl mb-3"
-									animate={{
-										scale: [1, 1.05, 1],
-									}}
-									transition={{ duration: 2, repeat: Infinity }}
-								>
-									Drop your resume here
-								</motion.p>
-								<p className="text-gray-400 text-base mb-6">
-									or click to browse{' '}
-									<span className="text-purple-400 font-semibold">
-										(PDF only — we have standards)
-									</span>
-								</p>
-							</>
-						)}
-
-						{error && (
-							<motion.div
-								className="mt-4 p-4 bg-red-900/50 border border-red-700 rounded-xl flex items-center justify-center"
-								initial={{ opacity: 0, y: 20 }}
-								animate={{ opacity: 1, y: 0 }}
-							>
-								<AlertCircle className="w-5 h-5 text-red-400 mr-2" />
-								<span className="text-red-200">{error}</span>
-							</motion.div>
-						)}
-
-						<motion.button
-							onClick={
-								file ? handleAnalyze : () => fileInputRef.current?.click()
-							}
-							disabled={loading}
-							className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white px-8 py-4 rounded-2xl font-black text-lg shadow-2xl group-hover:shadow-purple-500/50 transition-all duration-300 mt-6 w-full"
-							whileHover={{
-								scale: 1.05,
-								boxShadow: '0 20px 40px rgba(147, 51, 234, 0.4)',
-							}}
-							whileTap={{ scale: 0.95 }}
+						<motion.div
+							className="mt-6 text-center"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{ delay: 1 }}
 						>
-							{loading ? (
-								<>
-									<Loader2 className="w-5 h-5 mr-2 animate-spin inline" />
-									Analyzing...
-								</>
-							) : file ? (
-								'🔥 Roast My Resume'
-							) : (
-								'💥 Choose File & Get Wrecked'
-							)}
-						</motion.button>
-
-						<input
-							ref={fileInputRef}
-							type="file"
-							accept=".pdf"
-							onChange={handleFileChange}
-							className="hidden"
-						/>
+							<p className="text-gray-400 text-sm font-medium">
+								We'll roast your resume harder than your last performance review
+								🔥
+							</p>
+						</motion.div>
 					</motion.div>
+				) : (
+					<div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-pink-900 flex items-center justify-center relative overflow-hidden">
+						{/* Animated background particles */}
+						<div className="absolute inset-0 overflow-hidden pointer-events-none">
+							{[...Array(30)].map((_, i) => (
+								<motion.div
+									key={i}
+									className="absolute w-1 h-1 bg-white/20 rounded-full"
+									animate={{
+										x: [0, Math.random() * 200 - 100],
+										y: [0, Math.random() * 200 - 100],
+										opacity: [0, 1, 0],
+									}}
+									transition={{
+										duration: 4 + Math.random() * 2,
+										repeat: Infinity,
+										delay: Math.random() * 2,
+									}}
+									style={{
+										left: `${Math.random() * 100}%`,
+										top: `${Math.random() * 100}%`,
+									}}
+								/>
+							))}
+						</div>
 
-					<motion.div
-						className="mt-6 text-center"
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						transition={{ delay: 1 }}
-					>
-						<p className="text-gray-400 text-sm font-medium">
-							We'll roast your resume harder than your last performance review
-							🔥
-						</p>
-					</motion.div>
-				</motion.div>
+						<motion.div
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							className="text-center space-y-8 relative z-10"
+						>
+							<motion.div
+								animate={{
+									rotate: 360,
+									scale: [1, 1.2, 1],
+								}}
+								transition={{
+									rotate: { duration: 3, repeat: Infinity, ease: 'linear' },
+									scale: { duration: 2, repeat: Infinity },
+								}}
+								className="text-8xl mb-8"
+							>
+								🤖
+							</motion.div>
+
+							<div className="space-y-4">
+								<motion.h2
+									className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-red-400"
+									animate={{
+										backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+									}}
+									transition={{ duration: 3, repeat: Infinity }}
+									style={{ backgroundSize: '200% 200%' }}
+								>
+									Analyzing your career choices...
+								</motion.h2>
+								<motion.p
+									className="text-gray-300 text-xl"
+									animate={{ opacity: [0.5, 1, 0.5] }}
+									transition={{ duration: 1.5, repeat: Infinity }}
+								>
+									This might hurt more than your last performance review
+								</motion.p>
+							</div>
+
+							{/* Enhanced loading bar */}
+							<motion.div className="w-80 h-3 bg-gray-800 rounded-full mx-auto overflow-hidden border border-purple-500/30">
+								<motion.div
+									className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-full"
+									initial={{ width: 0 }}
+									animate={{ width: '100%' }}
+									transition={{ duration: 3, ease: 'easeInOut' }}
+								/>
+							</motion.div>
+						</motion.div>
+					</div>
+				)}
 
 				{/* Enhanced Features with animations */}
 				<motion.div
