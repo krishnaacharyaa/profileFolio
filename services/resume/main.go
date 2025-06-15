@@ -81,23 +81,6 @@ func connectToPostgres() (*sql.DB, error) {
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
 
-	// Create table if it doesn't exist
-	_, err = db.Exec(`
-        CREATE TABLE IF NOT EXISTS resume_analyses (
-            id SERIAL PRIMARY KEY,
-            name TEXT,
-            ai_risk INTEGER,
-            roast TEXT,
-            analysis_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            original_resume TEXT,
-            view_count BIGINT DEFAULT 0,
-            reactions JSONB DEFAULT '{"💩": 0, "🔥": 0, "👨‍💻": 0, "💀": 0, "😂": 0}'
-        )
-    `)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create table: %w", err)
-	}
-
 	return db, nil
 }
 
