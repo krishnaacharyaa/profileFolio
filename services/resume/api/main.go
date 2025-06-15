@@ -1,3 +1,4 @@
+// api/resumes.go
 package main
 
 import (
@@ -6,36 +7,29 @@ import (
 	"os"
 )
 
-type Message struct {
-	Text string `json:"text"`
-}
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	msg := Message{
-		Text: "Hello from Go on Vercel!",
+func Handler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		handleGetResumes(w, r)
+	case "POST":
+		handlePostResume(w, r)
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(msg)
 }
 
-func getEnvVars(w http.ResponseWriter, r *http.Request) {
-	apiKey := os.Getenv("AI_API_KEY")
-	dbUrl := os.Getenv("DATABASE_URL")
-
-	response := map[string]string{
-		"AI_API_KEY":   apiKey,
-		"DATABASE_URL": dbUrl,
-		"status":       "success",
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+func handleGetResumes(w http.ResponseWriter, r *http.Request) {
+	// Your GET logic here
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "GET resumes endpoint",
+		"db_url":  os.Getenv("DATABASE_URL"),
+	})
 }
 
-func main() {
-	http.HandleFunc("/", handler)
-	http.HandleFunc("/env", getEnvVars)
-	http.HandleFunc("/api", handler)
-	http.HandleFunc("/api/test", getEnvVars)
+func handlePostResume(w http.ResponseWriter, r *http.Request) {
+	// Your POST logic here
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "POST resume endpoint",
+		"api_key": os.Getenv("AI_API_KEY"),
+	})
 }
