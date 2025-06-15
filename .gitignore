@@ -2,3 +2,4 @@ services/resume/vendor
 services/resume/.env*
 .env
 .env.*
+*env

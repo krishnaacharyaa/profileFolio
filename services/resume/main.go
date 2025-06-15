@@ -17,6 +17,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/joho/godotenv"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/generative-ai-go/genai"
@@ -65,6 +67,11 @@ func NewResumeRoaster(apiKey string, db *sql.DB) (*ResumeRoaster, error) {
 }
 
 func connectToPostgres() (*sql.DB, error) {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	connStr := os.Getenv("DATABASE_URL")
 	if connStr == "" {
 		connStr = "host=localhost port=5432 user=postgres password=postgres dbname=resume_roaster sslmode=disable"
@@ -256,6 +263,11 @@ func extractTextFromDOCX(content []byte) (string, error) {
 }
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	apiKey := os.Getenv("AI_API_KEY")
 	if apiKey == "" {
 		log.Fatal("AI_API_KEY environment variable is required")
