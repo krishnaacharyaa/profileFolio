@@ -1,5 +1,6 @@
 import ReactionPage from '@/app/components/reactions';
 
-export default function Page({ params }: { params: { shareId: string } }) {
-	return <ReactionPage shareId={params.shareId} />;
+export default async function Page({ params }: { params: Promise<{ shareId: string }> }) {
+  const { shareId } = await params; // Await params to resolve shareId
+  return <ReactionPage shareId={shareId} />;
 }

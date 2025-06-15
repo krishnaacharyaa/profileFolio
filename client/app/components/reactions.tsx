@@ -1,26 +1,38 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getAnalysisById } from '../lib/resume';
 import { RoastAnalysis } from '../types/resume';
+
+import { useRouter } from 'next/navigation';
 
 interface ReactionPageProps {
 	shareId: string;
 }
 
 const ReactionPage = ({ shareId }: ReactionPageProps) => {
+	const router = useRouter(); // Initialize router
 	const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
+	const [prevReaction, setPrevReaction] = useState<string | null>(null);
 	const [showConfetti, setShowConfetti] = useState(false);
 	const [analysis, setAnalysis] = useState<RoastAnalysis | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const reactionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+	// Load reaction from localStorage on mount
 	useEffect(() => {
+		const storedReaction = localStorage.getItem(`reaction_${shareId}`);
+		if (storedReaction) {
+			setSelectedReaction(storedReaction);
+			setPrevReaction(null);
+		}
+
 		const fetchAnalysis = async () => {
 			try {
 				const analysisData = await getAnalysisById(parseInt(shareId));
 				setAnalysis(analysisData);
-			} catch (err) {
+			} catch {
 				setError('Failed to load analysis');
 			} finally {
 				setLoading(false);
@@ -30,9 +42,81 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 	}, [shareId]);
 
 	const handleReaction = (emoji: string) => {
+		if (selectedReaction === emoji) return; // Prevent reselecting same reaction
+
+		// Clear previous timeout
+		if (reactionTimeoutRef.current) {
+			clearTimeout(reactionTimeoutRef.current);
+		}
+
+		// Update localStorage and state
+		localStorage.setItem(`reaction_${shareId}`, emoji);
+		setPrevReaction(selectedReaction);
 		setSelectedReaction(emoji);
 		setShowConfetti(true);
 		setTimeout(() => setShowConfetti(false), 2000);
+
+		// Optimistically update reactions
+		setAnalysis(prev =>
+			prev
+				? {
+						...prev,
+						reactions: {
+							...prev.reactions,
+							...(prevReaction
+								? {
+										[prevReaction]: Math.max(
+											0,
+											(prev.reactions[prevReaction] || 0) - 1
+										),
+								  }
+								: {}),
+							[emoji]: (prev.reactions[emoji] || 0) + 1,
+						},
+				  }
+				: prev
+		);
+
+		// Send reaction to backend after 3 seconds
+		reactionTimeoutRef.current = setTimeout(async () => {
+			try {
+				const response = await fetch(
+					`http://localhost:8080/api/analyses/${shareId}/react`,
+					{
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({
+							reaction: emoji,
+							prevReaction: prevReaction || '',
+						}),
+					}
+				);
+				if (!response.ok) {
+					throw new Error('Failed to submit reaction');
+				}
+			} catch (err) {
+				console.error('Reaction error:', err);
+				// Revert optimistic update
+				setAnalysis(prev =>
+					prev
+						? {
+								...prev,
+								reactions: {
+									...prev.reactions,
+									...(prevReaction
+										? {
+												[prevReaction]: (prev.reactions[prevReaction] || 0) + 1,
+										  }
+										: {}),
+									[emoji]: Math.max(0, (prev.reactions[emoji] || 0) - 1),
+								},
+						  }
+						: prev
+				);
+				setPrevReaction(null);
+				localStorage.setItem(`reaction_${shareId}`, prevReaction || '');
+			}
+		}, 3000);
 	};
 
 	if (loading || !analysis) {
@@ -173,7 +257,7 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 										color: 'from-red-500 to-orange-500',
 									},
 									{
-										emoji: '👨🏻‍💻',
+										emoji: '👨‍💻',
 										label: 'Clown',
 										color: 'from-pink-500 to-purple-500',
 									},
@@ -203,11 +287,9 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 										transition={{ delay: 0.8 + index * 0.1 }}
 									>
 										<span>{reaction.emoji}</span>
-										{/* Fake count */}
 										<div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-											{Math.floor(Math.random() * 99) + 1}
+											{Math.abs(analysis.reactions[reaction.emoji])}
 										</div>
-										{/* Tooltip */}
 										<div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 text-xs bg-black/80 text-white px-2 py-1 rounded">
 											{reaction.label}
 										</div>
@@ -225,6 +307,7 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ delay: 1.2 }}
+						onClick={() => router.push('/')}
 					>
 						<motion.div
 							className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-purple-400 via-pink-400 to-red-400"

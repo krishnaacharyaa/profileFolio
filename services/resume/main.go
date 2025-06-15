@@ -42,11 +42,13 @@ type ResumeRoaster struct {
 }
 
 type ResumeAnalysisRecord struct {
-	Id           int       `json:"id"`
-	Name         string    `json:"name"`
-	AIRisk       int       `json:"ai_risk"`
-	Roast        string    `json:"roast"`
-	AnalysisDate time.Time `json:"analysis_date"`
+	Id           int              `json:"id"`
+	Name         string           `json:"name"`
+	AIRisk       int              `json:"ai_risk"`
+	Roast        string           `json:"roast"`
+	AnalysisDate time.Time        `json:"analysis_date"`
+	ViewCount    int64            `json:"view_count"`
+	Reactions    map[string]int64 `json:"reactions"`
 }
 
 func NewResumeRoaster(apiKey string, db *sql.DB) (*ResumeRoaster, error) {
@@ -81,15 +83,17 @@ func connectToPostgres() (*sql.DB, error) {
 
 	// Create table if it doesn't exist
 	_, err = db.Exec(`
-		CREATE TABLE IF NOT EXISTS resume_analyses (
-			id SERIAL PRIMARY KEY,
-			name TEXT,
-			ai_risk INTEGER,
-			roast TEXT,
-			analysis_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			original_resume TEXT
-		)
-	`)
+        CREATE TABLE IF NOT EXISTS resume_analyses (
+            id SERIAL PRIMARY KEY,
+            name TEXT,
+            ai_risk INTEGER,
+            roast TEXT,
+            analysis_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            original_resume TEXT,
+            view_count BIGINT DEFAULT 0,
+            reactions JSONB DEFAULT '{"💩": 0, "🔥": 0, "👨‍💻": 0, "💀": 0, "😂": 0}'
+        )
+    `)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create table: %w", err)
 	}
@@ -114,19 +118,22 @@ func (rr *ResumeRoaster) saveAnalysisToDB(name string, aiRisk int, roast string)
 	return id, nil
 }
 
-func (rr *ResumeRoaster) getAnalysisFromDB(id int64) (*RoastAnalysis, error) {
-	var analysis RoastAnalysis
-	err := rr.db.QueryRow(
-		"SELECT id, name, ai_risk, roast FROM resume_analyses WHERE id = $1",
-		id,
-	).Scan(&analysis.Id, &analysis.Name, &analysis.AIRisk, &analysis.Roast)
-
+func (r *ResumeRoaster) getAnalysisFromDB(id int64) (ResumeAnalysisRecord, error) {
+	var analysis ResumeAnalysisRecord
+	var reactionsJSON []byte
+	err := r.db.QueryRow(`
+        UPDATE resume_analyses
+        SET view_count = view_count + 1
+        WHERE id = $1
+        RETURNING id, name, ai_risk, roast, view_count, reactions`,
+		id).Scan(&analysis.Id, &analysis.Name, &analysis.AIRisk, &analysis.Roast, &analysis.ViewCount, &reactionsJSON)
 	if err != nil {
-		fmt.Printf("Error %+v", err)
-		return nil, err
+		return ResumeAnalysisRecord{}, err
 	}
-
-	return &analysis, nil
+	if err := json.Unmarshal(reactionsJSON, &analysis.Reactions); err != nil {
+		return ResumeAnalysisRecord{}, err
+	}
+	return analysis, nil
 }
 
 func (rr *ResumeRoaster) RoastResume(ctx context.Context, resumeText string) (*RoastAnalysis, error) {
@@ -339,6 +346,78 @@ func main() {
 		}
 
 		c.JSON(http.StatusOK, result)
+	})
+
+	r.POST("/api/analyses/:id/react", func(c *gin.Context) {
+		idStr := c.Param("id")
+		id, err := strconv.ParseInt(idStr, 10, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
+			return
+		}
+
+		var req struct {
+			Reaction     string `json:"reaction"`
+			PrevReaction string `json:"prevReaction,omitempty"`
+		}
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+			return
+		}
+
+		// Validate reaction
+		validReactions := map[string]bool{"💩": true, "🔥": true, "👨‍💻": true, "💀": true, "😂": true}
+		if !validReactions[req.Reaction] {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid reaction"})
+			return
+		}
+		if req.PrevReaction != "" && !validReactions[req.PrevReaction] {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid previous reaction"})
+			return
+		}
+
+		// Update reactions in database
+		query := `
+            UPDATE resume_analyses
+            SET reactions = jsonb_set(
+                jsonb_set(
+                    reactions,
+                    $1::text[],
+                    ((reactions->>$2)::integer + 1)::text::jsonb
+                ),
+                $3::text[],
+                ((reactions->>$4)::integer - 1)::text::jsonb
+            )
+            WHERE id = $5`
+		var result sql.Result
+		if req.PrevReaction != "" {
+			result, err = roaster.db.Exec(
+				query,
+				fmt.Sprintf("{%s}", req.Reaction), req.Reaction,
+				fmt.Sprintf("{%s}", req.PrevReaction), req.PrevReaction,
+				id)
+		} else {
+			result, err = roaster.db.Exec(`
+                UPDATE resume_analyses
+                SET reactions = jsonb_set(
+                    reactions,
+                    $1::text[],
+                    ((reactions->>$2)::integer + 1)::text::jsonb
+                )
+                WHERE id = $3`,
+				fmt.Sprintf("{%s}", req.Reaction), req.Reaction, id)
+		}
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+			return
+		}
+		rowsAffected, _ := result.RowsAffected()
+		if rowsAffected == 0 {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Analysis not found"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "Reaction recorded"})
 	})
 
 	r.GET("/api/analyses", func(c *gin.Context) {
