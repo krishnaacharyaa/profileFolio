@@ -4,7 +4,7 @@
 // import { Upload, Share2 } from 'lucide-react';
 // import ResultsPage from './components/results';
 'use client';
-import { ResumeAnalyzer } from './components/mainguy';
+import { ResumeAnalyzer } from './components/resumeAnalyser';
 
 // interface AnalysisResult {
 // 	score: number;

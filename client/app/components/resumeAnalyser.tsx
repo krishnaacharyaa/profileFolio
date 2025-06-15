@@ -58,6 +58,7 @@ export const ResumeAnalyzer = () => {
 		setDragActive(false);
 		if (e.dataTransfer.files && e.dataTransfer.files[0]) {
 			handleFile(e.dataTransfer.files[0]);
+			handleAnalyze(e.dataTransfer.files[0]);
 		}
 	};
 
@@ -67,18 +68,18 @@ export const ResumeAnalyzer = () => {
 			return;
 		}
 		setFile(file);
+		handleAnalyze(file);
 		setError(null);
 	};
 
 	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.target.files && e.target.files[0]) {
 			handleFile(e.target.files[0]);
+			handleAnalyze(e.target.files[0]);
 		}
 	};
 
-	const handleAnalyze = async () => {
-		if (!file) return;
-
+	const handleAnalyze = async (file: File) => {
 		setLoading(true);
 		setError(null);
 		setAnalysis(null);
@@ -112,7 +113,7 @@ export const ResumeAnalyzer = () => {
 	}
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+		<div className="min-h-screen bg-amber-300 h-full bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
 			{/* Animated background effects */}
 			<div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-400/20 via-transparent to-transparent"></div>
 			<div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]"></div>
@@ -176,35 +177,44 @@ export const ResumeAnalyzer = () => {
 					</motion.div>
 
 					<motion.div
-						className="hidden md:flex items-center space-x-4 lg:space-x-6 text-sm text-gray-300"
+						className="hidden md:flex items-center text-sm"
 						initial={{ opacity: 0, x: 20 }}
 						animate={{ opacity: 1, x: 0 }}
 						transition={{ delay: 0.3 }}
 					>
-						<motion.span
-							className="flex items-center space-x-1 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20"
+						<motion.a
+							href="https://github.com/krishnaacharyaa/profileFolio"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="flex items-center space-x-2 px-4 py-2 rounded-md bg-gray-900 border border-gray-700 hover:border-gray-500 transition-all group"
 							whileHover={{
 								scale: 1.05,
-								backgroundColor: 'rgba(255,255,255,0.15)',
+								boxShadow: '0 0 0 1px rgba(255,255,255,0.1)',
 							}}
+							whileTap={{ scale: 0.98 }}
 						>
-							<Upload className="h-4 w-4" />
-							<span>Upload</span>
-						</motion.span>
-						<motion.span
-							className="flex items-center space-x-1 px-3 py-1 rounded-full bg-white/5"
-							whileHover={{ scale: 1.05 }}
-						>
-							🧠
-							<span>Analyze</span>
-						</motion.span>
-						<motion.span
-							className="flex items-center space-x-1 px-3 py-1 rounded-full bg-white/5"
-							whileHover={{ scale: 1.05 }}
-						>
-							<Share2 className="h-4 w-4" />
-							<span>Share</span>
-						</motion.span>
+							<svg
+								className="text-gray-300 group-hover:text-white"
+								xmlns="http://www.w3.org/2000/svg"
+								width="20"
+								height="20"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="2"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+							>
+								<path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
+								<path d="M9 18c-4.51 2-5-2-7-2"></path>
+							</svg>
+							<span className="text-gray-300 group-hover:text-white font-medium">
+								Contribute
+							</span>
+							<span className="text-xs text-gray-500 group-hover:text-gray-400 ml-1">
+								☆
+							</span>
+						</motion.a>
 					</motion.div>
 				</motion.div>
 			</nav>
@@ -266,7 +276,7 @@ export const ResumeAnalyzer = () => {
 								animate={{
 									backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
 								}}
-								transition={{ duration: 3, repeat: Infinity }}
+								transition={{ duration: 6, repeat: Infinity }}
 								style={{ backgroundSize: '200% 200%' }}
 							>
 								Analyzing your career choices...
@@ -274,7 +284,7 @@ export const ResumeAnalyzer = () => {
 							<motion.p
 								className="text-gray-300 text-lg md:text-xl"
 								animate={{ opacity: [0.5, 1, 0.5] }}
-								transition={{ duration: 1.5, repeat: Infinity }}
+								transition={{ duration: 6, repeat: Infinity }}
 							>
 								This might hurt more than your last performance review
 							</motion.p>
@@ -294,13 +304,13 @@ export const ResumeAnalyzer = () => {
 			)}
 
 			{/* Main Content */}
-			<div className="relative z-10 max-w-4xl mx-auto px-4 md:px-6 pt-4 md:pt-8 pb-8 md:pb-12">
+			<div className="relative z-10 max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12 h-full overflow-y-auto">
 				{/* Hero Section */}
 				<motion.div
 					initial={{ opacity: 0, y: 30 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.2 }}
-					className="text-center mb-8 md:mb-12"
+					className="text-center mb-6 md:mb-8"
 				>
 					<motion.h1
 						className="text-4xl md:text-7xl font-black mb-4 md:mb-6 bg-gradient-to-r from-white via-purple-200 to-purple-400 bg-clip-text text-transparent"
@@ -356,7 +366,7 @@ export const ResumeAnalyzer = () => {
 					initial={{ opacity: 0, y: 30 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.4 }}
-					className="max-w-lg mx-auto mb-8 md:mb-16"
+					className="max-w-lg mx-auto mb-6 md:mb-8"
 				>
 					<motion.div
 						className={`relative border-2 border-dashed rounded-3xl p-8 md:p-12 text-center transition-all duration-500 group ${
@@ -446,7 +456,9 @@ export const ResumeAnalyzer = () => {
 
 						<motion.button
 							onClick={
-								file ? handleAnalyze : () => fileInputRef.current?.click()
+								file
+									? () => handleAnalyze(file)
+									: () => fileInputRef.current?.click()
 							}
 							disabled={loading}
 							className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white px-6 md:px-8 py-3 md:py-4 rounded-2xl font-black text-base md:text-lg shadow-2xl group-hover:shadow-purple-500/50 transition-all duration-300 mt-4 md:mt-6 w-full"
@@ -495,7 +507,7 @@ export const ResumeAnalyzer = () => {
 					initial={{ opacity: 0, y: 30 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.6 }}
-					className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8"
+					className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6"
 				>
 					{[
 						{
