@@ -1,8 +1,8 @@
 'use server';
 
-import { AnalysisResult } from '../types/resume';
+import { RoastAnalysis } from '../types/resume';
 
-export const analyzeResume = async (file: File): Promise<AnalysisResult> => {
+export const analyzeResume = async (file: File): Promise<RoastAnalysis> => {
 	const formData = new FormData();
 	formData.append('resume', file);
 

@@ -1,12 +1,4 @@
-export interface AnalysisResult {
-	overall_score: number;
-	strengths: string[];
-	weaknesses: string[];
-	suggestions: string[];
-	skills_found: string[];
-	experience_level: string;
-	summary: string;
-}
+
 
 export interface FileUploadProps {
 	file: File | null;
@@ -17,6 +9,17 @@ export interface FileUploadProps {
 }
 
 export interface AnalysisResultsProps {
-	analysis: AnalysisResult;
+	analysis: RoastAnalysis;
 	onReset: () => void;
+}
+
+export interface RoastAnalysis {
+    name: string;
+    ai_risk_percentage: number;
+    tech_score: number;
+    gpt_overlap: number;
+    buzzword_bingo: number;
+    whats_not_terrible: string[];
+    red_flags: string[];
+    roast: string;
 }
