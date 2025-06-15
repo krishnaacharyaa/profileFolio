@@ -332,7 +332,8 @@ const ResultsPage = ({ analysis, onReset }: ResultsPageProps) => {
 						className="text-center"
 					>
 						<motion.button
-							onClick={() => setShowShareOptions(!showShareOptions)}
+							// onClick={() => setShowShareOptions(!showShareOptions)}
+							onClick={copyToClipboard}
 							className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white py-3 sm:py-4 px-6 sm:px-8 md:px-12 rounded-xl sm:rounded-2xl font-black text-base sm:text-lg md:text-xl shadow-2xl group w-full sm:w-auto"
 							whileHover={{
 								scale: 1.02,

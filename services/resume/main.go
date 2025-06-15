@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	handler "profilefolio/api"
 	"regexp"
 	"strconv"
 	"strings"
@@ -263,6 +264,9 @@ func extractTextFromDOCX(content []byte) (string, error) {
 }
 
 func main() {
+	http.HandleFunc("/api/resumes", handler.Handler)
+	http.ListenAndServe(":8080", nil)
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
