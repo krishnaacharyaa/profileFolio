@@ -15,75 +15,75 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	    "github.com/google/generative-ai-go/genai"
-    "google.golang.org/api/option"
+	"github.com/google/generative-ai-go/genai"
+	"google.golang.org/api/option"
 )
-
-type AnalysisResult struct {
-	OverallScore    int      `json:"overall_score"`
-	Strengths       []string `json:"strengths"`
-	Weaknesses      []string `json:"weaknesses"`
-	Suggestions     []string `json:"suggestions"`
-	SkillsFound     []string `json:"skills_found"`
-	ExperienceLevel string   `json:"experience_level"`
-	Summary         string   `json:"summary"`
+type RoastAnalysis struct {
+	Name              string   `json:"name"`                // Candidate's name (if extractable)
+	AIRiskPercentage  int      `json:"ai_risk_percentage"`  // 0-100% how replaceable by AI
+	TechScore         int      `json:"tech_score"`          // 1-10 technical skills
+	GPTOverlap        int      `json:"gpt_overlap"`         // 1-10 how much GPT could do this job
+	BuzzwordBingo     int      `json:"buzzword_bingo"`      // 1-10 intensity of buzzwords
+	WhatsNotTerrible  []string `json:"whats_not_terrible"`  // 3 positive points
+	RedFlags          []string `json:"red_flags"`           // 3 warning signs
+	Roast             string   `json:"roast"`               // Snarky summary
 }
 
-type ResumeAnalyzer struct {
+
+type ResumeRoaster struct {
 	client *genai.Client
 }
 
-func NewResumeAnalyzer(apiKey string) (*ResumeAnalyzer, error) {
+func NewResumeRoaster(apiKey string) (*ResumeRoaster, error) {
 	ctx := context.Background()
 	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
-		return nil, fmt.Errorf("failed to create AI client: %w", err)
+		return nil, fmt.Errorf("failed to create roast client: %w", err)
 	}
 
-	return &ResumeAnalyzer{client: client}, nil
+	return &ResumeRoaster{client: client}, nil
 }
 
-func (ra *ResumeAnalyzer) AnalyzeResume(ctx context.Context, resumeText string) (*AnalysisResult, error) {
-	model := ra.client.GenerativeModel("gemini-1.5-flash")
-	
+func (rr *ResumeRoaster) RoastResume(ctx context.Context, resumeText string) (*RoastAnalysis, error) {
+	model := rr.client.GenerativeModel("gemini-1.5-flash")
+
 	prompt := fmt.Sprintf(`
-Analyze this resume and provide a comprehensive evaluation in JSON format. The response must be valid JSON only, no additional text or formatting.
+You are a snarky tech recruiter with a dark sense of humor. Your job is to roast resumes with brutal honesty and sharp wit.
 
-Resume text:
+Analyze the following resume and respond ONLY in **valid JSON**. No extra text, no preambles.
+
+---
+
+🎯 **Metrics to return**:
+- "name": (string) Try to extract the candidate's name from the resume.
+- "ai_risk_percentage": (int, 0-100) — How easily could AI replace this person?
+- "tech_score": (int, 1-10) — Actual technical skill level.
+- "gpt_overlap": (int, 1-10) — How much of this job could ChatGPT already do?
+- "buzzword_bingo": (int, 1-10) — Corporate jargon and filler words overload.
+- "whats_not_terrible": (array of strings) — Good things about this resume.
+- "red_flags": (array of strings) — Generic, overused, or cringy things.
+- "roast": (string) — A savage, two-sentence roast. Funny but workplace-appropriate.
+
+📝 **Instructions**:
+- Be sarcastic, confident, and concise.
+- If unsure about "name", return "Unknown".
+- Make the roast witty, not offensive.
+- Output **only valid JSON** — no markdown or formatting.
+
+📄 Resume:
 %s
-
-Provide the analysis in exactly this JSON structure:
-{
-  "overall_score": <number between 1-10>,
-  "strengths": ["strength1", "strength2", "strength3"],
-  "weaknesses": ["weakness1", "weakness2", "weakness3"],
-  "suggestions": ["suggestion1", "suggestion2", "suggestion3"],
-  "skills_found": ["skill1", "skill2", "skill3", "skill4", "skill5"],
-  "experience_level": "<Junior/Mid-level/Senior/Executive>",
-  "summary": "<2-sentence summary of the candidate>"
-}
-
-Focus on:
-- Technical skills and competencies
-- Work experience relevance
-- Education background
-- Resume formatting and presentation
-- Missing elements that could strengthen the resume
-- Career progression and achievements
 `, resumeText)
 
 	resp, err := model.GenerateContent(ctx, genai.Text(prompt))
 	if err != nil {
-		return nil, fmt.Errorf("failed to generate content: %w", err)
+		return nil, fmt.Errorf("failed to generate roast: %w", err)
 	}
 
 	if len(resp.Candidates) == 0 || len(resp.Candidates[0].Content.Parts) == 0 {
-		return nil, fmt.Errorf("no response from Gemini")
+		return nil, fmt.Errorf("no response from roast bot")
 	}
 
 	responseText := fmt.Sprintf("%v", resp.Candidates[0].Content.Parts[0])
-	
-	// Clean the response to extract JSON
 	responseText = strings.TrimSpace(responseText)
 	responseText = strings.Trim(responseText, "`")
 	if strings.HasPrefix(responseText, "json") {
@@ -91,10 +91,28 @@ Focus on:
 		responseText = strings.TrimSpace(responseText)
 	}
 
-	var result AnalysisResult
+	var result RoastAnalysis
 	if err := json.Unmarshal([]byte(responseText), &result); err != nil {
-		return nil, fmt.Errorf("failed to parse JSON response: %w, response: %s", err, responseText)
+		return nil, fmt.Errorf("failed to parse roast JSON: %w, response: %s", err, responseText)
 	}
+
+	log.Printf("\n🔥 NEW RESUME ROASTED 🔥\n"+
+		"Name: %s\n"+
+		"AI Risk: %d%%\n"+
+		"Tech Score: %d/10\n"+
+		"GPT Overlap: %d/10\n"+
+		"Buzzword Bingo: %d/10\n"+
+		"Whats Not Terrible: %v\n"+
+		"Red Flags: %v\n"+
+		"Roast: %s\n",
+		result.Name,
+		result.AIRiskPercentage,
+		result.TechScore,
+		result.GPTOverlap,
+		result.BuzzwordBingo,
+		result.WhatsNotTerrible,
+		result.RedFlags,
+		result.Roast)
 
 	return &result, nil
 }
@@ -161,9 +179,9 @@ func main() {
 		log.Fatal("AI_API_KEY environment variable is required")
 	}
 
-	analyzer, err := NewResumeAnalyzer(apiKey)
+	roaster, err := NewResumeRoaster(apiKey)
 	if err != nil {
-		log.Fatal("Failed to initialize resume analyzer:", err)
+		log.Fatal("Failed to initialize resume roaster:", err)
 	}
 
 	r := gin.Default()
@@ -214,10 +232,10 @@ func main() {
 
 		// Analyze with AI
 		ctx := context.Background()
-		result, err := analyzer.AnalyzeResume(ctx, text)
+		result, err := roaster.RoastResume(ctx, text)
 		if err != nil {
-			log.Printf("Analysis error: %v", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to analyze resume"})
+			log.Printf("Roast error: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to roast resume"})
 			return
 		}
 
@@ -225,10 +243,10 @@ func main() {
 	})
 
 	r.GET("/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"status": "healthy"})
+		c.JSON(http.StatusOK, gin.H{"status": "still savage"})
 	})
 
-	log.Println("Server starting on port 8080...")
+	log.Println("🔥 Resume Roaster starting on port 8080...")
 	if err := r.Run(":8080"); err != nil {
 		log.Fatal("Failed to start server:", err)
 	}
