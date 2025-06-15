@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,12 +13,15 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/generative-ai-go/genai"
+	_ "github.com/lib/pq" // Postgres driver
 	"google.golang.org/api/option"
 )
+
 type RoastAnalysis struct {
 	Name              string   `json:"name"`                // Candidate's name (if extractable)
 	AIRiskPercentage  int      `json:"ai_risk_percentage"`  // 0-100% how replaceable by AI
@@ -29,19 +33,76 @@ type RoastAnalysis struct {
 	Roast             string   `json:"roast"`               // Snarky summary
 }
 
-
 type ResumeRoaster struct {
 	client *genai.Client
+	db     *sql.DB
 }
 
-func NewResumeRoaster(apiKey string) (*ResumeRoaster, error) {
+type ResumeAnalysisRecord struct {
+	ID             int       `json:"id"`
+	Name           string    `json:"name"`
+	AIRisk         int       `json:"ai_risk"`
+	Roast          string    `json:"roast"`
+	AnalysisDate   time.Time `json:"analysis_date"`
+	OriginalResume string    `json:"original_resume,omitempty"`
+}
+
+func NewResumeRoaster(apiKey string, db *sql.DB) (*ResumeRoaster, error) {
 	ctx := context.Background()
 	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create roast client: %w", err)
 	}
 
-	return &ResumeRoaster{client: client}, nil
+	return &ResumeRoaster{
+		client: client,
+		db:     db,
+	}, nil
+}
+
+func connectToPostgres() (*sql.DB, error) {
+	connStr := os.Getenv("DATABASE_URL")
+	if connStr == "" {
+		connStr = "host=localhost port=5432 user=postgres password=postgres dbname=resume_roaster sslmode=disable"
+	}
+
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect to database: %w", err)
+	}
+
+	// Test the connection
+	err = db.Ping()
+	if err != nil {
+		return nil, fmt.Errorf("failed to ping database: %w", err)
+	}
+
+	// Create table if it doesn't exist
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS resume_analyses (
+			id SERIAL PRIMARY KEY,
+			name TEXT,
+			ai_risk INTEGER,
+			roast TEXT,
+			analysis_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			original_resume TEXT
+		)
+	`)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create table: %w", err)
+	}
+
+	return db, nil
+}
+
+func (rr *ResumeRoaster) saveAnalysisToDB(name string, aiRisk int, roast string) error {
+	_, err := rr.db.Exec(
+		"INSERT INTO resume_analyses (name, ai_risk, roast) VALUES ($1, $2, $3)",
+		name,
+		aiRisk,
+		roast,
+	)
+	return err
 }
 
 func (rr *ResumeRoaster) RoastResume(ctx context.Context, resumeText string) (*RoastAnalysis, error) {
@@ -94,6 +155,13 @@ Analyze the following resume and respond ONLY in **valid JSON**. No extra text, 
 	var result RoastAnalysis
 	if err := json.Unmarshal([]byte(responseText), &result); err != nil {
 		return nil, fmt.Errorf("failed to parse roast JSON: %w, response: %s", err, responseText)
+	}
+
+	// Save to database
+	err = rr.saveAnalysisToDB(result.Name, result.AIRiskPercentage, result.Roast)
+	if err != nil {
+		log.Printf("Failed to save analysis to DB: %v", err)
+		// We'll continue even if DB save fails
 	}
 
 	log.Printf("\n🔥 NEW RESUME ROASTED 🔥\n"+
@@ -179,7 +247,14 @@ func main() {
 		log.Fatal("AI_API_KEY environment variable is required")
 	}
 
-	roaster, err := NewResumeRoaster(apiKey)
+	// Connect to Postgres
+	db, err := connectToPostgres()
+	if err != nil {
+		log.Fatal("Failed to connect to database:", err)
+	}
+	defer db.Close()
+
+	roaster, err := NewResumeRoaster(apiKey, db)
 	if err != nil {
 		log.Fatal("Failed to initialize resume roaster:", err)
 	}
@@ -242,8 +317,36 @@ func main() {
 		c.JSON(http.StatusOK, result)
 	})
 
+	r.GET("/api/analyses", func(c *gin.Context) {
+		rows, err := db.Query("SELECT id, name, ai_risk, roast, analysis_date FROM resume_analyses ORDER BY analysis_date DESC")
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch analyses"})
+			return
+		}
+		defer rows.Close()
+
+		var analyses []ResumeAnalysisRecord
+		for rows.Next() {
+			var analysis ResumeAnalysisRecord
+			err := rows.Scan(&analysis.ID, &analysis.Name, &analysis.AIRisk, &analysis.Roast, &analysis.AnalysisDate)
+			if err != nil {
+				log.Printf("Error scanning row: %v", err)
+				continue
+			}
+			analyses = append(analyses, analysis)
+		}
+
+		c.JSON(http.StatusOK, analyses)
+	})
+
 	r.GET("/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"status": "still savage"})
+		// Check database connection as part of health check
+		err := db.Ping()
+		if err != nil {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"status": "database connection failed"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"status": "still savage and connected"})
 	})
 
 	log.Println("🔥 Resume Roaster starting on port 8080...")
