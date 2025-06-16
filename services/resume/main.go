@@ -1,27 +1,25 @@
 package main
 
 import (
-	"bytes"
 	"context"
 	"database/sql"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io"
 	"log"
-	"net/http"
 	"os"
-	"path/filepath"
-	handler "profilefolio/api"
+	"profilefolio/api/handlers"
+	"profilefolio/api/routes"
+	services "profilefolio/internal"
+	"profilefolio/models/analysis"
+	"profilefolio/pkg"
+	"profilefolio/utils"
 	"regexp"
-	"strconv"
 	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
 	"github.com/google/generative-ai-go/genai"
 	_ "github.com/lib/pq" // Postgres driver
 	"google.golang.org/api/option"
@@ -264,219 +262,248 @@ func extractTextFromDOCX(content []byte) (string, error) {
 }
 
 func main() {
-	http.HandleFunc("/api/resumes", handler.Handler)
-	http.ListenAndServe(":8080", nil)
+	// http.HandleFunc("/api/resumes", handler.Handler)
+	// http.ListenAndServe(":8080", nil)
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 
-	apiKey := os.Getenv("AI_API_KEY")
-	if apiKey == "" {
-		log.Fatal("AI_API_KEY environment variable is required")
-	}
+	// apiKey := os.Getenv("AI_API_KEY")
+	// if apiKey == "" {
+	// 	log.Fatal("AI_API_KEY environment variable is required")
+	// }
 
-	// Connect to Postgres
-	db, err := connectToPostgres()
-	if err != nil {
-		log.Fatal("Failed to connect to database:", err)
-	}
+	// // Connect to Postgres
+	// db, err := connectToPostgres()
+	// if err != nil {
+	// 	log.Fatal("Failed to connect to database:", err)
+	// }
+	// defer db.Close()
+
+	// roaster, err := NewResumeRoaster(apiKey, db)
+	// if err != nil {
+	// 	log.Fatal("Failed to initialize resume roaster:", err)
+	// }
+
+	// r := gin.Default()
+
+	// // Configure CORS
+	// config := cors.DefaultConfig()
+	// config.AllowOrigins = []string{"http://localhost:3000"}
+	// config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+	// config.AllowHeaders = []string{"Origin", "Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization"}
+	// r.Use(cors.New(config))
+
+	// r.POST("/api/analyze", func(c *gin.Context) {
+	// 	// Handle file upload
+	// 	file, header, err := c.Request.FormFile("resume")
+	// 	if err != nil {
+	// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to get file from request"})
+	// 		return
+	// 	}
+	// 	defer file.Close()
+
+	// 	// Read file content
+	// 	var buf bytes.Buffer
+	// 	if _, err := io.Copy(&buf, file); err != nil {
+	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read file"})
+	// 		return
+	// 	}
+
+	// 	// Create temporary file
+	// 	tempDir := os.TempDir()
+	// 	tempFile := filepath.Join(tempDir, header.Filename)
+	// 	if err := os.WriteFile(tempFile, buf.Bytes(), 0644); err != nil {
+	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save temporary file"})
+	// 		return
+	// 	}
+	// 	defer os.Remove(tempFile)
+
+	// 	// Extract text from file
+	// 	text, err := extractTextFromFile(tempFile, header.Header.Get("Content-Type"))
+	// 	if err != nil {
+	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to extract text from file"})
+	// 		return
+	// 	}
+
+	// 	if strings.TrimSpace(text) == "" {
+	// 		c.JSON(http.StatusBadRequest, gin.H{"error": "No readable text found in the file"})
+	// 		return
+	// 	}
+
+	// 	// Analyze with AI
+	// 	ctx := context.Background()
+	// 	result, err := roaster.RoastResume(ctx, text)
+	// 	if err != nil {
+	// 		log.Printf("Roast error: %v", err)
+	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to roast resume"})
+	// 		return
+	// 	}
+
+	// 	c.JSON(http.StatusOK, result)
+	// })
+
+	// r.POST("/api/analyses/:id/react", func(c *gin.Context) {
+	// 	idStr := c.Param("id")
+	// 	id, err := strconv.ParseInt(idStr, 10, 64)
+	// 	if err != nil {
+	// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
+	// 		return
+	// 	}
+
+	// 	var req struct {
+	// 		Reaction     string `json:"reaction"`
+	// 		PrevReaction string `json:"prevReaction,omitempty"`
+	// 	}
+	// 	if err := c.ShouldBindJSON(&req); err != nil {
+	// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+	// 		return
+	// 	}
+
+	// 	// Validate reaction
+	// 	validReactions := map[string]bool{"💩": true, "🔥": true, "👨‍💻": true, "💀": true, "😂": true}
+	// 	if !validReactions[req.Reaction] {
+	// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid reaction"})
+	// 		return
+	// 	}
+	// 	if req.PrevReaction != "" && !validReactions[req.PrevReaction] {
+	// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid previous reaction"})
+	// 		return
+	// 	}
+
+	// 	// Update reactions in database
+	// 	query := `
+	//         UPDATE resume_analyses
+	//         SET reactions = jsonb_set(
+	//             jsonb_set(
+	//                 reactions,
+	//                 $1::text[],
+	//                 ((reactions->>$2)::integer + 1)::text::jsonb
+	//             ),
+	//             $3::text[],
+	//             ((reactions->>$4)::integer - 1)::text::jsonb
+	//         )
+	//         WHERE id = $5`
+	// 	var result sql.Result
+	// 	if req.PrevReaction != "" {
+	// 		result, err = roaster.db.Exec(
+	// 			query,
+	// 			fmt.Sprintf("{%s}", req.Reaction), req.Reaction,
+	// 			fmt.Sprintf("{%s}", req.PrevReaction), req.PrevReaction,
+	// 			id)
+	// 	} else {
+	// 		result, err = roaster.db.Exec(`
+	//             UPDATE resume_analyses
+	//             SET reactions = jsonb_set(
+	//                 reactions,
+	//                 $1::text[],
+	//                 ((reactions->>$2)::integer + 1)::text::jsonb
+	//             )
+	//             WHERE id = $3`,
+	// 			fmt.Sprintf("{%s}", req.Reaction), req.Reaction, id)
+	// 	}
+	// 	if err != nil {
+	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+	// 		return
+	// 	}
+	// 	rowsAffected, _ := result.RowsAffected()
+	// 	if rowsAffected == 0 {
+	// 		c.JSON(http.StatusNotFound, gin.H{"error": "Analysis not found"})
+	// 		return
+	// 	}
+
+	// 	c.JSON(http.StatusOK, gin.H{"message": "Reaction recorded"})
+	// })
+
+	// r.GET("/api/analyses", func(c *gin.Context) {
+	// 	rows, err := db.Query("SELECT id, name, ai_risk, roast, analysis_date FROM resume_analyses ORDER BY analysis_date DESC")
+	// 	if err != nil {
+	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch analyses"})
+	// 		return
+	// 	}
+	// 	defer rows.Close()
+
+	// 	var analyses []ResumeAnalysisRecord
+	// 	for rows.Next() {
+	// 		var analysis ResumeAnalysisRecord
+	// 		err := rows.Scan(&analysis.Id, &analysis.Name, &analysis.AIRisk, &analysis.Roast, &analysis.AnalysisDate)
+	// 		if err != nil {
+	// 			log.Printf("Error scanning row: %v", err)
+	// 			continue
+	// 		}
+	// 		analyses = append(analyses, analysis)
+	// 	}
+
+	// 	c.JSON(http.StatusOK, analyses)
+	// })
+
+	// // Add this route in your Gin router setup
+	// r.GET("/api/analyses/:id", func(c *gin.Context) {
+	// 	// Get the ID from URL parameter
+	// 	idStr := c.Param("id")
+	// 	id, err := strconv.ParseInt(idStr, 10, 64)
+	// 	if err != nil {
+	// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
+	// 		return
+	// 	}
+
+	// 	// Call your database function
+	// 	analysis, err := roaster.getAnalysisFromDB(id)
+	// 	if err != nil {
+	// 		if errors.Is(err, sql.ErrNoRows) {
+	// 			c.JSON(http.StatusNotFound, gin.H{"error": "Analysis not found"})
+	// 		} else {
+	// 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+	// 		}
+	// 		return
+	// 	}
+
+	// 	// Return the analysis as JSON
+	// 	c.JSON(http.StatusOK, analysis)
+	// })
+	// r.GET("/health", func(c *gin.Context) {
+	// 	// Check database connection as part of health check
+	// 	err := db.Ping()
+	// 	if err != nil {
+	// 		c.JSON(http.StatusServiceUnavailable, gin.H{"status": "database connection failed"})
+	// 		return
+	// 	}
+	// 	c.JSON(http.StatusOK, gin.H{"status": "still savage and connected"})
+	// })
+
+	// log.Println("🔥 Resume Roaster starting on port 8080...")
+	// if err := r.Run(":8080"); err != nil {
+	// 	log.Fatal("Failed to start server:", err)
+	// }
+	db := pkg.NewDatabase()
 	defer db.Close()
 
-	roaster, err := NewResumeRoaster(apiKey, db)
-	if err != nil {
-		log.Fatal("Failed to initialize resume roaster:", err)
-	}
+	aiClient := pkg.NewAIClient()
+	defer aiClient.(*pkg.GeminiAIClient).Close()
 
-	r := gin.Default()
+	roasterRepo := analysis.NewAnalysisRepository(db)
 
-	// Configure CORS
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:3000"}
-	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
-	config.AllowHeaders = []string{"Origin", "Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization"}
-	r.Use(cors.New(config))
+	roasterService := services.NewResumeRoaster(aiClient, roasterRepo)
+	roasterHandler := handlers.NewResumeRoasterHandler(roasterService)
 
-	r.POST("/api/analyze", func(c *gin.Context) {
-		// Handle file upload
-		file, header, err := c.Request.FormFile("resume")
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to get file from request"})
-			return
-		}
-		defer file.Close()
+	// Create Gin router
+	router := gin.Default()
 
-		// Read file content
-		var buf bytes.Buffer
-		if _, err := io.Copy(&buf, file); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read file"})
-			return
-		}
+	// Apply middleware
+	router.Use(utils.CORSMiddleware())
+	router.Use(utils.LoggerMiddleware())
 
-		// Create temporary file
-		tempDir := os.TempDir()
-		tempFile := filepath.Join(tempDir, header.Filename)
-		if err := os.WriteFile(tempFile, buf.Bytes(), 0644); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save temporary file"})
-			return
-		}
-		defer os.Remove(tempFile)
+	// Register routes
+	apiGroup := router.Group("/api")
+	routes.RegisterAnalysisRoutes(apiGroup, roasterHandler)
+	// routes.RegisterReactionRoutes(apiGroup, roasterHandler)
+	// routes.RegisterHealthRoutes(router)
 
-		// Extract text from file
-		text, err := extractTextFromFile(tempFile, header.Header.Get("Content-Type"))
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to extract text from file"})
-			return
-		}
-
-		if strings.TrimSpace(text) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "No readable text found in the file"})
-			return
-		}
-
-		// Analyze with AI
-		ctx := context.Background()
-		result, err := roaster.RoastResume(ctx, text)
-		if err != nil {
-			log.Printf("Roast error: %v", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to roast resume"})
-			return
-		}
-
-		c.JSON(http.StatusOK, result)
-	})
-
-	r.POST("/api/analyses/:id/react", func(c *gin.Context) {
-		idStr := c.Param("id")
-		id, err := strconv.ParseInt(idStr, 10, 64)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
-			return
-		}
-
-		var req struct {
-			Reaction     string `json:"reaction"`
-			PrevReaction string `json:"prevReaction,omitempty"`
-		}
-		if err := c.ShouldBindJSON(&req); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
-			return
-		}
-
-		// Validate reaction
-		validReactions := map[string]bool{"💩": true, "🔥": true, "👨‍💻": true, "💀": true, "😂": true}
-		if !validReactions[req.Reaction] {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid reaction"})
-			return
-		}
-		if req.PrevReaction != "" && !validReactions[req.PrevReaction] {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid previous reaction"})
-			return
-		}
-
-		// Update reactions in database
-		query := `
-            UPDATE resume_analyses
-            SET reactions = jsonb_set(
-                jsonb_set(
-                    reactions,
-                    $1::text[],
-                    ((reactions->>$2)::integer + 1)::text::jsonb
-                ),
-                $3::text[],
-                ((reactions->>$4)::integer - 1)::text::jsonb
-            )
-            WHERE id = $5`
-		var result sql.Result
-		if req.PrevReaction != "" {
-			result, err = roaster.db.Exec(
-				query,
-				fmt.Sprintf("{%s}", req.Reaction), req.Reaction,
-				fmt.Sprintf("{%s}", req.PrevReaction), req.PrevReaction,
-				id)
-		} else {
-			result, err = roaster.db.Exec(`
-                UPDATE resume_analyses
-                SET reactions = jsonb_set(
-                    reactions,
-                    $1::text[],
-                    ((reactions->>$2)::integer + 1)::text::jsonb
-                )
-                WHERE id = $3`,
-				fmt.Sprintf("{%s}", req.Reaction), req.Reaction, id)
-		}
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
-			return
-		}
-		rowsAffected, _ := result.RowsAffected()
-		if rowsAffected == 0 {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Analysis not found"})
-			return
-		}
-
-		c.JSON(http.StatusOK, gin.H{"message": "Reaction recorded"})
-	})
-
-	r.GET("/api/analyses", func(c *gin.Context) {
-		rows, err := db.Query("SELECT id, name, ai_risk, roast, analysis_date FROM resume_analyses ORDER BY analysis_date DESC")
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch analyses"})
-			return
-		}
-		defer rows.Close()
-
-		var analyses []ResumeAnalysisRecord
-		for rows.Next() {
-			var analysis ResumeAnalysisRecord
-			err := rows.Scan(&analysis.Id, &analysis.Name, &analysis.AIRisk, &analysis.Roast, &analysis.AnalysisDate)
-			if err != nil {
-				log.Printf("Error scanning row: %v", err)
-				continue
-			}
-			analyses = append(analyses, analysis)
-		}
-
-		c.JSON(http.StatusOK, analyses)
-	})
-
-	// Add this route in your Gin router setup
-	r.GET("/api/analyses/:id", func(c *gin.Context) {
-		// Get the ID from URL parameter
-		idStr := c.Param("id")
-		id, err := strconv.ParseInt(idStr, 10, 64)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
-			return
-		}
-
-		// Call your database function
-		analysis, err := roaster.getAnalysisFromDB(id)
-		if err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				c.JSON(http.StatusNotFound, gin.H{"error": "Analysis not found"})
-			} else {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
-			}
-			return
-		}
-
-		// Return the analysis as JSON
-		c.JSON(http.StatusOK, analysis)
-	})
-	r.GET("/health", func(c *gin.Context) {
-		// Check database connection as part of health check
-		err := db.Ping()
-		if err != nil {
-			c.JSON(http.StatusServiceUnavailable, gin.H{"status": "database connection failed"})
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{"status": "still savage and connected"})
-	})
-
-	log.Println("🔥 Resume Roaster starting on port 8080...")
-	if err := r.Run(":8080"); err != nil {
+	// Start server
+	log.Println("🔥 Server starting on :8080")
+	if err := router.Run(":8080"); err != nil {
 		log.Fatal("Failed to start server:", err)
 	}
 }
