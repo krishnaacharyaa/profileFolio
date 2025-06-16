@@ -8,8 +8,14 @@
 	],
 	"routes": [
 		{
-			"src": "/*",
+			"src": "/api/.*",
 			"dest": "/api/index.go"
+		}
+	],
+	"rewrites": [
+		{
+			"source": "/api/(.*)",
+			"dest": "/api/index.go?path=$1"
 		}
 	]
 }

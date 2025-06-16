@@ -35,12 +35,30 @@ import (
 	services "profilefolio/services"
 	"profilefolio/utils"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func Handler(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Printf("Incoming request: %s %s\n", r.Method, r.URL.Path)
+	fmt.Printf("Incoming request - Method: %s, Path: %s, Query: %v\n",
+		r.Method, r.URL.Path, r.URL.Query())
+
+	switch r.URL.Path {
+	case "/api/test":
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(`{"status":"ok"}`))
+		return
+	case "/":
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(`{"status":"ok /"}`))
+	case "/api":
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(`{"status":"ok /api"}`))
+	default:
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(`{"error":"not found"}`))
+	}
 
 	if r.URL.Path == "/api/test" && r.Method == "GET" {
 		w.WriteHeader(http.StatusOK)
@@ -51,6 +69,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	// Initialize Gin in serverless mode
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.New()
+	router.Use(cors.Default())
 	db := pkg.NewDatabase()
 	defer db.Close()
 
@@ -64,7 +83,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	// Apply middleware
 	router.Use(utils.ServerlessLogger(), gin.Recovery())
 
-	apiGroup := router.Group("/api")
+	apiGroup := router.Group("/")
 	// Register routes
 	routes.RegisterAnalysisRoutes(apiGroup, roasterHandler)
 
