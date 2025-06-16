@@ -4,21 +4,59 @@ import { API_BASE_URL } from '@/constants/constants';
 import { RoastAnalysis } from '../types/resume';
 
 export const analyzeResume = async (file: File): Promise<RoastAnalysis> => {
+	console.log('Preparing to analyze resume file:', file.name);
+
 	const formData = new FormData();
 	formData.append('resume', file);
 
-	const response = await fetch(`${API_BASE_URL}/api/analyze`, {
-		method: 'POST',
-		body: formData,
-	});
+	try {
+		const apiUrl = `${API_BASE_URL}/api/analyze`;
+		console.log('Making request to:', apiUrl);
 
-	if (!response.ok) {
-		throw new Error(`HTTP error! status: ${response.status}`);
+		const response = await fetch(apiUrl, {
+			method: 'POST',
+			body: formData,
+			// credentials: 'include' // Uncomment if you need to send cookies
+		});
+
+		console.log('Received response status:', response.status);
+
+		if (!response.ok) {
+			let errorDetails = '';
+			try {
+				const errorResponse = await response.json();
+				errorDetails = errorResponse.message || JSON.stringify(errorResponse);
+			} catch (e) {
+				errorDetails = await response.text();
+			}
+
+			console.error('API Error Details:', {
+				status: response.status,
+				statusText: response.statusText,
+				url: apiUrl,
+				details: errorDetails,
+			});
+
+			throw new Error(
+				`Analysis failed: ${response.statusText} (${response.status}). ${errorDetails}`
+			);
+		}
+
+		const result = await response.json();
+		console.log('Analysis result:', result);
+		return result;
+	} catch (err) {
+		console.error('Network/API error:', err);
+
+		if (err instanceof TypeError && err.message.includes('Failed to fetch')) {
+			throw new Error(
+				'Network error: Could not connect to the analysis service'
+			);
+		}
+
+		throw err; // Re-throw for handleAnalyze to catch
 	}
-
-	return await response.json();
 };
-
 export const getAnalysisById = async (id: number): Promise<RoastAnalysis> => {
 	const response = await fetch(`${API_BASE_URL}/api/analyses/${id}`, {
 		method: 'GET',
