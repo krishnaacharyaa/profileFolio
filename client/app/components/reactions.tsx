@@ -35,9 +35,7 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 				const analysisData = await getAnalysisById(parseInt(shareId));
 				setAnalysis(analysisData);
 				// Simulate view count - you can replace this with actual API call
-				setViewCount(
-					analysisData.view_count || Math.floor(Math.random() * 500) + 50
-				);
+				setViewCount(analysisData.view_count || 1);
 			} catch {
 				setError('Failed to load analysis');
 			} finally {
@@ -123,19 +121,31 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 	const getHeaderMessage = () => {
 		const name = analysis?.name?.trim();
 		const hasName = name && name.length > 0 && name.toLowerCase() !== 'unknown';
+		const firstName = hasName ? name.split(' ')[0] : null;
 
-		if (hasName) {
-			return `${name}'s resume just got absolutely demolished`;
-		}
-		return 'Another resume just got absolutely demolished';
+		const messages = [
+			firstName ? `${firstName} got roasted 🔥` : 'Someone got roasted 🔥',
+			firstName
+				? `${firstName} didn't see this coming 💀`
+				: "They didn't see this coming 💀",
+			firstName
+				? `${firstName} just got exposed 😱`
+				: 'Someone just got exposed 😱',
+			firstName
+				? `${firstName} thought they were safe...`
+				: 'They thought they were safe...',
+			firstName ? `RIP ${firstName}'s career 💀` : "RIP someone's career 💀",
+		];
+
+		return messages[Math.floor(Math.random() * messages.length)];
 	};
 
 	const getSubMessage = () => {
 		const riskLevel = analysis?.ai_risk || 0;
-		if (riskLevel > 80) return 'The AI showed no mercy 💀';
-		if (riskLevel > 60) return "The future isn't looking bright 🔥";
-		if (riskLevel > 40) return "There's still hope... maybe 🤔";
-		return 'Not bad, but could be better ✨';
+		if (riskLevel > 80) return 'The AI was absolutely ruthless';
+		if (riskLevel > 60) return "This one's gonna leave a mark";
+		if (riskLevel > 40) return "Ouch, that's gotta hurt";
+		return 'Not terrible, but still brutal';
 	};
 
 	if (loading || !analysis) {
@@ -212,9 +222,9 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 					transition={{ delay: 0.2 }}
 				>
 					{/* Header */}
-					<div className="text-center space-y-6">
+					<div className="text-center space-y-4">
 						<motion.h1
-							className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-red-400"
+							className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-red-400"
 							animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
 							transition={{ duration: 3, repeat: Infinity }}
 							style={{ backgroundSize: '200% 200%' }}
@@ -222,7 +232,7 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 							{getHeaderMessage()}
 						</motion.h1>
 						<motion.p
-							className="text-xl md:text-2xl font-bold text-white/90"
+							className="text-lg md:text-xl font-medium text-white/80"
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: 0.4 }}
@@ -230,27 +240,33 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 							{getSubMessage()}
 						</motion.p>
 
-						{/* Stats bar */}
+						{/* Views highlight */}
 						<motion.div
-							className="flex justify-center items-center gap-6 text-sm text-white/60"
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
+							className="flex justify-center"
+							initial={{ opacity: 0, scale: 0.8 }}
+							animate={{ opacity: 1, scale: 1 }}
 							transition={{ delay: 0.6 }}
 						>
-							<div className="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-full backdrop-blur-sm">
-								<Eye size={16} />
-								<span>{viewCount.toLocaleString()} views</span>
-							</div>
-							<div className="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-full backdrop-blur-sm">
-								<Users size={16} />
-								<span>
-									{Object.values(analysis.reactions).reduce((a, b) => a + b, 0)}{' '}
-									reactions
-								</span>
-							</div>
-							<div className="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-full backdrop-blur-sm">
-								<TrendingUp size={16} />
-								<span>Trending</span>
+							<div className="bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-red-500/20 backdrop-blur-xl border border-purple-400/30 px-6 py-3 rounded-full shadow-lg">
+								<div className="flex items-center gap-2 text-white font-bold">
+									<motion.span
+										animate={{
+											scale: [1, 1.2, 1],
+											rotate: [0, -10, 10, 0],
+										}}
+										transition={{
+											duration: 2,
+											repeat: Infinity,
+											repeatType: 'reverse',
+										}}
+										className="text-xl"
+									>
+										👀
+									</motion.span>
+									<span className="text-lg">
+										{viewCount.toLocaleString()} people witnessed this carnage
+									</span>
+								</div>
 							</div>
 						</motion.div>
 					</div>
