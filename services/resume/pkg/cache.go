@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -96,19 +97,31 @@ type RedisCache struct {
 
 // NewRedisCache creates a new Redis cache client
 func NewRedisCache(addr, password string, db int) (*RedisCache, error) {
+	fmt.Printf("Attempting to connect to Redis at: %s\n", addr) // Log connection attempt
+
 	client := redis.NewClient(&redis.Options{
 		Addr:     addr,
 		Password: password,
 		DB:       db,
+		TLSConfig: &tls.Config{
+			MinVersion: tls.VersionTLS12,
+		},
 	})
 
-	// Verify connection
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second) // Increased timeout
 	defer cancel()
+
 	if err := client.Ping(ctx).Err(); err != nil {
+		fmt.Printf("Detailed Redis connection error: %v\n", err) // Detailed error
 		return nil, fmt.Errorf("failed to connect to Redis: %w", err)
 	}
 
+	_, err := client.Ping(ctx).Result()
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect to Redis at %s: %w", addr, err)
+	}
+
+	fmt.Println("Successfully connected to Redis")
 	return &RedisCache{client: client}, nil
 }
 
