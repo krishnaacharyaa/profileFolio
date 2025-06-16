@@ -16,30 +16,34 @@ export const analyzeResume = async (file: File): Promise<RoastAnalysis> => {
 		const response = await fetch(apiUrl, {
 			method: 'POST',
 			body: formData,
-			// credentials: 'include' // Uncomment if you need to send cookies
 		});
 
 		console.log('Received response status:', response.status);
 
+		// First clone the response for error handling
+		const responseClone = response.clone();
+
 		if (!response.ok) {
-			let errorDetails = '';
 			try {
-				const errorResponse = await response.json();
-				errorDetails = errorResponse.message || JSON.stringify(errorResponse);
+				const errorResponse = await responseClone.json();
+				console.error('API Error Details:', {
+					status: response.status,
+					statusText: response.statusText,
+					url: apiUrl,
+					details: errorResponse,
+				});
+				throw new Error(
+					`Analysis failed: ${response.statusText} (${response.status}). ${
+						errorResponse.message || JSON.stringify(errorResponse)
+					}`
+				);
 			} catch (e) {
-				errorDetails = await response.text();
+				// If JSON parsing fails, try reading as text
+				const errorText = await responseClone.text();
+				throw new Error(
+					`Analysis failed: ${response.statusText} (${response.status}). ${errorText}`
+				);
 			}
-
-			console.error('API Error Details:', {
-				status: response.status,
-				statusText: response.statusText,
-				url: apiUrl,
-				details: errorDetails,
-			});
-
-			throw new Error(
-				`Analysis failed: ${response.statusText} (${response.status}). ${errorDetails}`
-			);
 		}
 
 		const result = await response.json();
@@ -54,9 +58,10 @@ export const analyzeResume = async (file: File): Promise<RoastAnalysis> => {
 			);
 		}
 
-		throw err; // Re-throw for handleAnalyze to catch
+		throw err;
 	}
 };
+
 export const getAnalysisById = async (id: number): Promise<RoastAnalysis> => {
 	const response = await fetch(`${API_BASE_URL}/api/analyses/${id}`, {
 		method: 'GET',
