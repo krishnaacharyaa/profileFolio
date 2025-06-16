@@ -58,17 +58,17 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 		const firstName = hasName ? name.split(' ')[0] : null;
 
 		const messages = [
-			firstName ? `${firstName} got roasted 🔥` : 'Someone got roasted 🔥',
+			firstName ? `${firstName} got roasted ` : 'Someone got roasted ',
 			firstName
-				? `${firstName} didn't see this coming 💀`
-				: "They didn't see this coming 💀",
+				? `${firstName} didn't see this coming `
+				: "They didn't see this coming ",
 			firstName
-				? `${firstName} just got exposed 😱`
-				: 'Someone just got exposed 😱',
+				? `${firstName} just got exposed `
+				: 'Someone just got exposed ',
 			firstName
 				? `${firstName} thought they were safe...`
 				: 'They thought they were safe...',
-			firstName ? `RIP ${firstName}'s career 💀` : "RIP someone's career 💀",
+			firstName ? `RIP ${firstName}'s career ` : "RIP someone's career ",
 		];
 
 		// Create a simple hash function to consistently select the same message for the same shareId

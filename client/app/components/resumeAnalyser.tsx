@@ -6,6 +6,7 @@ import { Upload, Share2, Loader2, AlertCircle } from 'lucide-react';
 import { analyzeResume } from '../lib/resume';
 import ResultsPage from './results';
 import { RoastAnalysis } from '../types/resume';
+import { API_BASE_URL } from '@/constants/constants';
 
 export const ResumeAnalyzer = () => {
 	const [file, setFile] = useState<File | null>(null);
@@ -44,22 +45,11 @@ export const ResumeAnalyzer = () => {
 		y: Math.floor(Math.random() * 200) - 100,
 	}));
 
-	// Loading stages with progress simulation
 	const loadingStages = [
-		{ stage: 'Uploading your resume...', progress: 15, duration: 800 },
-		{ stage: 'Parsing PDF content...', progress: 30, duration: 1000 },
-		{
-			stage: 'Analyzing skills and experience...',
-			progress: 50,
-			duration: 1500,
-		},
-		{ stage: 'Generating brutal feedback...', progress: 70, duration: 1200 },
-		{ stage: 'Preparing the roast...', progress: 85, duration: 800 },
-		{
-			stage: 'Almost ready to destroy your confidence...',
-			progress: 95,
-			duration: 500,
-		},
+		{ stage: 'Uploading your resume...', progress: 25 },
+		{ stage: 'Generating brutal feedback...', progress: 50 },
+		{ stage: 'Preparing the roast...', progress: 75 },
+		{ stage: 'Finalizing your humiliation...', progress: 95 },
 	];
 
 	const handleDrag = (e: React.DragEvent) => {
@@ -99,57 +89,92 @@ export const ResumeAnalyzer = () => {
 		}
 	};
 
-	const simulateProgress = async () => {
-		setLoadingProgress(0);
-		setLoadingStage('');
+	// const simulateProgress = async () => {
+	// 	setLoadingProgress(0);
+	// 	setLoadingStage('');
 
-		for (let i = 0; i < loadingStages.length; i++) {
-			const stage = loadingStages[i];
-			setLoadingStage(stage.stage);
+	// 	for (let i = 0; i < loadingStages.length; i++) {
+	// 		const stage = loadingStages[i];
+	// 		setLoadingStage(stage.stage);
 
-			// Animate progress to the target
-			const startProgress = i === 0 ? 0 : loadingStages[i - 1].progress;
-			const targetProgress = stage.progress;
-			const steps = 20;
-			const progressIncrement = (targetProgress - startProgress) / steps;
+	// 		// Animate progress to the target
+	// 		const startProgress = i === 0 ? 0 : loadingStages[i - 1].progress;
+	// 		const targetProgress = stage.progress;
+	// 		const steps = 20;
+	// 		const progressIncrement = (targetProgress - startProgress) / steps;
 
-			for (let step = 0; step <= steps; step++) {
-				await new Promise(resolve =>
-					setTimeout(resolve, stage.duration / steps)
-				);
-				setLoadingProgress(startProgress + progressIncrement * step);
-			}
-		}
-	};
+	// 		for (let step = 0; step <= steps; step++) {
+	// 			await new Promise(resolve =>
+	// 				setTimeout(resolve, stage.duration / steps)
+	// 			);
+	// 			setLoadingProgress(startProgress + progressIncrement * step);
+	// 		}
+	// 	}
+	// };
 
 	const handleAnalyze = async (file: File) => {
 		setLoading(true);
 		setError(null);
 		setAnalysis(null);
 
-		// Start progress simulation
-		const progressPromise = simulateProgress();
-
 		try {
-			// Run actual analysis
-			const result = await analyzeResume(file);
+			// Start job and get job ID
+			const { jobId } = await analyzeResume(file); // Modified to return jobId
 
-			// Wait for progress to complete or force complete if analysis finishes early
-			await progressPromise;
+			// Start progress simulation
+			const progressInterval = setInterval(() => {
+				setLoadingProgress(prev => {
+					const next = prev + 1;
+					// Update stage based on progress
+					const currentStage =
+						loadingStages.find(stage => next <= stage.progress) ||
+						loadingStages[loadingStages.length - 1];
+					setLoadingStage(currentStage.stage);
+					return next >= 95 ? 95 : next; // Cap at 95% until job completes
+				});
+			}, 300);
 
-			// Ensure we reach 100% and show completion
+			// Poll for job completion
+			const result = await pollJobStatus(jobId);
+			clearInterval(progressInterval);
+
+			// Complete progress
 			setLoadingProgress(100);
-			setLoadingStage('Analysis complete!');
-
-			// Small delay to show completion
-			await new Promise(resolve => setTimeout(resolve, 300));
+			setLoadingStage('Roast complete!');
+			await new Promise(resolve => setTimeout(resolve, 500));
 
 			setAnalysis(result);
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Failed to analyze resume');
+			setError(err instanceof Error ? err.message : 'Analysis failed');
 		} finally {
 			setLoading(false);
 		}
+	};
+
+	// Polling function
+	const pollJobStatus = async (jobId: string): Promise<RoastAnalysis> => {
+		const POLL_INTERVAL = 2000; // 2 seconds
+		const MAX_ATTEMPTS = 30; // ~1 minute timeout
+
+		for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+			try {
+				const response = await fetch(`${API_BASE_URL}/api/job-status/${jobId}`);
+				const data = await response.json();
+
+				if (data.status === 'completed') {
+					return data.data;
+				} else if (data.status === 'failed') {
+					throw new Error(data.error || 'Job processing failed');
+				}
+				// If still processing, wait and try again
+				await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL));
+			} catch (err) {
+				if (attempt === MAX_ATTEMPTS - 1) {
+					throw new Error('Job timed out');
+				}
+			}
+		}
+		throw new Error('Max polling attempts reached');
 	};
 
 	const resetAnalysis = () => {
@@ -316,18 +341,25 @@ export const ResumeAnalyzer = () => {
 						animate={{ scale: 1, opacity: 1 }}
 						className="text-center space-y-6 relative z-10 p-8 bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-purple-500/30 mx-4 max-w-md w-full"
 					>
+						{/* Progressive emoji that pulses */}
 						<motion.div
 							animate={{
-								rotate: 360,
 								scale: [1, 1.2, 1],
 							}}
 							transition={{
-								rotate: { duration: 3, repeat: Infinity, ease: 'linear' },
-								scale: { duration: 2, repeat: Infinity },
+								duration: 1.5,
+								repeat: Infinity,
+								ease: 'easeInOut',
 							}}
-							className="text-6xl md:text-8xl mb-4"
+							className="text-8xl mb-4"
 						>
-							🤖
+							{loadingProgress < 25
+								? '📤'
+								: loadingProgress < 50
+								? '🔍'
+								: loadingProgress < 75
+								? '🤖'
+								: '🔥'}
 						</motion.div>
 
 						<div className="space-y-4">
@@ -339,25 +371,14 @@ export const ResumeAnalyzer = () => {
 								transition={{ duration: 6, repeat: Infinity }}
 								style={{ backgroundSize: '200% 200%' }}
 							>
-								{loadingStage || 'Initializing...'}
+								{loadingStage}
 							</motion.h2>
-							<motion.p
-								className="text-gray-300 text-base md:text-lg"
-								animate={{ opacity: [0.5, 1, 0.5] }}
-								transition={{ duration: 2, repeat: Infinity }}
-							>
-								{loadingProgress < 50
-									? 'Reading your career disasters...'
-									: loadingProgress < 80
-									? 'Calculating your market value...'
-									: 'Preparing the roast...'}
-							</motion.p>
 						</div>
 
-						{/* Enhanced progress bar with percentage */}
+						{/* Enhanced progress bar */}
 						<div className="space-y-3">
 							<div className="flex justify-between items-center text-sm">
-								<span className="text-gray-400">Progress</span>
+								<span className="text-gray-400">Roasting in progress</span>
 								<span className="text-purple-400 font-bold">
 									{Math.round(loadingProgress)}%
 								</span>
@@ -369,7 +390,6 @@ export const ResumeAnalyzer = () => {
 									animate={{ width: `${loadingProgress}%` }}
 									transition={{ duration: 0.3, ease: 'easeOut' }}
 								>
-									{/* Shimmer effect */}
 									<motion.div
 										className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
 										animate={{
@@ -385,14 +405,20 @@ export const ResumeAnalyzer = () => {
 							</motion.div>
 						</div>
 
-						{/* Funny loading tips */}
-						<motion.div
-							className="text-xs text-gray-500 italic"
-							animate={{ opacity: [0.5, 1, 0.5] }}
-							transition={{ duration: 3, repeat: Infinity }}
-						>
-							💡 Tip: This is taking longer than your last job search
-						</motion.div>
+						{/* Cancel button */}
+						{loadingProgress < 95 && (
+							<motion.button
+								onClick={() => {
+									setLoading(false);
+									setLoadingProgress(0);
+								}}
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
+								className="mt-4 text-xs text-gray-400 hover:text-white transition-colors"
+							>
+								Cancel and spare my feelings
+							</motion.button>
+						)}
 					</motion.div>
 				</motion.div>
 			)}

@@ -27,6 +27,7 @@ package api
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"profilefolio/api/handlers"
 	"profilefolio/api/routes"
@@ -51,13 +52,17 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	db := pkg.NewDatabase()
 	defer db.Close()
 
+	redisCache, err := pkg.NewRedisCacheFromEnv()
+	if err != nil {
+		log.Fatal("Failed to initialize Redis:", err)
+	}
 	aiClient := pkg.NewAIClient()
 	defer aiClient.(*pkg.GeminiAIClient).Close()
 
 	roasterRepo := analysis.NewAnalysisRepository(db)
 
 	roasterService := services.NewResumeRoaster(aiClient, roasterRepo)
-	roasterHandler := handlers.NewResumeRoasterHandler(roasterService)
+	roasterHandler := handlers.NewResumeRoasterHandler(roasterService, redisCache)
 	// Apply middleware
 	router.Use(utils.ServerlessLogger(), gin.Recovery())
 

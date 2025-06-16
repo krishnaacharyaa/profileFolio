@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"profilefolio/pkg"
@@ -10,19 +12,25 @@ import (
 	"profilefolio/utils"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 type ResumeRoasterHandler struct {
-	service *services.ResumeRoaster
+	service    *services.ResumeRoaster
+	jobManager *pkg.JobManager
 }
 
-func NewResumeRoasterHandler(service *services.ResumeRoaster) *ResumeRoasterHandler {
-	return &ResumeRoasterHandler{service: service}
+func NewResumeRoasterHandler(service *services.ResumeRoaster, cache pkg.CacheClient) *ResumeRoasterHandler {
+	return &ResumeRoasterHandler{
+		service:    service,
+		jobManager: pkg.NewJobManager(cache),
+	}
 }
 
 func (h *ResumeRoasterHandler) AnalyzeResume(c *gin.Context) {
+	// 1. FIRST read the file in the main handler
 	file, header, err := c.Request.FormFile("resume")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to get file from request"})
@@ -30,30 +38,64 @@ func (h *ResumeRoasterHandler) AnalyzeResume(c *gin.Context) {
 	}
 	defer file.Close()
 
-	// Create temporary file
+	// 2. Create job only AFTER file is successfully read
+	jobID, err := h.jobManager.CreateJob(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create job"})
+		return
+	}
+
+	// 3. Process in background with the ALREADY READ file data
+	go h.processResumeAsync(file, header, jobID)
+
+	c.JSON(http.StatusAccepted, gin.H{
+		"status": "processing",
+		"jobId": jobID,
+	})
+}
+
+func (h *ResumeRoasterHandler) processResumeAsync(file multipart.File, header *multipart.FileHeader, jobID string) {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	// Now we can safely process the file
 	tempFile, err := utils.CreateTempFile(file, header)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process file"})
+		h.jobManager.FailJob(ctx, jobID, fmt.Errorf("failed to create temp file: %v", err))
 		return
 	}
 	defer os.Remove(tempFile)
 
-	// Extract text from file
 	text, err := utils.ExtractTextFromFile(tempFile, header.Header.Get("Content-Type"))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to extract text from file"})
+		h.jobManager.FailJob(ctx, jobID, fmt.Errorf("failed to extract text: %v", err))
 		return
 	}
 
 	if strings.TrimSpace(text) == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "No readable text found in the file"})
+		h.jobManager.FailJob(ctx, jobID, fmt.Errorf("no readable text found"))
 		return
 	}
 
-	// Analyze with AI
-	result, err := h.service.RoastResume(c.Request.Context(), text)
+	result, err := h.service.RoastResume(ctx, text) // Pass timeout context
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to analyze resume"})
+		h.jobManager.FailJob(ctx, jobID, fmt.Errorf("AI analysis failed: %v", err))
+		return
+	}
+
+	h.jobManager.CompleteJob(ctx, jobID, result)
+}
+
+func (h *ResumeRoasterHandler) CheckJobStatus(c *gin.Context) {
+	jobID := c.Param("job_id")
+	if jobID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "job_id is required"})
+		return
+	}
+
+	result, err := h.jobManager.GetJobStatus(c.Request.Context(), jobID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 

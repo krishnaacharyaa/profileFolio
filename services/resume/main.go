@@ -15,6 +15,11 @@ import (
 )
 
 func main() {
+	redisCache, err := pkg.NewRedisCacheFromEnv()
+	if err != nil {
+		log.Fatal("Failed to initialize Redis:", err)
+	}
+	defer redisCache.Close()
 	db := pkg.NewDatabase()
 	defer db.Close()
 
@@ -24,7 +29,7 @@ func main() {
 	roasterRepo := analysis.NewAnalysisRepository(db)
 
 	roasterService := services.NewResumeRoaster(aiClient, roasterRepo)
-	roasterHandler := handlers.NewResumeRoasterHandler(roasterService)
+	roasterHandler := handlers.NewResumeRoasterHandler(roasterService, redisCache)
 
 	// Create Gin router
 	router := gin.Default()
@@ -34,7 +39,7 @@ func main() {
 	router.Use(utils.LoggerMiddleware())
 
 	// Register routes
-	apiGroup := router.Group("/api")
+	apiGroup := router.Group("/")
 	routes.RegisterAnalysisRoutes(apiGroup, roasterHandler)
 
 	// Start server

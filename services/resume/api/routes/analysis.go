@@ -12,4 +12,5 @@ func RegisterAnalysisRoutes(router *gin.RouterGroup, roasterHandler *handlers.Re
 	router.GET("/api/analyses", roasterHandler.GetAllAnalyses)
 	router.GET("/api/analyses/:id", roasterHandler.GetAnalysis)
 	router.POST("/api/analyses/:id/react", roasterHandler.ReactToAnalysis)
+	router.GET("/api/job-status/:job_id", roasterHandler.CheckJobStatus)
 }
