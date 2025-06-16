@@ -2,10 +2,11 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
-	services "profilefolio/services"
 	"profilefolio/pkg"
+	services "profilefolio/services"
 	"profilefolio/utils"
 	"strconv"
 	"strings"
@@ -61,6 +62,8 @@ func (h *ResumeRoasterHandler) AnalyzeResume(c *gin.Context) {
 
 func (h *ResumeRoasterHandler) GetAllAnalyses(c *gin.Context) {
 	// Implementation from your original GET /api/analyses
+	fmt.Printf("Hey hi")
+	c.JSON(http.StatusOK, "Hey")
 }
 
 func (h *ResumeRoasterHandler) ReactToAnalysis(c *gin.Context) {
