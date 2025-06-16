@@ -279,7 +279,7 @@ const ResultsPage = ({ analysis, onReset }: ResultsPageProps) => {
 						<div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8">
 							<h3 className="text-lg sm:text-xl md:text-2xl font-bold text-green-400 mb-4 sm:mb-6 flex items-center">
 								<TrendingUp className="mr-2 sm:mr-3 h-5 w-5 sm:h-6 sm:w-6" />
-								What's Not Terrible
+								What&apos;s Not Terrible
 							</h3>
 							<ul className="space-y-2 sm:space-y-3 md:space-y-4">
 								{analysis.whats_not_terrible.map((strength, index) => (

@@ -590,8 +590,8 @@ export const ResumeAnalyzer = () => {
 						transition={{ delay: 1 }}
 					>
 						<p className="text-gray-400 text-xs md:text-sm font-medium px-4">
-							We'll roast your resume harder than your last performance review
-							🔥
+							We&apos;ll roast your resume harder than your last performance
+							review 🔥
 						</p>
 					</motion.div>
 				</motion.div>
