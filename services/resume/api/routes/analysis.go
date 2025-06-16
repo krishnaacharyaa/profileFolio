@@ -7,9 +7,9 @@ import (
 )
 
 func RegisterAnalysisRoutes(router *gin.RouterGroup, roasterHandler *handlers.ResumeRoasterHandler) {
-	router.POST("/analyze", roasterHandler.AnalyzeResume)
-	router.GET("/get", roasterHandler.GetAllAnalyses)
-	router.GET("/analyses", roasterHandler.GetAllAnalyses)
-	router.GET("/analyses/:id", roasterHandler.GetAnalysis)
-	router.POST("/analyses/:id/react", roasterHandler.ReactToAnalysis)
+	router.POST("/api/analyze", roasterHandler.AnalyzeResume)
+	router.GET("/api/get", roasterHandler.GetAllAnalyses) // Now matches frontend calls
+	router.GET("/api/analyses", roasterHandler.GetAllAnalyses)
+	router.GET("/api/analyses/:id", roasterHandler.GetAnalysis)
+	router.POST("/api/analyses/:id/react", roasterHandler.ReactToAnalysis)
 }
