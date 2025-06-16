@@ -30,7 +30,6 @@ func NewResumeRoasterHandler(service *services.ResumeRoaster, cache pkg.CacheCli
 }
 
 func (h *ResumeRoasterHandler) AnalyzeResume(c *gin.Context) {
-	// 1. FIRST read the file in the main handler
 	file, header, err := c.Request.FormFile("resume")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to get file from request"})
@@ -38,24 +37,22 @@ func (h *ResumeRoasterHandler) AnalyzeResume(c *gin.Context) {
 	}
 	defer file.Close()
 
-	// 2. Create job only AFTER file is successfully read
 	jobID, err := h.jobManager.CreateJob(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create job"})
 		return
 	}
 
-	// 3. Process in background with the ALREADY READ file data
 	go h.processResumeAsync(file, header, jobID)
 
 	c.JSON(http.StatusAccepted, gin.H{
 		"status": "processing",
-		"jobId": jobID,
+		"jobId":  jobID,
 	})
 }
 
 func (h *ResumeRoasterHandler) processResumeAsync(file multipart.File, header *multipart.FileHeader, jobID string) {
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
 	// Now we can safely process the file
@@ -77,6 +74,7 @@ func (h *ResumeRoasterHandler) processResumeAsync(file multipart.File, header *m
 		return
 	}
 
+	fmt.Printf("Roasting resume")
 	result, err := h.service.RoastResume(ctx, text) // Pass timeout context
 	if err != nil {
 		h.jobManager.FailJob(ctx, jobID, fmt.Errorf("AI analysis failed: %v", err))

@@ -30,10 +30,12 @@ func (r *ResumeRoaster) RoastResume(ctx context.Context, resumeText string) (*an
 
 	prompt := createRoastPrompt(resumeText)
 
+	fmt.Printf("Roasting resume from gemini")
 	response, err := r.aiClient.GenerateContent(ctx, "gemini-1.5-flash", prompt)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate roast: %w", err)
 	}
+	fmt.Printf("Roasted resume")
 
 	// Clean up the response
 	response = strings.TrimSpace(response)

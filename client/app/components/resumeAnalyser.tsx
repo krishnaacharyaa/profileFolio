@@ -130,8 +130,8 @@ export const ResumeAnalyzer = () => {
 
 	// Polling function
 	const pollJobStatus = async (jobId: string): Promise<RoastAnalysis> => {
-		const POLL_INTERVAL = 2000; // 2 seconds
-		const MAX_ATTEMPTS = 30; // ~1 minute timeout
+		const POLL_INTERVAL = 6000; // 2 seconds
+		const MAX_ATTEMPTS = 3; // ~1 minute timeout
 
 		for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
 			try {
