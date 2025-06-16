@@ -108,7 +108,7 @@ Analyze the following resume and respond ONLY in **valid JSON**. No extra text, 
 
 🎯 **Metrics to return**:
 - "name": (string) Try to extract the candidate's name from the resume.
-- "ai_risk": (int, 0-100) — How easily could AI replace this person?
+- "ai_risk": (int, 0-100) — How easily could AI replace this person? Be fair, consider soft skills and versatility.
 - "tech_score": (int, 1-10) — Actual technical skill level.
 - "gpt_overlap": (int, 1-10) — How much of this job could ChatGPT already do?
 - "buzzword_bingo": (int, 1-10) — Corporate jargon and filler words overload.

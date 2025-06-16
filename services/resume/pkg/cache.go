@@ -19,8 +19,13 @@ type RedisConfig struct {
 	DB       int
 }
 
-// LoadRedisConfigFromEnv loads Redis configuration from environment variables
 func LoadRedisConfigFromEnv() (*RedisConfig, error) {
+	// First check for Upstash URL (common in Vercel deployments)
+	if upstashURL := os.Getenv("UPSTASH_REDIS_URL"); upstashURL != "" {
+		return parseUpstashURL(upstashURL)
+	}
+
+	// Fall back to standard Redis config
 	addr := os.Getenv("REDIS_ADDR")
 	if addr == "" {
 		addr = "localhost:6379" // default value
@@ -42,6 +47,25 @@ func LoadRedisConfigFromEnv() (*RedisConfig, error) {
 		Addr:     addr,
 		Password: password,
 		DB:       db,
+	}, nil
+}
+
+// parseUpstashURL handles Upstash-specific URL format
+// Format: redis://<username>:<password>@<host>:<port>
+func parseUpstashURL(url string) (*RedisConfig, error) {
+	parsed, err := redis.ParseURL(url)
+	if err != nil {
+		return nil, fmt.Errorf("invalid Redis URL: %w", err)
+	}
+
+	password := parsed.Password
+	addr := parsed.Addr // includes port
+
+	// Upstash typically uses DB 0 and includes password in URL
+	return &RedisConfig{
+		Addr:     addr,
+		Password: password,
+		DB:       0, // Upstash usually only has DB 0
 	}, nil
 }
 
