@@ -44,28 +44,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Incoming request - Method: %s, Path: %s, Query: %v\n",
 		r.Method, r.URL.Path, r.URL.Query())
 
-	switch r.URL.Path {
-	case "/api/test":
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"status":"ok"}`))
-		return
-	case "/":
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"status":"ok /"}`))
-	case "/api":
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"status":"ok /api"}`))
-	default:
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(`{"error":"not found"}`))
-	}
-
-	if r.URL.Path == "/api/test" && r.Method == "GET" {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Test endpoint working"))
-		return
-	}
-
 	// Initialize Gin in serverless mode
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.New()
