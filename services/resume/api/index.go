@@ -26,18 +26,28 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"profilefolio/api/handlers"
 	"profilefolio/api/routes"
-	services "profilefolio/services"
 	"profilefolio/models/analysis"
 	"profilefolio/pkg"
+	services "profilefolio/services"
 	"profilefolio/utils"
 
 	"github.com/gin-gonic/gin"
 )
 
 func Handler(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Printf("Incoming request: %s %s\n", r.Method, r.URL.Path)
+
+	if r.URL.Path == "/api/test" && r.Method == "GET" {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Test endpoint working"))
+		return
+	}
+
 	// Initialize Gin in serverless mode
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.New()
