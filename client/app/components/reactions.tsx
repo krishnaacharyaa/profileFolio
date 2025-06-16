@@ -6,6 +6,7 @@ import { RoastAnalysis } from '../types/resume';
 import { Eye, Users, TrendingUp } from 'lucide-react';
 
 import { useRouter } from 'next/navigation';
+import { API_BASE_URL } from '@/constants/constants';
 
 interface ReactionPageProps {
 	shareId: string;
@@ -20,6 +21,8 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [viewCount, setViewCount] = useState<number>(0);
+	const [headerMessage, setHeaderMessage] = useState<string>('');
+	const [subMessage, setSubMessage] = useState<string>('');
 	const reactionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 	// Load reaction from localStorage on mount
@@ -36,6 +39,10 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 				setAnalysis(analysisData);
 				// Simulate view count - you can replace this with actual API call
 				setViewCount(analysisData.view_count || 1);
+
+				// Generate consistent messages based on shareId and analysis data
+				setHeaderMessage(getHeaderMessage(analysisData, shareId));
+				setSubMessage(getSubMessage(analysisData));
 			} catch {
 				setError('Failed to load analysis');
 			} finally {
@@ -44,6 +51,40 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 		};
 		fetchAnalysis();
 	}, [shareId]);
+
+	const getHeaderMessage = (analysisData: RoastAnalysis, id: string) => {
+		const name = analysisData?.name?.trim();
+		const hasName = name && name.length > 0 && name.toLowerCase() !== 'unknown';
+		const firstName = hasName ? name.split(' ')[0] : null;
+
+		const messages = [
+			firstName ? `${firstName} got roasted 🔥` : 'Someone got roasted 🔥',
+			firstName
+				? `${firstName} didn't see this coming 💀`
+				: "They didn't see this coming 💀",
+			firstName
+				? `${firstName} just got exposed 😱`
+				: 'Someone just got exposed 😱',
+			firstName
+				? `${firstName} thought they were safe...`
+				: 'They thought they were safe...',
+			firstName ? `RIP ${firstName}'s career 💀` : "RIP someone's career 💀",
+		];
+
+		// Create a simple hash function to consistently select the same message for the same shareId
+		const hash = id
+			.split('')
+			.reduce((acc, char) => acc + char.charCodeAt(0), 0);
+		return messages[hash % messages.length];
+	};
+
+	const getSubMessage = (analysisData: RoastAnalysis) => {
+		const riskLevel = analysisData?.ai_risk || 0;
+		if (riskLevel > 80) return 'The AI was absolutely ruthless';
+		if (riskLevel > 60) return "This one's gonna leave a mark";
+		if (riskLevel > 40) return "Ouch, that's gotta hurt";
+		return 'Not terrible, but still brutal';
+	};
 
 	const handleReaction = (emoji: string) => {
 		if (selectedReaction === emoji) return;
@@ -81,7 +122,7 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 		reactionTimeoutRef.current = setTimeout(async () => {
 			try {
 				const response = await fetch(
-					`http://localhost:8080/api/analyses/${shareId}/react`,
+					`${API_BASE_URL}/api/analyses/${shareId}/react`,
 					{
 						method: 'POST',
 						headers: { 'Content-Type': 'application/json' },
@@ -116,36 +157,6 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 				localStorage.setItem(`reaction_${shareId}`, prevReaction || '');
 			}
 		}, 3000);
-	};
-
-	const getHeaderMessage = () => {
-		const name = analysis?.name?.trim();
-		const hasName = name && name.length > 0 && name.toLowerCase() !== 'unknown';
-		const firstName = hasName ? name.split(' ')[0] : null;
-
-		const messages = [
-			firstName ? `${firstName} got roasted 🔥` : 'Someone got roasted 🔥',
-			firstName
-				? `${firstName} didn't see this coming 💀`
-				: "They didn't see this coming 💀",
-			firstName
-				? `${firstName} just got exposed 😱`
-				: 'Someone just got exposed 😱',
-			firstName
-				? `${firstName} thought they were safe...`
-				: 'They thought they were safe...',
-			firstName ? `RIP ${firstName}'s career 💀` : "RIP someone's career 💀",
-		];
-
-		return messages[Math.floor(Math.random() * messages.length)];
-	};
-
-	const getSubMessage = () => {
-		const riskLevel = analysis?.ai_risk || 0;
-		if (riskLevel > 80) return 'The AI was absolutely ruthless';
-		if (riskLevel > 60) return "This one's gonna leave a mark";
-		if (riskLevel > 40) return "Ouch, that's gotta hurt";
-		return 'Not terrible, but still brutal';
 	};
 
 	if (loading || !analysis) {
@@ -229,7 +240,7 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 							transition={{ duration: 3, repeat: Infinity }}
 							style={{ backgroundSize: '200% 200%' }}
 						>
-							{getHeaderMessage()}
+							{headerMessage}
 						</motion.h1>
 						<motion.p
 							className="text-lg md:text-xl font-medium text-white/80"
@@ -237,7 +248,7 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: 0.4 }}
 						>
-							{getSubMessage()}
+							{subMessage}
 						</motion.p>
 
 						{/* Views highlight */}

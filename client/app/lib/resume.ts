@@ -1,12 +1,13 @@
 'use server';
 
+import { API_BASE_URL } from '@/constants/constants';
 import { RoastAnalysis } from '../types/resume';
 
 export const analyzeResume = async (file: File): Promise<RoastAnalysis> => {
 	const formData = new FormData();
 	formData.append('resume', file);
 
-	const response = await fetch('http://localhost:8080/api/analyze', {
+	const response = await fetch(`${API_BASE_URL}/api/analyze`, {
 		method: 'POST',
 		body: formData,
 	});
@@ -19,18 +20,18 @@ export const analyzeResume = async (file: File): Promise<RoastAnalysis> => {
 };
 
 export const getAnalysisById = async (id: number): Promise<RoastAnalysis> => {
-  const response = await fetch(`http://localhost:8080/api/analyses/${id}`, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-    },
-  });
+	const response = await fetch(`${API_BASE_URL}/api/analyses/${id}`, {
+		method: 'GET',
+		headers: {
+			Accept: 'application/json',
+		},
+	});
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
+	if (!response.ok) {
+		throw new Error(`HTTP error! status: ${response.status}`);
+	}
 
-  return await response.json();
+	return await response.json();
 };
 
 // await fetch(`/api/analyses/${shareId}/react`, {
@@ -46,16 +47,16 @@ export const getAnalysisById = async (id: number): Promise<RoastAnalysis> => {
 // 				}
 
 export const postReactions = async (id: number): Promise<RoastAnalysis> => {
-  const response = await fetch(`http://localhost:8080/api/analyses/${id}/react`, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-    },
-  });
+	const response = await fetch(`${API_BASE_URL}/api/analyses/${id}/react`, {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json',
+		},
+	});
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
+	if (!response.ok) {
+		throw new Error(`HTTP error! status: ${response.status}`);
+	}
 
-  return await response.json();
+	return await response.json();
 };
