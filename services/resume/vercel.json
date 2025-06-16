@@ -3,7 +3,10 @@
 	"builds": [
 		{
 			"src": "api/index.go",
-			"use": "@vercel/go"
+			"use": "@vercel/go",
+			"config": {
+				"maxDuration": 30
+			}
 		}
 	],
 	"routes": [
