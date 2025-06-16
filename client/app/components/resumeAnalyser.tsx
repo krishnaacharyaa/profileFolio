@@ -89,29 +89,6 @@ export const ResumeAnalyzer = () => {
 		}
 	};
 
-	// const simulateProgress = async () => {
-	// 	setLoadingProgress(0);
-	// 	setLoadingStage('');
-
-	// 	for (let i = 0; i < loadingStages.length; i++) {
-	// 		const stage = loadingStages[i];
-	// 		setLoadingStage(stage.stage);
-
-	// 		// Animate progress to the target
-	// 		const startProgress = i === 0 ? 0 : loadingStages[i - 1].progress;
-	// 		const targetProgress = stage.progress;
-	// 		const steps = 20;
-	// 		const progressIncrement = (targetProgress - startProgress) / steps;
-
-	// 		for (let step = 0; step <= steps; step++) {
-	// 			await new Promise(resolve =>
-	// 				setTimeout(resolve, stage.duration / steps)
-	// 			);
-	// 			setLoadingProgress(startProgress + progressIncrement * step);
-	// 		}
-	// 	}
-	// };
-
 	const handleAnalyze = async (file: File) => {
 		setLoading(true);
 		setError(null);
