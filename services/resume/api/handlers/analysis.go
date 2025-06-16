@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"os"
-	services "profilefolio/internal"
+	services "profilefolio/services"
 	"profilefolio/pkg"
 	"profilefolio/utils"
 	"strconv"

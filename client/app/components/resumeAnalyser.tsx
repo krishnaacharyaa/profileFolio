@@ -14,6 +14,8 @@ export const ResumeAnalyzer = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [dragActive, setDragActive] = useState(false);
 	const [mounted, setMounted] = useState(false);
+	const [loadingProgress, setLoadingProgress] = useState(0);
+	const [loadingStage, setLoadingStage] = useState('');
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	// Fix hydration error by ensuring component is mounted on client
@@ -41,6 +43,24 @@ export const ResumeAnalyzer = () => {
 		x: Math.floor(Math.random() * 200) - 100,
 		y: Math.floor(Math.random() * 200) - 100,
 	}));
+
+	// Loading stages with progress simulation
+	const loadingStages = [
+		{ stage: 'Uploading your resume...', progress: 15, duration: 800 },
+		{ stage: 'Parsing PDF content...', progress: 30, duration: 1000 },
+		{
+			stage: 'Analyzing skills and experience...',
+			progress: 50,
+			duration: 1500,
+		},
+		{ stage: 'Generating brutal feedback...', progress: 70, duration: 1200 },
+		{ stage: 'Preparing the roast...', progress: 85, duration: 800 },
+		{
+			stage: 'Almost ready to destroy your confidence...',
+			progress: 95,
+			duration: 500,
+		},
+	];
 
 	const handleDrag = (e: React.DragEvent) => {
 		e.preventDefault();
@@ -79,13 +99,51 @@ export const ResumeAnalyzer = () => {
 		}
 	};
 
+	const simulateProgress = async () => {
+		setLoadingProgress(0);
+		setLoadingStage('');
+
+		for (let i = 0; i < loadingStages.length; i++) {
+			const stage = loadingStages[i];
+			setLoadingStage(stage.stage);
+
+			// Animate progress to the target
+			const startProgress = i === 0 ? 0 : loadingStages[i - 1].progress;
+			const targetProgress = stage.progress;
+			const steps = 20;
+			const progressIncrement = (targetProgress - startProgress) / steps;
+
+			for (let step = 0; step <= steps; step++) {
+				await new Promise(resolve =>
+					setTimeout(resolve, stage.duration / steps)
+				);
+				setLoadingProgress(startProgress + progressIncrement * step);
+			}
+		}
+	};
+
 	const handleAnalyze = async (file: File) => {
 		setLoading(true);
 		setError(null);
 		setAnalysis(null);
 
+		// Start progress simulation
+		const progressPromise = simulateProgress();
+
 		try {
+			// Run actual analysis
 			const result = await analyzeResume(file);
+
+			// Wait for progress to complete or force complete if analysis finishes early
+			await progressPromise;
+
+			// Ensure we reach 100% and show completion
+			setLoadingProgress(100);
+			setLoadingStage('Analysis complete!');
+
+			// Small delay to show completion
+			await new Promise(resolve => setTimeout(resolve, 300));
+
 			setAnalysis(result);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : 'Failed to analyze resume');
@@ -98,6 +156,8 @@ export const ResumeAnalyzer = () => {
 		setFile(null);
 		setAnalysis(null);
 		setError(null);
+		setLoadingProgress(0);
+		setLoadingStage('');
 	};
 
 	if (!mounted) {
@@ -254,7 +314,7 @@ export const ResumeAnalyzer = () => {
 					<motion.div
 						initial={{ scale: 0.8, opacity: 0 }}
 						animate={{ scale: 1, opacity: 1 }}
-						className="text-center space-y-6 relative z-10 p-8 bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-purple-500/30 mx-4"
+						className="text-center space-y-6 relative z-10 p-8 bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-purple-500/30 mx-4 max-w-md w-full"
 					>
 						<motion.div
 							animate={{
@@ -272,32 +332,66 @@ export const ResumeAnalyzer = () => {
 
 						<div className="space-y-4">
 							<motion.h2
-								className="text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-red-400"
+								className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-red-400"
 								animate={{
 									backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
 								}}
 								transition={{ duration: 6, repeat: Infinity }}
 								style={{ backgroundSize: '200% 200%' }}
 							>
-								Analyzing your career choices...
+								{loadingStage || 'Initializing...'}
 							</motion.h2>
 							<motion.p
-								className="text-gray-300 text-lg md:text-xl"
+								className="text-gray-300 text-base md:text-lg"
 								animate={{ opacity: [0.5, 1, 0.5] }}
-								transition={{ duration: 6, repeat: Infinity }}
+								transition={{ duration: 2, repeat: Infinity }}
 							>
-								This might hurt more than your last performance review
+								{loadingProgress < 50
+									? 'Reading your career disasters...'
+									: loadingProgress < 80
+									? 'Calculating your market value...'
+									: 'Preparing the roast...'}
 							</motion.p>
 						</div>
 
-						{/* Enhanced loading bar */}
-						<motion.div className="w-64 md:w-80 h-3 bg-gray-800 rounded-full mx-auto overflow-hidden border border-purple-500/30">
-							<motion.div
-								className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-full"
-								initial={{ width: 0 }}
-								animate={{ width: '100%' }}
-								transition={{ duration: 3, ease: 'easeInOut' }}
-							/>
+						{/* Enhanced progress bar with percentage */}
+						<div className="space-y-3">
+							<div className="flex justify-between items-center text-sm">
+								<span className="text-gray-400">Progress</span>
+								<span className="text-purple-400 font-bold">
+									{Math.round(loadingProgress)}%
+								</span>
+							</div>
+							<motion.div className="w-full h-4 bg-gray-800 rounded-full overflow-hidden border border-purple-500/30 relative">
+								<motion.div
+									className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-full relative"
+									initial={{ width: '0%' }}
+									animate={{ width: `${loadingProgress}%` }}
+									transition={{ duration: 0.3, ease: 'easeOut' }}
+								>
+									{/* Shimmer effect */}
+									<motion.div
+										className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+										animate={{
+											x: ['-100%', '100%'],
+										}}
+										transition={{
+											duration: 1.5,
+											repeat: Infinity,
+											ease: 'linear',
+										}}
+									/>
+								</motion.div>
+							</motion.div>
+						</div>
+
+						{/* Funny loading tips */}
+						<motion.div
+							className="text-xs text-gray-500 italic"
+							animate={{ opacity: [0.5, 1, 0.5] }}
+							transition={{ duration: 3, repeat: Infinity }}
+						>
+							💡 Tip: This is taking longer than your last job search
 						</motion.div>
 					</motion.div>
 				</motion.div>

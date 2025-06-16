@@ -9,7 +9,7 @@ import (
 	"os"
 	"profilefolio/api/handlers"
 	"profilefolio/api/routes"
-	services "profilefolio/internal"
+	services "profilefolio/services"
 	"profilefolio/models/analysis"
 	"profilefolio/pkg"
 	"profilefolio/utils"
