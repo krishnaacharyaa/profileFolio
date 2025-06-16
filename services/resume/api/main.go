@@ -1,35 +1,67 @@
-// api/resumes.go
+// api/hello.go
 package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
-	"os"
 )
 
+type Response struct {
+	Message string `json:"message"`
+	Status  string `json:"status"`
+}
+
+// Handler is the main function for the serverless endpoint
 func Handler(w http.ResponseWriter, r *http.Request) {
+	// Set CORS headers
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Content-Type", "application/json")
+
+	// Handle preflight requests
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
 	switch r.Method {
 	case "GET":
-		handleGetResumes(w, r)
+		handleGet(w, r)
 	case "POST":
-		handlePostResume(w, r)
+		handlePost(w, r)
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
 
-func handleGetResumes(w http.ResponseWriter, r *http.Request) {
-	// Your GET logic here
-	json.NewEncoder(w).Encode(map[string]string{
-		"message": "GET resumes endpoint",
-		"db_url":  os.Getenv("DATABASE_URL"),
-	})
+func handleGet(w http.ResponseWriter, r *http.Request) {
+	name := r.URL.Query().Get("name")
+	if name == "" {
+		name = "World"
+	}
+
+	response := Response{
+		Message: fmt.Sprintf("Hello, %s!", name),
+		Status:  "success",
+	}
+
+	json.NewEncoder(w).Encode(response)
 }
 
-func handlePostResume(w http.ResponseWriter, r *http.Request) {
-	// Your POST logic here
-	json.NewEncoder(w).Encode(map[string]string{
-		"message": "POST resume endpoint",
-		"api_key": os.Getenv("AI_API_KEY"),
-	})
+func handlePost(w http.ResponseWriter, r *http.Request) {
+	var body map[string]interface{}
+
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+
+	response := Response{
+		Message: fmt.Sprintf("Received: %v", body),
+		Status:  "success",
+	}
+
+	json.NewEncoder(w).Encode(response)
 }
