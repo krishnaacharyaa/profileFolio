@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
+	"github.com/joho/godotenv"
 )
 
 // RedisConfig holds Redis connection configuration
@@ -21,6 +22,7 @@ type RedisConfig struct {
 
 func LoadRedisConfigFromEnv() (*RedisConfig, error) {
 	// First check for Upstash URL (common in Vercel deployments)
+	_ = godotenv.Load()
 	if upstashURL := os.Getenv("UPSTASH_REDIS_URL"); upstashURL != "" {
 		return parseUpstashURL(upstashURL)
 	}
@@ -65,7 +67,7 @@ func parseUpstashURL(url string) (*RedisConfig, error) {
 	return &RedisConfig{
 		Addr:     addr,
 		Password: password,
-		DB:       0, // Upstash usually only has DB 0
+		DB:       parsed.DB,
 	}, nil
 }
 
