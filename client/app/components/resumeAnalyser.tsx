@@ -68,7 +68,6 @@ export const ResumeAnalyzer = () => {
 		setDragActive(false);
 		if (e.dataTransfer.files && e.dataTransfer.files[0]) {
 			handleFile(e.dataTransfer.files[0]);
-			handleAnalyze(e.dataTransfer.files[0]);
 		}
 	};
 
@@ -78,14 +77,12 @@ export const ResumeAnalyzer = () => {
 			return;
 		}
 		setFile(file);
-		handleAnalyze(file);
 		setError(null);
 	};
 
 	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.target.files && e.target.files[0]) {
 			handleFile(e.target.files[0]);
-			handleAnalyze(e.target.files[0]);
 		}
 	};
 
