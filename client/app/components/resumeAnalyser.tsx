@@ -6,6 +6,7 @@ import { Upload, Share2, Loader2, AlertCircle } from 'lucide-react';
 import { analyzeResume } from '../lib/resume';
 import ResultsPage from './results';
 import { RoastAnalysis } from '../types/resume';
+import { toast } from 'sonner';
 import { API_BASE_URL } from '@/constants/constants';
 
 export const ResumeAnalyzer = () => {
@@ -535,18 +536,19 @@ export const ResumeAnalyzer = () => {
 							</>
 						)}
 
-						{error && (
-							<motion.div
-								className="mt-4 p-3 md:p-4 bg-red-900/50 border border-red-700 rounded-xl flex items-center justify-center mx-2"
-								initial={{ opacity: 0, y: 20 }}
-								animate={{ opacity: 1, y: 0 }}
-							>
-								<AlertCircle className="w-4 h-4 md:w-5 md:h-5 text-red-400 mr-2 flex-shrink-0" />
-								<span className="text-red-200 text-sm md:text-base">
-									{error}
-								</span>
-							</motion.div>
-						)}
+						{
+							error && toast.error(error)
+							// <motion.div
+							// 	className="mt-4 p-3 md:p-4 bg-red-900/50 border border-red-700 rounded-xl flex items-center justify-center mx-2"
+							// 	initial={{ opacity: 0, y: 20 }}
+							// 	animate={{ opacity: 1, y: 0 }}
+							// >
+							// 	<AlertCircle className="w-4 h-4 md:w-5 md:h-5 text-red-400 mr-2 flex-shrink-0" />
+							// 	<span className="text-red-200 text-sm md:text-base">
+							// 		{error}
+							// 	</span>
+							// </motion.div>
+						}
 
 						<motion.button
 							onClick={

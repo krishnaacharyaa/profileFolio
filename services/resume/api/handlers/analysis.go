@@ -43,7 +43,7 @@ func (h *ResumeRoasterHandler) AnalyzeResume(c *gin.Context) {
 		return
 	}
 
-	h.processResumeAsync(file, header, jobID)
+	go h.processResumeAsync(file, header, jobID)
 
 	c.JSON(http.StatusAccepted, gin.H{
 		"status": "processing",
