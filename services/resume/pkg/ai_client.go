@@ -53,7 +53,7 @@ func (g *GeminiAIClient) GenerateContent(ctx context.Context, modelName string, 
 		return "", fmt.Errorf("model is nil")
 	}
 
-	fmt.Printf("Generating content with prompt %s", genai.Text(prompt))
+	fmt.Printf("Generating content with prompt")
 	resp, err := model.GenerateContent(ctx, genai.Text(prompt))
 	if err != nil {
 		return "", fmt.Errorf("failed to generate content: %w", err)
