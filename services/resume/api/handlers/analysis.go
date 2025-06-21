@@ -86,7 +86,7 @@ func (h *ResumeRoasterHandler) processResumeAsync(file multipart.File, header *m
 	}
 	log.Printf("Extracted text for jobID %s, length: %d, sample: %s", jobID, len(trimmedText))
 
-	err = h.sendResumeAnalyserEvent(ctx, trimmedText, jobID)
+	err = h.sendResumeAnalyserEvent(ctx, "Krishna is here", jobID)
 	if err != nil {
 		log.Printf("Failed to send api/account.created event for jobID %s: %v", jobID, err)
 		// Optionally fail the job or continue based on your requirements
