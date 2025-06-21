@@ -162,7 +162,7 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 	if (loading || !analysis) {
 		return (
 			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-pink-900">
-				<div className="text-white text-xl md:text-2xl">
+				<div className="text-white text-lg sm:text-xl md:text-2xl px-4 text-center max-w-sm">
 					{error || 'Loading roast analysis...'}
 				</div>
 			</div>
@@ -206,7 +206,7 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 						{[...Array(30)].map((_, i) => (
 							<motion.div
 								key={i}
-								className="absolute text-2xl"
+								className="absolute text-xl sm:text-2xl"
 								initial={{ x: '50vw', y: '50vh', scale: 0 }}
 								animate={{
 									x: Math.random() * window.innerWidth,
@@ -225,17 +225,17 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 			</AnimatePresence>
 
 			{/* Content */}
-			<div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-12">
+			<div className="relative z-10 min-h-screen flex items-center justify-center px-3 sm:px-4 py-8 sm:py-12">
 				<motion.div
-					className="w-full max-w-3xl space-y-12"
+					className="w-full max-w-3xl space-y-6 sm:space-y-8 md:space-y-12"
 					initial={{ y: 50, opacity: 0 }}
 					animate={{ y: 0, opacity: 1 }}
 					transition={{ delay: 0.2 }}
 				>
 					{/* Header */}
-					<div className="text-center space-y-4">
+					<div className="text-center space-y-3 sm:space-y-4">
 						<motion.h1
-							className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-red-400"
+							className="text-2xl sm:text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 px-2"
 							animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
 							transition={{ duration: 3, repeat: Infinity }}
 							style={{ backgroundSize: '200% 200%' }}
@@ -243,7 +243,7 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 							{headerMessage}
 						</motion.h1>
 						<motion.p
-							className="text-lg md:text-xl font-medium text-white/80"
+							className="text-base sm:text-lg md:text-xl font-medium text-white/80 px-2"
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: 0.4 }}
@@ -253,12 +253,12 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 
 						{/* Views highlight */}
 						<motion.div
-							className="flex justify-center"
+							className="flex justify-center px-2"
 							initial={{ opacity: 0, scale: 0.8 }}
 							animate={{ opacity: 1, scale: 1 }}
 							transition={{ delay: 0.6 }}
 						>
-							<div className="bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-red-500/20 backdrop-blur-xl border border-purple-400/30 px-6 py-3 rounded-full shadow-lg">
+							<div className="bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-red-500/20 backdrop-blur-xl border border-purple-400/30 px-3 sm:px-6 py-2 sm:py-3 rounded-full shadow-lg max-w-full">
 								<div className="flex items-center gap-2 text-white font-bold">
 									<motion.span
 										animate={{
@@ -270,11 +270,11 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 											repeat: Infinity,
 											repeatType: 'reverse',
 										}}
-										className="text-xl"
+										className="text-lg sm:text-xl"
 									>
 										👀
 									</motion.span>
-									<span className="text-lg">
+									<span className="text-sm sm:text-base md:text-lg text-center">
 										{viewCount.toLocaleString()} people witnessed this carnage
 									</span>
 								</div>
@@ -284,15 +284,15 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 
 					{/* Main analysis card */}
 					<motion.div
-						className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl space-y-8"
+						className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl space-y-6 sm:space-y-8"
 						initial={{ opacity: 0, y: 30 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ delay: 0.8 }}
 					>
 						{/* Risk summary */}
-						<div className="text-center space-y-4">
+						<div className="text-center space-y-3 sm:space-y-4">
 							<motion.div
-								className="text-6xl"
+								className="text-4xl sm:text-5xl md:text-6xl"
 								animate={{
 									scale: [1, 1.1, 1],
 									rotate: [0, 5, -5, 0],
@@ -309,11 +309,11 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 									? '🔥'
 									: '🤔'}
 							</motion.div>
-							<div className="bg-gradient-to-r from-red-500/20 via-orange-500/20 to-yellow-500/20 rounded-xl p-4 border border-red-500/30">
-								<p className="text-xl md:text-2xl font-bold text-white">
+							<div className="bg-gradient-to-r from-red-500/20 via-orange-500/20 to-yellow-500/20 rounded-xl p-3 sm:p-4 border border-red-500/30">
+								<p className="text-lg sm:text-xl md:text-2xl font-bold text-white">
 									AI Replaceability Score:{' '}
 									<motion.span
-										className="text-red-400 font-black text-3xl"
+										className="text-red-400 font-black text-xl sm:text-2xl md:text-3xl block sm:inline mt-1 sm:mt-0"
 										animate={{
 											textShadow: [
 												'0 0 0px #ff0000',
@@ -330,22 +330,22 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 						</div>
 
 						{/* Roast details */}
-						<div className="bg-black/30 p-6 rounded-xl border border-purple-500/30">
-							<h3 className="text-xl font-bold text-purple-300 mb-3 flex items-center gap-2">
+						<div className="bg-black/30 p-4 sm:p-6 rounded-xl border border-purple-500/30">
+							<h3 className="text-lg sm:text-xl font-bold text-purple-300 mb-3 flex items-center gap-2">
 								<span>🎯</span>
 								The Brutal Verdict:
 							</h3>
-							<p className="text-white text-base md:text-lg whitespace-pre-line leading-relaxed">
+							<p className="text-white text-sm sm:text-base md:text-lg whitespace-pre-line leading-relaxed">
 								{analysis.roast}
 							</p>
 						</div>
 
 						{/* Reactions */}
-						<div className="space-y-4">
-							<p className="text-center text-gray-300 text-base md:text-lg font-medium">
+						<div className="space-y-3 sm:space-y-4">
+							<p className="text-center text-gray-300 text-sm sm:text-base md:text-lg font-medium px-2">
 								How did the AI do? Drop your reaction 👇
 							</p>
-							<div className="flex justify-center gap-3 md:gap-5 flex-wrap">
+							<div className="flex justify-center gap-2 sm:gap-3 md:gap-5 flex-wrap px-1">
 								{[
 									{
 										emoji: '💩',
@@ -376,7 +376,7 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 									<motion.button
 										key={reaction.emoji}
 										onClick={() => handleReaction(reaction.emoji)}
-										className={`relative group text-3xl md:text-4xl p-4 rounded-xl transition-all ${
+										className={`relative group text-2xl sm:text-3xl md:text-4xl p-2 sm:p-3 md:p-4 rounded-xl transition-all ${
 											selectedReaction === reaction.emoji
 												? `bg-gradient-to-br ${reaction.color} shadow-2xl shadow-purple-500/50`
 												: 'bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 hover:border-white/40'
@@ -389,13 +389,13 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 									>
 										<span>{reaction.emoji}</span>
 										<motion.div
-											className="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg"
+											className="absolute -top-1 sm:-top-2 -right-1 sm:-right-2 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center shadow-lg"
 											animate={{ scale: [1, 1.1, 1] }}
 											transition={{ duration: 2, repeat: Infinity }}
 										>
 											{Math.abs(analysis.reactions[reaction.emoji] || 0)}
 										</motion.div>
-										<div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 text-xs bg-black/90 text-white px-3 py-1 rounded-lg transition-opacity duration-200 whitespace-nowrap">
+										<div className="absolute -bottom-8 sm:-bottom-10 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 text-xs bg-black/90 text-white px-2 sm:px-3 py-1 rounded-lg transition-opacity duration-200 whitespace-nowrap">
 											{reaction.label}
 										</div>
 									</motion.button>
@@ -406,7 +406,7 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 
 					{/* CTA */}
 					<motion.button
-						className="w-full bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white py-5 rounded-2xl font-bold text-xl shadow-xl relative group overflow-hidden"
+						className="w-full bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white py-4 sm:py-5 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg md:text-xl shadow-xl relative group overflow-hidden"
 						whileHover={{ scale: 1.03 }}
 						whileTap={{ scale: 0.95 }}
 						initial={{ opacity: 0, y: 20 }}
@@ -419,11 +419,14 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 							animate={{ x: ['-100%', '100%'] }}
 							transition={{ duration: 1.5, repeat: Infinity }}
 						/>
-						<span className="relative z-10 flex justify-center items-center gap-2">
-							🎯 Think you can handle the roast? Upload yours now!{' '}
+						<span className="relative z-10 flex justify-center items-center gap-2 px-2">
+							<span className="text-center">
+								🎯 Think you can handle the roast? Upload yours now!
+							</span>
 							<motion.span
 								animate={{ x: [0, 5, 0] }}
 								transition={{ repeat: Infinity, duration: 1 }}
+								className="hidden sm:inline"
 							>
 								🔥
 							</motion.span>
@@ -431,7 +434,7 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 					</motion.button>
 
 					<motion.p
-						className="text-center text-gray-400 text-sm italic mt-4"
+						className="text-center text-gray-400 text-xs sm:text-sm italic mt-3 sm:mt-4 px-2"
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						transition={{ delay: 1.6 }}
