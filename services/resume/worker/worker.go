@@ -18,14 +18,36 @@ type ResumeAnalyserEventData struct {
 	JobID string `json:"jobId"`
 }
 
-func ResumeAnalyser(ctx context.Context, input inngestgo.Input[json.RawMessage]) (any, error) {
-	log.Printf("Received event: %+v", input.Event)
+// EventWrapper matches the outer structure of the Inngest event
+type EventWrapper struct {
+	Data ResumeAnalyserEventData `json:"data"`
+	ID   string                  `json:"id"`
+	Name string                  `json:"name"`
+	TS   int64                   `json:"ts"`
+	User map[string]interface{}  `json:"user"`
+}
 
-	var eventData ResumeAnalyserEventData
-	if err := json.Unmarshal(input.Event, &eventData); err != nil {
-		log.Printf("Failed to unmarshal event data: %v", err)
-		return nil, fmt.Errorf("failed to unmarshal event data: %v %s, %s, event:  %+v, input: %+v", err, eventData.Text, eventData.JobID, input.Event, input)
+func ResumeAnalyser(ctx context.Context, input inngestgo.Input[json.RawMessage]) (any, error) {
+	log.Printf("Raw input: %s", string(input.Event))
+
+	// Unmarshal the raw JSON into EventWrapper
+	var wrapper EventWrapper
+	if err := json.Unmarshal(input.Event, &wrapper); err != nil {
+		log.Printf("Failed to unmarshal event wrapper: %v", err)
+		return nil, fmt.Errorf("failed to unmarshal event wrapper %v , %+v", err, input.Event)
 	}
+
+	// Extract the nested data field
+	eventData := wrapper.Data
+	log.Printf("Parsed event data: %+v", eventData)
+
+	// Validate input
+	if eventData.Text == "" {
+		err := fmt.Errorf("empty resume text provided: %+v", eventData)
+		log.Printf("Validation error: %v", err)
+		return nil, err
+	}
+
 	_, err := step.Run(ctx, "analyse-resume", func(ctx context.Context) (any, error) {
 		db := pkg.NewDatabase()
 		defer db.Close()
@@ -42,14 +64,6 @@ func ResumeAnalyser(ctx context.Context, input inngestgo.Input[json.RawMessage])
 		roasterRepo := analysis.NewAnalysisRepository(db)
 		roasterService := services.NewResumeRoaster(aiClient, roasterRepo)
 		jobManager := pkg.NewJobManager(redisCache)
-
-		// Validate input
-		if eventData.Text == "" {
-			// fmt.Printf("Text is %s",  )
-			err := fmt.Errorf("empty resume text provided %s, %s, event:  %+v, input: %+v", eventData.Text, eventData.JobID, input.Event, input)
-			jobManager.FailJob(ctx, eventData.JobID, err)
-			return nil, err
-		}
 
 		result, err := roasterService.RoastResume(ctx, eventData.Text)
 		if err != nil {
