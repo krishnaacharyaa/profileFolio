@@ -26,6 +26,8 @@
 package api
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -78,7 +80,9 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 			ID: "resume-analysis-job",
 		},
 		inngestgo.EventTrigger("api/resume-analyser", nil),
-		worker.ResumeAnalyser,
+		func(ctx context.Context, input inngestgo.Input[json.RawMessage]) (any, error) {
+			return worker.ResumeAnalyser(ctx, input)
+		},
 	)
 	if err != nil {
 		log.Fatalf("Failed to create resume-analyser function: %v", err)
