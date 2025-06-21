@@ -38,6 +38,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/inngest/inngestgo"
 )
 
 func Handler(w http.ResponseWriter, r *http.Request) {
@@ -69,7 +70,27 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	apiGroup := router.Group("/")
 	// Register routes
 	routes.RegisterAnalysisRoutes(apiGroup, roasterHandler)
+	inngestClient, err := inngestgo.NewClient(inngestgo.ClientOpts{
+		AppID: "profilefolio-backend",
+	})
+	if err != nil {
+		fmt.Printf("Failed to initialize Inngest client: %v\n", err)
+		return
+	}
 
+	// Define and register a durable function
+	_, err = inngestgo.CreateFunction(
+		inngestClient,
+		inngestgo.FunctionOpts{
+			ID: "account-created",
+		},
+		inngestgo.EventTrigger("api/account.created", nil),
+		pkg.AccountCreated,
+	)
+	if err != nil {
+		fmt.Printf("Failed to create function: %v\n", err)
+		return
+	}
 	// Serve the request
 	router.ServeHTTP(w, r)
 }

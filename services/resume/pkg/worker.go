@@ -14,7 +14,7 @@ type AccountCreatedEventData struct {
 }
 
 func AccountCreated(ctx context.Context, input inngestgo.Input[AccountCreatedEventData]) (any, error) {
-	fmt.Printf("Received event: %v\n", input.Event.UserID)
+	fmt.Printf("Received event: %+v\n", input)
 
 	// Define a step (e.g., send a follow-up email)
 	_, err := step.Run(ctx, "send-follow-up-email", func(ctx context.Context) (any, error) {
