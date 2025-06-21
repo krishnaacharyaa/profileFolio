@@ -9,7 +9,6 @@ import (
 	"profilefolio/models/analysis"
 	"profilefolio/pkg"
 	"strconv"
-	"time"
 
 	"strings"
 )
@@ -78,16 +77,10 @@ func (r *ResumeRoaster) GetAnalysis(ctx context.Context, id string) (*analysis.R
 		return nil, fmt.Errorf("failed to get analysis: %w", err)
 	}
 
-	go func() {
-		// Use a separate context with timeout to prevent hanging
-		incCtx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-		defer cancel()
-
-		if err := r.analysisRepo.IncrementViewCount(incCtx, idInt); err != nil {
-			// Log the error but don't fail the request
-			log.Printf("failed to increment view count: %v", err)
-		}
-	}()
+	if err := r.analysisRepo.IncrementViewCount(ctx, idInt); err != nil {
+		// Log the error but don't fail the request
+		log.Printf("failed to increment view count: %v", err)
+	}
 
 	// Convert repository model to domain model
 	return &analysis.ResumeAnalysisRecord{

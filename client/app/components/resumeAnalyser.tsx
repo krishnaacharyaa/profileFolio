@@ -53,6 +53,14 @@ export const ResumeAnalyzer = () => {
 		{ stage: 'Finalizing your humiliation...', progress: 95 },
 	];
 
+	// Helper function to get emoji based on progress
+	const getLoadingEmoji = (progress: number) => {
+		if (progress < 25) return '📤';
+		if (progress < 50) return '🔍';
+		if (progress < 75) return '🤖';
+		return '🔥';
+	};
+
 	const handleDrag = (e: React.DragEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -94,18 +102,21 @@ export const ResumeAnalyzer = () => {
 
 		try {
 			// Start job and get job ID
-			const { jobId } = await analyzeResume(file); // Modified to return jobId
+			const { jobId } = await analyzeResume(file);
 
 			// Start progress simulation
 			const progressInterval = setInterval(() => {
 				setLoadingProgress(prev => {
 					const next = prev + 1;
+					const cappedProgress = next >= 95 ? 95 : next;
+
 					// Update stage based on progress
 					const currentStage =
-						loadingStages.find(stage => next <= stage.progress) ||
+						loadingStages.find(stage => cappedProgress <= stage.progress) ||
 						loadingStages[loadingStages.length - 1];
 					setLoadingStage(currentStage.stage);
-					return next >= 95 ? 95 : next; // Cap at 95% until job completes
+
+					return cappedProgress;
 				});
 			}, 300);
 
@@ -128,8 +139,8 @@ export const ResumeAnalyzer = () => {
 
 	// Polling function
 	const pollJobStatus = async (jobId: string): Promise<RoastAnalysis> => {
-		const POLL_INTERVAL = 6000; // 2 seconds
-		const MAX_ATTEMPTS = 3; // ~1 minute timeout
+		const POLL_INTERVAL = 6000; // 6 seconds
+		const MAX_ATTEMPTS = 3; // ~18 seconds timeout
 
 		for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
 			try {
@@ -328,13 +339,7 @@ export const ResumeAnalyzer = () => {
 							}}
 							className="text-8xl mb-4"
 						>
-							{loadingProgress < 25
-								? '📤'
-								: loadingProgress < 50
-								? '🔍'
-								: loadingProgress < 75
-								? '🤖'
-								: '🔥'}
+							{getLoadingEmoji(loadingProgress)}
 						</motion.div>
 
 						<div className="space-y-4">
