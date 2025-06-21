@@ -40,7 +40,7 @@ func ResumeAnalyser(ctx context.Context, input inngestgo.Input[ResumeAnalyserEve
 		// Validate input
 		if input.Event.Text == "" {
 			// fmt.Printf("Text is %s",  )
-			err := fmt.Errorf("empty resume text provided %s, %s, %+v", input.Event.Text, input.Event.JobID, input.Event)
+			err := fmt.Errorf("empty resume text provided %s, %s, event:  %+v, input: %+v", input.Event.Text, input.Event.JobID, input.Event, input)
 			jobManager.FailJob(ctx, input.Event.JobID, err)
 			return nil, err
 		}
