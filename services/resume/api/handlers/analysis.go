@@ -78,8 +78,15 @@ func (h *ResumeRoasterHandler) processResumeAsync(file multipart.File, header *m
 		return
 	}
 
+	trimmedText := text
+	const maxTextLength = 100 * 1024 // 100 KB
+	if len(trimmedText) > maxTextLength {
+		log.Printf("Text too large for jobID %s, truncating from %d to %d bytes", jobID, len(trimmedText), maxTextLength)
+		trimmedText = trimmedText[:maxTextLength]
+	}
+	log.Printf("Extracted text for jobID %s, length: %d, sample: %s", jobID, len(trimmedText))
 
-	err = h.sendResumeAnalyserEvent(ctx, text, jobID)
+	err = h.sendResumeAnalyserEvent(ctx, trimmedText, jobID)
 	if err != nil {
 		log.Printf("Failed to send api/account.created event for jobID %s: %v", jobID, err)
 		// Optionally fail the job or continue based on your requirements

@@ -61,6 +61,7 @@ require (
 	github.com/karlseguin/ccache/v2 v2.0.8 // indirect
 	github.com/klauspost/compress v1.17.11 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.10 // indirect
+	github.com/ledongthuc/pdf v0.0.0-20250510234604-a6dfec7e9de4 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/liushuangls/go-anthropic/v2 v2.12.2 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
