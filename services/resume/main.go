@@ -1,20 +1,45 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"profilefolio/api/handlers"
 	"profilefolio/api/routes"
 	"profilefolio/models/analysis"
 	"profilefolio/pkg"
-	services "profilefolio/services"
+	"profilefolio/services"
 	"profilefolio/utils"
 
 	"github.com/gin-gonic/gin"
 
 	_ "github.com/lib/pq" // Postgres driver
+
+	"github.com/inngest/inngestgo"
 )
 
 func main() {
+	inngestClient, err := inngestgo.NewClient(inngestgo.ClientOpts{
+		AppID: "profilefolio-backend",
+	})
+	if err != nil {
+		fmt.Printf("Failed to initialize Inngest client: %v\n", err)
+		return
+	}
+
+	// Define and register a durable function
+	_, err = inngestgo.CreateFunction(
+		inngestClient,
+		inngestgo.FunctionOpts{
+			ID: "account-created",
+		},
+		inngestgo.EventTrigger("api/account.created", nil),
+		pkg.AccountCreated,
+	)
+	if err != nil {
+		fmt.Printf("Failed to create function: %v\n", err)
+		return
+	}
+
 	redisCache, err := pkg.NewRedisCacheFromEnv()
 	if err != nil {
 		log.Fatal("Failed to initialize Redis:", err)
@@ -34,11 +59,14 @@ func main() {
 	// Create Gin router
 	router := gin.Default()
 
+	// Register Inngest endpoint before middleware
+	router.Any("/api/inngest", gin.WrapH(inngestClient.Serve()))
+
 	// Apply middleware
 	router.Use(utils.CORSMiddleware())
 	router.Use(utils.LoggerMiddleware())
 
-	// Register routes
+	// Register other routes (simplified for brevity)
 	apiGroup := router.Group("/")
 	routes.RegisterAnalysisRoutes(apiGroup, roasterHandler)
 
