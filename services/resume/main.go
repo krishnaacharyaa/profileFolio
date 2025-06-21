@@ -9,6 +9,7 @@ import (
 	"profilefolio/pkg"
 	"profilefolio/services"
 	"profilefolio/utils"
+	"profilefolio/worker"
 
 	"github.com/gin-gonic/gin"
 
@@ -30,10 +31,10 @@ func main() {
 	_, err = inngestgo.CreateFunction(
 		inngestClient,
 		inngestgo.FunctionOpts{
-			ID: "account-created",
+			ID: "resume-analyser",
 		},
-		inngestgo.EventTrigger("api/account.created", nil),
-		pkg.AccountCreated,
+		inngestgo.EventTrigger("api/resume-analyser", nil),
+		worker.ResumeAnalyser,
 	)
 	if err != nil {
 		fmt.Printf("Failed to create function: %v\n", err)
@@ -54,7 +55,7 @@ func main() {
 	roasterRepo := analysis.NewAnalysisRepository(db)
 
 	roasterService := services.NewResumeRoaster(aiClient, roasterRepo)
-	roasterHandler := handlers.NewResumeRoasterHandler(roasterService, redisCache)
+	roasterHandler := handlers.NewResumeRoasterHandler(roasterService, redisCache, &inngestClient)
 
 	// Create Gin router
 	router := gin.Default()

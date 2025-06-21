@@ -35,6 +35,7 @@ import (
 	"profilefolio/pkg"
 	services "profilefolio/services"
 	"profilefolio/utils"
+	"profilefolio/worker"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -62,14 +63,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 	roasterRepo := analysis.NewAnalysisRepository(db)
 
-	roasterService := services.NewResumeRoaster(aiClient, roasterRepo)
-	roasterHandler := handlers.NewResumeRoasterHandler(roasterService, redisCache)
-	// Apply middleware
-	router.Use(utils.ServerlessLogger(), gin.Recovery())
-
-	apiGroup := router.Group("/")
-	// Register routes
-	routes.RegisterAnalysisRoutes(apiGroup, roasterHandler)
 	inngestClient, err := inngestgo.NewClient(inngestgo.ClientOpts{
 		AppID: "profilefolio-backend",
 	})
@@ -82,16 +75,25 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	_, err = inngestgo.CreateFunction(
 		inngestClient,
 		inngestgo.FunctionOpts{
-			ID: "account-created",
+			ID: "resume-analyser",
 		},
-		inngestgo.EventTrigger("api/account.created", nil),
-		pkg.AccountCreated,
+		inngestgo.EventTrigger("api/resume-analyser", nil),
+		worker.ResumeAnalyser,
 	)
 	if err != nil {
 		fmt.Printf("Failed to create function: %v\n", err)
 		return
 	}
 	router.Any("/api/inngest", gin.WrapH(inngestClient.Serve()))
+	roasterService := services.NewResumeRoaster(aiClient, roasterRepo)
+	roasterHandler := handlers.NewResumeRoasterHandler(roasterService, redisCache, &inngestClient)
+	// Apply middleware
+	router.Use(utils.ServerlessLogger(), gin.Recovery())
+
+	apiGroup := router.Group("/")
+	// Register routes
+	routes.RegisterAnalysisRoutes(apiGroup, roasterHandler)
+
 	// Serve the request
 	router.ServeHTTP(w, r)
 }

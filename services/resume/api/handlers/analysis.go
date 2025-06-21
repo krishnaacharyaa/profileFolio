@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -15,17 +16,20 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/inngest/inngestgo"
 )
 
 type ResumeRoasterHandler struct {
-	service    *services.ResumeRoaster
-	jobManager *pkg.JobManager
+	service       *services.ResumeRoaster
+	jobManager    *pkg.JobManager
+	inngestClient inngestgo.Client
 }
 
-func NewResumeRoasterHandler(service *services.ResumeRoaster, cache pkg.CacheClient) *ResumeRoasterHandler {
+func NewResumeRoasterHandler(service *services.ResumeRoaster, cache pkg.CacheClient, inngestClient *inngestgo.Client) *ResumeRoasterHandler {
 	return &ResumeRoasterHandler{
-		service:    service,
-		jobManager: pkg.NewJobManager(cache),
+		service:       service,
+		jobManager:    pkg.NewJobManager(cache),
+		inngestClient: *inngestClient,
 	}
 }
 
@@ -43,7 +47,7 @@ func (h *ResumeRoasterHandler) AnalyzeResume(c *gin.Context) {
 		return
 	}
 
-	go h.processResumeAsync(file, header, jobID)
+	h.processResumeAsync(file, header, jobID)
 
 	c.JSON(http.StatusAccepted, gin.H{
 		"status": "processing",
@@ -74,14 +78,36 @@ func (h *ResumeRoasterHandler) processResumeAsync(file multipart.File, header *m
 		return
 	}
 
-	fmt.Printf("Roasting resume")
-	result, err := h.service.RoastResume(ctx, text) // Pass timeout context
+
+	err = h.sendResumeAnalyserEvent(ctx, text, jobID)
 	if err != nil {
-		h.jobManager.FailJob(ctx, jobID, fmt.Errorf("AI analysis failed: %v", err))
-		return
+		log.Printf("Failed to send api/account.created event for jobID %s: %v", jobID, err)
+		// Optionally fail the job or continue based on your requirements
+		// h.jobManager.FailJob(ctx, jobID, fmt.Errorf("failed to send event: %v", err))
+		// return
 	}
 
-	h.jobManager.CompleteJob(ctx, jobID, result)
+	return
+}
+
+// sendAccountCreatedEvent sends the api/account.created event using the Inngest client
+func (h *ResumeRoasterHandler) sendResumeAnalyserEvent(ctx context.Context, text, jobId string) error {
+
+	fmt.Printf("Sending resume analyser event %s %s", text, jobId)
+	event := inngestgo.Event{
+		Name: "api/resume-analyser",
+		Data: map[string]interface{}{
+			"text":  text,
+			"jobId": jobId,
+		},
+	}
+
+	_, err := h.inngestClient.Send(ctx, event)
+	if err != nil {
+		return fmt.Errorf("failed to send event: %v", err)
+	}
+
+	return nil
 }
 
 func (h *ResumeRoasterHandler) CheckJobStatus(c *gin.Context) {
