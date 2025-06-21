@@ -75,15 +75,16 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	_, err = inngestgo.CreateFunction(
 		inngestClient,
 		inngestgo.FunctionOpts{
-			ID: "resume-analyser",
+			ID: "resume-analysis-job",
 		},
 		inngestgo.EventTrigger("api/resume-analyser", nil),
 		worker.ResumeAnalyser,
 	)
 	if err != nil {
-		fmt.Printf("Failed to create function: %v\n", err)
-		return
+		log.Fatalf("Failed to create resume-analyser function: %v", err)
 	}
+	log.Println("Successfully registered resume-analysis-job function")
+
 	router.Any("/api/inngest", gin.WrapH(inngestClient.Serve()))
 	roasterService := services.NewResumeRoaster(aiClient, roasterRepo)
 	roasterHandler := handlers.NewResumeRoasterHandler(roasterService, redisCache, &inngestClient)
