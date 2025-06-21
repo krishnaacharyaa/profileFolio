@@ -91,6 +91,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("Failed to create function: %v\n", err)
 		return
 	}
+	router.Any("/api/inngest", gin.WrapH(inngestClient.Serve()))
 	// Serve the request
 	router.ServeHTTP(w, r)
 }
