@@ -143,8 +143,9 @@ func (h *ResumeRoasterHandler) GetAllAnalyses(c *gin.Context) {
 func (h *ResumeRoasterHandler) ReactToAnalysis(c *gin.Context) {
 	// Extract and validate ID
 	idStr := c.Param("id")
-	id, err := uuid.Parse(idStr) // Fixed: use uuid.Parse instead of strconv
+	id, err := uuid.Parse(idStr)
 	if err != nil {
+		pkg.Error("Invalid ID format: %s", idStr)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
 		return
 	}
@@ -153,29 +154,37 @@ func (h *ResumeRoasterHandler) ReactToAnalysis(c *gin.Context) {
 		Reaction string `json:"reaction" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
+		pkg.Error("Invalid request body: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 		return
 	}
 
 	// Validate reaction type
 	if _, exists := analysis.ReactionToIndex[req.Reaction]; !exists {
+		pkg.Error("Invalid reaction type: %s", req.Reaction)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid reaction type"})
 		return
 	}
 
-	// Process reaction
-	ctx := c.Request.Context()
+	// Add request ID to context
+	ctx := context.WithValue(c.Request.Context(), "request_id", uuid.New().String())
+
+	pkg.ContextLog(ctx, "Processing reaction %s for analysis %s", req.Reaction, id)
+
 	err = h.service.AddReaction(ctx, id, req.Reaction)
 	if err != nil {
 		switch {
 		case errors.Is(err, pkg.ErrItemNotFound):
+			pkg.Error("Analysis not found: %s", id)
 			c.JSON(http.StatusNotFound, gin.H{"error": "Analysis not found"})
 		default:
+			pkg.Error("Failed to update reaction: %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update reaction"})
 		}
 		return
 	}
 
+	pkg.ContextLog(ctx, "Successfully processed reaction %s for analysis %s", req.Reaction, id)
 	c.JSON(http.StatusOK, gin.H{"message": "Reaction added successfully"})
 }
 

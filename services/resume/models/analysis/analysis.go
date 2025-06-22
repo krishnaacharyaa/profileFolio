@@ -111,10 +111,13 @@ func (r *analysisRepo) IncrementViewCount(ctx context.Context, id uuid.UUID) err
 func (r *analysisRepo) AddReaction(ctx context.Context, id uuid.UUID, reaction string) error {
 	reactionIndex, exists := ReactionToIndex[reaction]
 	if !exists {
+		pkg.Error("Invalid reaction type: %s", reaction)
 		return errors.New("invalid reaction type")
 	}
 
-	// Simple SQL to increment the reaction at specific array index
+	pkg.ContextLog(ctx, "Attempting to update reaction for analysis %s with %s (index %d)",
+		id, reaction, reactionIndex)
+
 	query := `
 		UPDATE resume_analyses 
 		SET reactions = jsonb_set(
@@ -128,19 +131,28 @@ func (r *analysisRepo) AddReaction(ctx context.Context, id uuid.UUID, reaction s
 	indexPath := fmt.Sprintf("{%d}", reactionIndex)
 	indexStr := strconv.Itoa(reactionIndex)
 
+	pkg.ContextLog(ctx, "Executing SQL: %s with params: path=%s, index=%s, id=%s",
+		query, indexPath, indexStr, id)
+
 	result, err := r.db.ExecContext(ctx, query, indexPath, indexStr, id)
 	if err != nil {
+		pkg.Error("Failed to execute reaction update for %s: %v", id, err)
 		return fmt.Errorf("failed to update reaction: %w", err)
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
+		pkg.Error("Failed to get rows affected for %s: %v", id, err)
 		return fmt.Errorf("failed to check rows affected: %w", err)
 	}
 
+	pkg.ContextLog(ctx, "Rows affected: %d for analysis %s", rowsAffected, id)
+
 	if rowsAffected == 0 {
+		pkg.Error("No analysis found with ID: %s", id)
 		return pkg.ErrItemNotFound
 	}
 
+	pkg.ContextLog(ctx, "Successfully updated reaction %s for analysis %s", reaction, id)
 	return nil
 }
