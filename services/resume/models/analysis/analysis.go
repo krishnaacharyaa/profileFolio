@@ -153,15 +153,6 @@ func (r *analysisRepo) AddReaction(ctx context.Context, id uuid.UUID, reaction s
 		return pkg.ErrItemNotFound
 	}
 
-	// Verify the update actually worked
-	var updatedReactions string
-	err = r.db.QueryRowContext(ctx, "SELECT reactions::text FROM resume_analyses WHERE id = $1", id).Scan(&updatedReactions)
-	if err != nil {
-		pkg.Error("Failed to verify reactions update for %s: %v", id, err)
-	} else {
-		pkg.ContextLog(ctx, "Verified reactions after update: %s", updatedReactions)
-	}
-
 	pkg.ContextLog(ctx, "Successfully updated reaction %s for analysis %s", reaction, id)
 	return nil
 }

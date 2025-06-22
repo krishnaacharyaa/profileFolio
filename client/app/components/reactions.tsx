@@ -12,6 +12,16 @@ interface ReactionPageProps {
 	shareId: string;
 }
 
+interface ReactionButton {
+	emoji: string;
+	label: string;
+	color: string;
+}
+
+interface ReactionsObject {
+	[emoji: string]: number;
+}
+
 const ReactionPage = ({ shareId }: ReactionPageProps) => {
 	const router = useRouter();
 	const [analysis, setAnalysis] = useState<RoastAnalysis | null>(null);
@@ -24,6 +34,25 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 	const [userReactions, setUserReactions] = useState<Set<string>>(new Set());
 	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+	// Solution 1: Transform reactions array to object
+	const transformReactionsToObject = (
+		reactionsArray: number[]
+	): ReactionsObject => {
+		const reactionButtons: ReactionButton[] = [
+			{ emoji: '💩', label: 'Trash', color: 'from-yellow-600 to-orange-600' },
+			{ emoji: '🔥', label: 'Fire', color: 'from-red-500 to-orange-500' },
+			{ emoji: '🤡', label: 'Clown', color: 'from-pink-500 to-purple-500' },
+			{ emoji: '💀', label: 'Dead', color: 'from-gray-500 to-black' },
+			{ emoji: '😂', label: 'LMAO', color: 'from-yellow-400 to-yellow-600' },
+		];
+
+		const reactionsObject: ReactionsObject = {};
+		reactionButtons.forEach((reaction, index) => {
+			reactionsObject[reaction.emoji] = reactionsArray[index] || 0;
+		});
+
+		return reactionsObject;
+	};
 	// Load user's previous reactions on mount
 	useEffect(() => {
 		const storedReactions = localStorage.getItem(`user_reactions_${shareId}`);
@@ -125,7 +154,13 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 		const fetchAnalysis = async () => {
 			try {
 				const analysisData = await getAnalysisById(shareId);
+				if (Array.isArray(analysisData.reactions)) {
+					analysisData.reactions = transformReactionsToObject(
+						analysisData.reactions
+					);
+				}
 				setAnalysis(analysisData);
+
 				// Simulate view count - you can replace this with actual API call
 				setViewCount(analysisData.view_count || 1);
 
