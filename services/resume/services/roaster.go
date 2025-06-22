@@ -8,9 +8,10 @@ import (
 	"log"
 	"profilefolio/models/analysis"
 	"profilefolio/pkg"
-	"strconv"
 
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 type ResumeRoaster struct {
@@ -62,14 +63,9 @@ func (r *ResumeRoaster) RoastResume(ctx context.Context, resumeText string) (*an
 	return result, nil
 }
 
-func (r *ResumeRoaster) GetAnalysis(ctx context.Context, id string) (*analysis.ResumeAnalysisRecord, error) {
-	// Convert string ID to int64 if needed
-	idInt, err := strconv.ParseInt(id, 10, 64)
-	if err != nil {
-		return nil, fmt.Errorf("invalid ID format: %w", err)
-	}
+func (r *ResumeRoaster) GetAnalysis(ctx context.Context, id uuid.UUID) (*analysis.ResumeAnalysisRecord, error) {
 
-	record, err := r.analysisRepo.GetByID(ctx, idInt)
+	record, err := r.analysisRepo.GetByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, pkg.ErrItemNotFound) {
 			return nil, pkg.ErrItemNotFound
@@ -77,7 +73,7 @@ func (r *ResumeRoaster) GetAnalysis(ctx context.Context, id string) (*analysis.R
 		return nil, fmt.Errorf("failed to get analysis: %w", err)
 	}
 
-	if err := r.analysisRepo.IncrementViewCount(ctx, idInt); err != nil {
+	if err := r.analysisRepo.IncrementViewCount(ctx, id); err != nil {
 		// Log the error but don't fail the request
 		log.Printf("failed to increment view count: %v", err)
 	}
@@ -107,9 +103,9 @@ Analyze the following resume and respond ONLY in **valid JSON**. No extra text, 
 - "tech_score": (int, 1-10) — Actual technical skill level.
 - "gpt_overlap": (int, 1-10) — How much of this job could ChatGPT already do?
 - "buzzword_bingo": (int, 1-10) — Corporate jargon and filler words overload.
-- "whats_not_terrible": (array of strings) — Positives formatted EXACTLY like:
+- "whats_not_terrible": (array of strings, max len of 5) — Positives formatted EXACTLY like:
     [concise, snarky-but-positive observation]
-- "red_flags": (array of strings) — Negatives formatted EXACTLY like:
+- "red_flags": (array of strings, max len of 5) — Negatives formatted EXACTLY like:
     [concise, savage observation]
 - "roast": (string) — A savage, two-sentence roast. Funny but workplace-appropriate.
 
@@ -132,7 +128,7 @@ Analyze the following resume and respond ONLY in **valid JSON**. No extra text, 
 `, resumeText)
 }
 
-func (r *ResumeRoaster) saveAnalysis(ctx context.Context, result *analysis.RoastAnalysis) (int64, error) {
+func (r *ResumeRoaster) saveAnalysis(ctx context.Context, result *analysis.RoastAnalysis) (uuid.UUID, error) {
 	// Create the analysis record using the repository
 	id, err := r.analysisRepo.Create(ctx, &analysis.RoastAnalysis{
 		Name:             result.Name,
@@ -146,7 +142,7 @@ func (r *ResumeRoaster) saveAnalysis(ctx context.Context, result *analysis.Roast
 	})
 
 	if err != nil {
-		return 0, fmt.Errorf("failed to save analysis to database: %w", err)
+		return uuid.UUID{}, fmt.Errorf("failed to save analysis to database: %w", err)
 	}
 
 	return id, nil

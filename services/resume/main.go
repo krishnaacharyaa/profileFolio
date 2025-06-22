@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"profilefolio/api/handlers"
@@ -10,6 +12,7 @@ import (
 	"profilefolio/services"
 	"profilefolio/utils"
 	"profilefolio/worker"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -31,10 +34,12 @@ func main() {
 	_, err = inngestgo.CreateFunction(
 		inngestClient,
 		inngestgo.FunctionOpts{
-			ID: "resume-analyser",
+			ID: "resume-analysis-job",
 		},
 		inngestgo.EventTrigger("api/resume-analyser", nil),
-		worker.ResumeAnalyser,
+		func(ctx context.Context, input inngestgo.Input[json.RawMessage]) (any, error) {
+			return worker.ResumeAnalyser(ctx, input)
+		},
 	)
 	if err != nil {
 		fmt.Printf("Failed to create function: %v\n", err)
@@ -48,6 +53,11 @@ func main() {
 	defer redisCache.Close()
 	db := pkg.NewDatabase()
 	defer db.Close()
+
+	// Initialize the database schema
+	if err := InitializeDatabase(db); err != nil {
+		log.Fatal("Failed to initialize database:", err)
+	}
 
 	aiClient := pkg.NewAIClient()
 	defer aiClient.(*pkg.GeminiAIClient).Close()
@@ -76,4 +86,34 @@ func main() {
 	if err := router.Run(":8080"); err != nil {
 		log.Fatal("Failed to start server:", err)
 	}
+}
+
+func InitializeDatabase(db pkg.Database) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Drop existing table if it exists
+	_, err := db.ExecContext(ctx, `DROP TABLE IF EXISTS resume_analyses`)
+	if err != nil {
+		return fmt.Errorf("failed to drop table: %w", err)
+	}
+
+	// Create new table with UUID
+	_, err = db.ExecContext(ctx, `
+		CREATE TABLE resume_analyses (
+			id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+			name TEXT NOT NULL,
+			ai_risk TEXT NOT NULL,
+			roast TEXT NOT NULL,
+			analysis_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+			view_count INTEGER DEFAULT 1,
+			reactions JSONB
+		)
+	`)
+	if err != nil {
+		return fmt.Errorf("failed to create table: %w", err)
+	}
+
+	log.Println("Database initialized with new schema")
+	return nil
 }

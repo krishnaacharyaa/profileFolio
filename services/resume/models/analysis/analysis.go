@@ -7,12 +7,14 @@ import (
 	"errors"
 	"fmt"
 	"profilefolio/pkg"
+
+	"github.com/google/uuid"
 )
 
 type AnalysisRepository interface {
-	Create(ctx context.Context, analysis *RoastAnalysis) (int64, error)
-	GetByID(ctx context.Context, id int64) (*ResumeAnalysisRecord, error)
-	IncrementViewCount(ctx context.Context, id int64) error
+	Create(ctx context.Context, analysis *RoastAnalysis) (uuid.UUID, error)
+	GetByID(ctx context.Context, id uuid.UUID) (*ResumeAnalysisRecord, error)
+	IncrementViewCount(ctx context.Context, id uuid.UUID) error
 	UpdateReactions(ctx context.Context, id int64, reaction string, prevReaction string) error
 }
 
@@ -24,22 +26,24 @@ func NewAnalysisRepository(db pkg.Database) AnalysisRepository {
 	return &analysisRepo{db: db}
 }
 
-func (r *analysisRepo) Create(ctx context.Context, analysis *RoastAnalysis) (int64, error) {
-	var id int64
+func (r *analysisRepo) Create(ctx context.Context, analysis *RoastAnalysis) (uuid.UUID, error) {
+	var id uuid.UUID
 	err := r.db.QueryRowContext(ctx,
-		"INSERT INTO resume_analyses (name, ai_risk, roast) VALUES ($1, $2, $3) RETURNING id",
+		`INSERT INTO resume_analyses (name, ai_risk, roast) 
+		VALUES ($1, $2, $3) 
+		RETURNING id`,
 		analysis.Name,
 		analysis.AIRisk,
 		analysis.Roast,
 	).Scan(&id)
 
 	if err != nil {
-		return 0, err
+		return uuid.Nil, fmt.Errorf("failed to create analysis: %w", err)
 	}
 	return id, nil
 }
 
-func (r *analysisRepo) GetByID(ctx context.Context, id int64) (*ResumeAnalysisRecord, error) {
+func (r *analysisRepo) GetByID(ctx context.Context, id uuid.UUID) (*ResumeAnalysisRecord, error) {
 	var analysis ResumeAnalysisRecord
 	var reactionsJSON []byte
 
@@ -59,23 +63,25 @@ func (r *analysisRepo) GetByID(ctx context.Context, id int64) (*ResumeAnalysisRe
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, errors.ErrUnsupported
+			return nil, errors.New("analysis not found")
 		}
-		return nil, err
+		return nil, fmt.Errorf("failed to get analysis: %w", err)
 	}
 
-	if err := json.Unmarshal(reactionsJSON, &analysis.Reactions); err != nil {
-		return nil, err
+	if len(reactionsJSON) > 0 {
+		if err := json.Unmarshal(reactionsJSON, &analysis.Reactions); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal reactions: %w", err)
+		}
 	}
 
 	return &analysis, nil
 }
 
-func (r *analysisRepo) IncrementViewCount(ctx context.Context, id int64) error {
+func (r *analysisRepo) IncrementViewCount(ctx context.Context, id uuid.UUID) error {
 	result, err := r.db.ExecContext(ctx,
 		`UPDATE resume_analyses 
-		SET view_count = view_count + 1 
-		WHERE id = $1`,
+        SET view_count = view_count + 1 
+        WHERE id = $1`,
 		id,
 	)
 	if err != nil {
@@ -88,11 +94,12 @@ func (r *analysisRepo) IncrementViewCount(ctx context.Context, id int64) error {
 	}
 
 	if rowsAffected == 0 {
-		return fmt.Errorf("rows not found")
+		return fmt.Errorf("no analysis found with id %s", id.String())
 	}
 
 	return nil
 }
+
 func (r *analysisRepo) UpdateReactions(ctx context.Context, id int64, reaction, prevReaction string) error {
 	fmt.Printf("Id %d, reaction %s, prevReaction %s\n", id, reaction, prevReaction)
 	if reaction == "" {
