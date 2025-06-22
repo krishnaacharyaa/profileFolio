@@ -34,7 +34,7 @@ const ResultsPage = ({ analysis, onReset }: ResultsPageProps) => {
 			navigator.clipboard
 				.writeText(shareUrl)
 				.then(() => {
-					toast.success("Link copied! 🔥 Now go ruin someone's day 😈", {
+					toast.success("Link copied! Now go ruin someone's day 😈", {
 						duration: 3000,
 					});
 				})

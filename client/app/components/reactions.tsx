@@ -35,7 +35,7 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 
 		const fetchAnalysis = async () => {
 			try {
-				const analysisData = await getAnalysisById(parseInt(shareId));
+				const analysisData = await getAnalysisById(shareId);
 				setAnalysis(analysisData);
 				// Simulate view count - you can replace this with actual API call
 				setViewCount(analysisData.view_count || 1);

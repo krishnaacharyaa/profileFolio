@@ -27,7 +27,7 @@ export async function analyzeResume(file: File): Promise<{ jobId: string }> {
 
 	return res;
 }
-export const getAnalysisById = async (id: number): Promise<RoastAnalysis> => {
+export const getAnalysisById = async (id: string): Promise<RoastAnalysis> => {
 	const response = await fetch(`${API_BASE_URL}/api/analyses/${id}`, {
 		method: 'GET',
 		headers: {
@@ -42,19 +42,7 @@ export const getAnalysisById = async (id: number): Promise<RoastAnalysis> => {
 	return await response.json();
 };
 
-// await fetch(`/api/analyses/${shareId}/react`, {
-// 					method: 'POST',
-// 					headers: { 'Content-Type': 'application/json' },
-// 					body: JSON.stringify({
-// 						reaction: emoji,
-// 						prevReaction: prevReaction || '',
-// 					}),
-// 				});
-// 				if (!response.ok) {
-// 					throw new Error('Failed to submit reaction');
-// 				}
-
-export const postReactions = async (id: number): Promise<RoastAnalysis> => {
+export const postReactions = async (id: string): Promise<RoastAnalysis> => {
 	const response = await fetch(`${API_BASE_URL}/api/analyses/${id}/react`, {
 		method: 'POST',
 		headers: {
