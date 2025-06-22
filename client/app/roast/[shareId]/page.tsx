@@ -1,7 +1,7 @@
 import ReactionPage from '@/app/components/reactions';
 import { getAnalysisById } from '@/app/lib/resume';
-
 import { Metadata } from 'next';
+
 export async function generateMetadata({
 	params,
 }: {
@@ -59,11 +59,11 @@ export async function generateMetadata({
 		},
 	};
 }
+
 export default async function Page({
 	params,
 }: {
-	params: Promise<{ shareId: string }>;
+	params: { shareId: string };
 }) {
-	const { shareId } = await params; // Await params to resolve shareId
-	return <ReactionPage shareId={shareId} />;
+	return <ReactionPage shareId={params.shareId} />;
 }
