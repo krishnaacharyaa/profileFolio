@@ -123,7 +123,7 @@ func (r *analysisRepo) AddReaction(ctx context.Context, id uuid.UUID, reaction s
         SET reactions = jsonb_set(
             COALESCE(reactions, '{}'::jsonb), 
             $1::text[], 
-            ((COALESCE(reactions->>$2, '0')::int + 1)::text::jsonb
+            (COALESCE(reactions->>$2, '0')::int + 1)::text::jsonb
         )
         WHERE id = $3
     `
