@@ -87,6 +87,8 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 		newUserReactions.add(emoji);
 		setUserReactions(newUserReactions);
 
+		setShowConfetti(true);
+		timeoutRef.current = setTimeout(() => setShowConfetti(false), 1500);
 		// Save to localStorage
 		localStorage.setItem(
 			`user_reactions_${shareId}`,
@@ -106,10 +108,6 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 			if (!response.ok) {
 				throw new Error('Failed to submit reaction');
 			}
-
-			// Optional: Add visual feedback
-			setShowConfetti(true);
-			timeoutRef.current = setTimeout(() => setShowConfetti(false), 1500);
 
 			// Store timeout ID for cleanup if needed
 			// You can add this to a ref if you want to clear it on unmount
