@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/inngest/inngestgo"
 )
 
@@ -97,7 +98,7 @@ func (h *ResumeRoasterHandler) processResumeAsync(file multipart.File, header *m
 	return
 }
 
-// sendAccountCreatedEvent sends the api/account.created event using the Inngest client
+// sendAccountCreatedEvent sends the api/resume-analyser event using the Inngest client
 func (h *ResumeRoasterHandler) sendResumeAnalyserEvent(ctx context.Context, text, jobId string) error {
 
 	fmt.Printf("Sending resume analyser event %s %s", text, jobId)
@@ -180,14 +181,24 @@ func (h *ResumeRoasterHandler) GetAnalysis(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "analysis ID is required"})
 		return
 	}
-
-	analysis, err := h.service.GetAnalysis(c.Request.Context(), id)
+	fmt.Printf("id %s\n", id)
+	// Parse the UUID from string
+	uui, err := uuid.Parse(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "invalid analysis ID format",
+			"details": "ID must be a valid UUID",
+		})
+		return
+	}
+	fmt.Printf("uuid %s\n", uui)
+	analysis, err := h.service.GetAnalysis(c.Request.Context(), uui)
 	if err != nil {
 		switch err {
 		case pkg.ErrItemNotFound:
 			c.JSON(http.StatusNotFound, gin.H{"error": "analysis not found"})
 		default:
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch analysis"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("failed to fetch analysis %s", err)})
 		}
 		return
 	}
