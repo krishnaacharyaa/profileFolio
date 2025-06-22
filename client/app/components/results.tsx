@@ -190,19 +190,21 @@ const ResultsPage = ({ analysis, onReset }: ResultsPageProps) => {
 								className="flex-1 w-full lg:w-auto"
 							>
 								<div className="bg-gradient-to-r from-red-500/20 via-orange-500/20 to-yellow-500/20 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-red-500/30">
-									<motion.div
-										className="text-2xl sm:text-3xl md:text-4xl mb-2 sm:mb-3 text-center lg:text-left"
-										animate={{
-											rotate: [0, -5, 5, -3, 0],
-											scale: [1, 1.05, 1, 1.02, 1],
-										}}
-										transition={{ duration: 2, repeat: Infinity }}
-									>
-										🔥
-									</motion.div>
-									<h3 className="text-lg sm:text-xl md:text-2xl font-bold text-orange-300 mb-3 sm:mb-4 text-center lg:text-left">
-										The Roast:
-									</h3>
+									<div className="flex items-center justify-center lg:justify-start gap-2 mb-3 sm:mb-4">
+										<motion.div
+											className="text-2xl sm:text-3xl md:text-4xl"
+											animate={{
+												rotate: [0, -5, 5, -3, 0],
+												scale: [1, 1.05, 1, 1.02, 1],
+											}}
+											transition={{ duration: 2, repeat: Infinity }}
+										>
+											🔥
+										</motion.div>
+										<h3 className="text-lg sm:text-xl md:text-2xl font-bold text-orange-300">
+											The Roast:
+										</h3>
+									</div>
 									<p className="text-base sm:text-lg md:text-xl font-bold text-white leading-relaxed text-center lg:text-left">
 										{analysis.roast}
 									</p>

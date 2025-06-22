@@ -161,10 +161,221 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 
 	if (loading || !analysis) {
 		return (
-			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-pink-900">
-				<div className="text-white text-lg sm:text-xl md:text-2xl px-4 text-center max-w-sm">
-					{error || 'Loading roast analysis...'}
+			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-pink-900 relative overflow-hidden">
+				{/* Animated background particles */}
+				<div className="absolute inset-0 pointer-events-none">
+					{[...Array(50)].map((_, i) => (
+						<motion.div
+							key={i}
+							className="absolute w-1 h-1 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full"
+							animate={{
+								x: [0, Math.random() * 200 - 100],
+								y: [0, Math.random() * 200 - 100],
+								opacity: [0, 1, 0],
+								scale: [0, 1, 0],
+							}}
+							transition={{
+								duration: 3 + Math.random() * 2,
+								repeat: Infinity,
+								delay: Math.random() * 2,
+							}}
+							style={{
+								left: `${Math.random() * 100}%`,
+								top: `${Math.random() * 100}%`,
+							}}
+						/>
+					))}
 				</div>
+
+				{/* Pulsing background rings */}
+				<motion.div
+					className="absolute inset-0 flex items-center justify-center"
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+				>
+					{[...Array(3)].map((_, i) => (
+						<motion.div
+							key={i}
+							className="absolute border border-purple-500/20 rounded-full"
+							animate={{
+								scale: [1, 2, 1],
+								opacity: [0.5, 0, 0.5],
+							}}
+							transition={{
+								duration: 3,
+								repeat: Infinity,
+								delay: i * 0.5,
+							}}
+							style={{
+								width: `${150 + i * 100}px`,
+								height: `${150 + i * 100}px`,
+							}}
+						/>
+					))}
+				</motion.div>
+
+				{/* Main loading content */}
+				<motion.div
+					className="relative z-10 text-center space-y-8 max-w-lg px-6"
+					initial={{ opacity: 0, y: 50 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.8 }}
+				>
+					{/* Loading icon with rotation */}
+					<motion.div
+						className="flex justify-center"
+						animate={{ rotate: 360 }}
+						transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+					>
+						<motion.div
+							className="text-6xl sm:text-7xl"
+							animate={{
+								scale: [1, 1.2, 1],
+								filter: [
+									'drop-shadow(0 0 0px #ff0080)',
+									'drop-shadow(0 0 20px #ff0080)',
+									'drop-shadow(0 0 0px #ff0080)',
+								],
+							}}
+							transition={{ duration: 1.5, repeat: Infinity }}
+						>
+							🔥
+						</motion.div>
+					</motion.div>
+
+					{/* Loading text with typewriter effect */}
+					<motion.div
+						className="space-y-4"
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						transition={{ delay: 0.5 }}
+					>
+						<motion.h2
+							className="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-red-400"
+							animate={{
+								backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+							}}
+							transition={{ duration: 3, repeat: Infinity }}
+							style={{ backgroundSize: '200% 200%' }}
+						>
+							{error || 'Preparing the Roast...'}
+						</motion.h2>
+
+						{!error && (
+							<motion.div
+								className="space-y-3"
+								initial={{ opacity: 0, y: 20 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ delay: 1 }}
+							>
+								<motion.p
+									className="text-white/80 text-lg font-medium"
+									animate={{ opacity: [0.5, 1, 0.5] }}
+									transition={{ duration: 2, repeat: Infinity }}
+								>
+									AI is analyzing the carnage...
+								</motion.p>
+
+								{/* Loading progress bar */}
+								<div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+									<motion.div
+										className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-red-500"
+										initial={{ width: '0%' }}
+										animate={{ width: '100%' }}
+										transition={{
+											duration: 3,
+											repeat: Infinity,
+											ease: 'easeInOut',
+										}}
+									/>
+								</div>
+							</motion.div>
+						)}
+					</motion.div>
+
+					{/* Loading stages animation */}
+					{!error && (
+						<motion.div
+							className="flex justify-center space-x-4"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{ delay: 1.5 }}
+						>
+							{['📊', '🤖', '💀'].map((emoji, index) => (
+								<motion.div
+									key={index}
+									className="text-2xl sm:text-3xl"
+									animate={{
+										scale: [1, 1.3, 1],
+										opacity: [0.3, 1, 0.3],
+									}}
+									transition={{
+										duration: 1.5,
+										repeat: Infinity,
+										delay: index * 0.3,
+									}}
+								>
+									{emoji}
+								</motion.div>
+							))}
+						</motion.div>
+					)}
+
+					{/* Floating action hints */}
+					{!error && (
+						<motion.div
+							className="text-gray-400 text-sm space-y-2"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{ delay: 2 }}
+						>
+							<motion.p
+								animate={{ opacity: [0.5, 1, 0.5] }}
+								transition={{ duration: 2.5, repeat: Infinity }}
+							>
+								🎯 Calculating destruction level...
+							</motion.p>
+							<motion.p
+								animate={{ opacity: [0.5, 1, 0.5] }}
+								transition={{ duration: 2.5, repeat: Infinity, delay: 1.2 }}
+							>
+								⚡ Preparing brutal honesty...
+							</motion.p>
+						</motion.div>
+					)}
+
+					{/* Error state enhancement */}
+					{error && (
+						<motion.div
+							className="space-y-4"
+							initial={{ opacity: 0, scale: 0.8 }}
+							animate={{ opacity: 1, scale: 1 }}
+							transition={{ delay: 0.5 }}
+						>
+							<motion.div
+								className="text-4xl"
+								animate={{
+									rotate: [0, -10, 10, -10, 0],
+									scale: [1, 1.1, 1],
+								}}
+								transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 2 }}
+							>
+								💥
+							</motion.div>
+							<p className="text-red-400 font-medium">
+								Something went wrong! The roast might be too hot to handle.
+							</p>
+							<motion.button
+								className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2 rounded-lg font-medium"
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
+								onClick={() => window.location.reload()}
+							>
+								Try Again 🔄
+							</motion.button>
+						</motion.div>
+					)}
+				</motion.div>
 			</div>
 		);
 	}
