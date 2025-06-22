@@ -94,11 +94,12 @@ export const ResumeAnalyzer = () => {
 			handleFile(e.target.files[0]);
 		}
 	};
-
 	const handleAnalyze = async (file: File) => {
 		setLoading(true);
 		setError(null);
 		setAnalysis(null);
+		setLoadingProgress(0);
+		setLoadingStage('Starting analysis...');
 
 		try {
 			// Start job and get job ID
@@ -120,18 +121,27 @@ export const ResumeAnalyzer = () => {
 				});
 			}, 300);
 
-			// Poll for job completion
-			const result = await pollJobStatus(jobId);
-			clearInterval(progressInterval);
+			try {
+				// Poll for job completion
+				const result = await pollJobStatus(jobId);
+				clearInterval(progressInterval);
 
-			// Complete progress
-			setLoadingProgress(100);
-			setLoadingStage('Roast complete!');
-			await new Promise(resolve => setTimeout(resolve, 500));
+				// Complete progress
+				setLoadingProgress(100);
+				setLoadingStage('Roast complete!');
+				await new Promise(resolve => setTimeout(resolve, 500));
 
-			setAnalysis(result);
+				setAnalysis(result);
+			} catch (pollError) {
+				clearInterval(progressInterval);
+				throw pollError; // Re-throw to be caught by outer catch
+			}
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Analysis failed');
+			resetAnalysis();
+			const errorMessage =
+				err instanceof Error ? err.message : 'Analysis failed';
+			setError(errorMessage);
+			toast.error(errorMessage); // Show toast only once
 		} finally {
 			setLoading(false);
 		}
@@ -140,11 +150,16 @@ export const ResumeAnalyzer = () => {
 	// Polling function
 	const pollJobStatus = async (jobId: string): Promise<RoastAnalysis> => {
 		const POLL_INTERVAL = 6000; // 6 seconds
-		const MAX_ATTEMPTS = 3; // ~18 seconds timeout
+		const MAX_ATTEMPTS = 3; // ~18 seconds total timeout
 
 		for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
 			try {
 				const response = await fetch(`${API_BASE_URL}/api/job-status/${jobId}`);
+
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+
 				const data = await response.json();
 
 				if (data.status === 'completed') {
@@ -152,11 +167,12 @@ export const ResumeAnalyzer = () => {
 				} else if (data.status === 'failed') {
 					throw new Error(data.error || 'Job processing failed');
 				}
+
 				// If still processing, wait and try again
 				await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL));
 			} catch (err) {
 				if (attempt === MAX_ATTEMPTS - 1) {
-					throw new Error('Job timed out');
+					throw new Error('Analysis timed out - try again later');
 				}
 			}
 		}
@@ -169,6 +185,9 @@ export const ResumeAnalyzer = () => {
 		setError(null);
 		setLoadingProgress(0);
 		setLoadingStage('');
+		if (fileInputRef.current) {
+			fileInputRef.current.value = ''; // Clear file input
+		}
 	};
 
 	if (!mounted) {
@@ -540,20 +559,6 @@ export const ResumeAnalyzer = () => {
 								</p>
 							</>
 						)}
-
-						{
-							error && toast.error(error)
-							// <motion.div
-							// 	className="mt-4 p-3 md:p-4 bg-red-900/50 border border-red-700 rounded-xl flex items-center justify-center mx-2"
-							// 	initial={{ opacity: 0, y: 20 }}
-							// 	animate={{ opacity: 1, y: 0 }}
-							// >
-							// 	<AlertCircle className="w-4 h-4 md:w-5 md:h-5 text-red-400 mr-2 flex-shrink-0" />
-							// 	<span className="text-red-200 text-sm md:text-base">
-							// 		{error}
-							// 	</span>
-							// </motion.div>
-						}
 
 						<motion.button
 							onClick={
