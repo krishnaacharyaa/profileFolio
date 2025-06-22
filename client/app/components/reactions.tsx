@@ -14,25 +14,114 @@ interface ReactionPageProps {
 
 const ReactionPage = ({ shareId }: ReactionPageProps) => {
 	const router = useRouter();
-	const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
-	const [prevReaction, setPrevReaction] = useState<string | null>(null);
-	const [showConfetti, setShowConfetti] = useState(false);
 	const [analysis, setAnalysis] = useState<RoastAnalysis | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [viewCount, setViewCount] = useState<number>(0);
 	const [headerMessage, setHeaderMessage] = useState<string>('');
 	const [subMessage, setSubMessage] = useState<string>('');
-	const reactionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [userReactions, setUserReactions] = useState<Set<string>>(new Set());
+	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+	// Load user's previous reactions on mount
+	useEffect(() => {
+		const storedReactions = localStorage.getItem(`user_reactions_${shareId}`);
+		if (storedReactions) {
+			setUserReactions(new Set(JSON.parse(storedReactions)));
+		}
+	}, [shareId]);
+
+	const handleReaction = async (emoji: string) => {
+		if (isSubmitting) return;
+
+		// Check if user already reacted with this emoji
+		if (userReactions.has(emoji)) {
+			// Optional: Show a toast or visual feedback
+			console.log(`Already reacted with ${emoji}`);
+			return;
+		}
+
+		setIsSubmitting(true);
+
+		// Optimistically update UI
+		setAnalysis(prev => {
+			if (!prev) return prev;
+			const newReactions = { ...prev.reactions };
+			// Add safety check here
+			newReactions[emoji] = (newReactions[emoji] || 0) + 1;
+			return { ...prev, reactions: newReactions };
+		});
+
+		// Update user reactions
+		const newUserReactions = new Set(userReactions);
+		newUserReactions.add(emoji);
+		setUserReactions(newUserReactions);
+
+		// Save to localStorage
+		localStorage.setItem(
+			`user_reactions_${shareId}`,
+			JSON.stringify([...newUserReactions])
+		);
+
+		try {
+			const response = await fetch(
+				`${API_BASE_URL}/api/analyses/${shareId}/react`,
+				{
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ reaction: emoji }),
+				}
+			);
+
+			if (!response.ok) {
+				throw new Error('Failed to submit reaction');
+			}
+
+			// Optional: Add visual feedback
+			setShowConfetti(true);
+			timeoutRef.current = setTimeout(() => setShowConfetti(false), 1500);
+
+			// Store timeout ID for cleanup if needed
+			// You can add this to a ref if you want to clear it on unmount
+		} catch (err) {
+			console.error('Reaction error:', err);
+
+			// Rollback optimistic updates
+			setAnalysis(prev => {
+				if (!prev) return prev;
+				const newReactions = { ...prev.reactions };
+				// Add safety check here too
+				newReactions[emoji] = Math.max(0, (newReactions[emoji] || 0) - 1);
+				return { ...prev, reactions: newReactions };
+			});
+
+			// Rollback user reactions
+			const rolledBackReactions = new Set(userReactions);
+			rolledBackReactions.delete(emoji);
+			setUserReactions(rolledBackReactions);
+			localStorage.setItem(
+				`user_reactions_${shareId}`,
+				JSON.stringify([...rolledBackReactions])
+			);
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
+
+	// Updated reaction buttons rendering
+	const reactionButtons = [
+		{ emoji: '💩', label: 'Trash', color: 'from-yellow-600 to-orange-600' },
+		{ emoji: '🔥', label: 'Fire', color: 'from-red-500 to-orange-500' },
+		{ emoji: '🤡', label: 'Clown', color: 'from-pink-500 to-purple-500' },
+		{ emoji: '💀', label: 'Dead', color: 'from-gray-500 to-black' },
+		{ emoji: '😂', label: 'LMAO', color: 'from-yellow-400 to-yellow-600' },
+	];
+
+	const [showConfetti, setShowConfetti] = useState(false);
 
 	// Load reaction from localStorage on mount
 	useEffect(() => {
-		const storedReaction = localStorage.getItem(`reaction_${shareId}`);
-		if (storedReaction) {
-			setSelectedReaction(storedReaction);
-			setPrevReaction(null);
-		}
-
 		const fetchAnalysis = async () => {
 			try {
 				const analysisData = await getAnalysisById(shareId);
@@ -50,6 +139,11 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 			}
 		};
 		fetchAnalysis();
+		return () => {
+			if (timeoutRef.current) {
+				clearTimeout(timeoutRef.current);
+			}
+		};
 	}, [shareId]);
 
 	const getHeaderMessage = (analysisData: RoastAnalysis, id: string) => {
@@ -84,79 +178,6 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 		if (riskLevel > 60) return "This one's gonna leave a mark";
 		if (riskLevel > 40) return "Ouch, that's gotta hurt";
 		return 'Not terrible, but still brutal';
-	};
-
-	const handleReaction = (emoji: string) => {
-		if (selectedReaction === emoji) return;
-
-		if (reactionTimeoutRef.current) {
-			clearTimeout(reactionTimeoutRef.current);
-		}
-
-		localStorage.setItem(`reaction_${shareId}`, emoji);
-		setPrevReaction(selectedReaction);
-		setSelectedReaction(emoji);
-		setShowConfetti(true);
-		setTimeout(() => setShowConfetti(false), 2000);
-
-		setAnalysis(prev =>
-			prev
-				? {
-						...prev,
-						reactions: {
-							...prev.reactions,
-							...(prevReaction
-								? {
-										[prevReaction]: Math.max(
-											0,
-											(prev.reactions[prevReaction] || 0) - 1
-										),
-								  }
-								: {}),
-							[emoji]: (prev.reactions[emoji] || 0) + 1,
-						},
-				  }
-				: prev
-		);
-
-		reactionTimeoutRef.current = setTimeout(async () => {
-			try {
-				const response = await fetch(
-					`${API_BASE_URL}/api/analyses/${shareId}/react`,
-					{
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({
-							reaction: emoji,
-							prevReaction: prevReaction || '',
-						}),
-					}
-				);
-				if (!response.ok) {
-					throw new Error('Failed to submit reaction');
-				}
-			} catch (err) {
-				console.error('Reaction error:', err);
-				setAnalysis(prev =>
-					prev
-						? {
-								...prev,
-								reactions: {
-									...prev.reactions,
-									...(prevReaction
-										? {
-												[prevReaction]: (prev.reactions[prevReaction] || 0) + 1,
-										  }
-										: {}),
-									[emoji]: Math.max(0, (prev.reactions[emoji] || 0) - 1),
-								},
-						  }
-						: prev
-				);
-				setPrevReaction(null);
-				localStorage.setItem(`reaction_${shareId}`, prevReaction || '');
-			}
-		}, 3000);
 	};
 
 	if (loading || !analysis) {
@@ -552,66 +573,50 @@ const ReactionPage = ({ shareId }: ReactionPageProps) => {
 						</div>
 
 						{/* Reactions */}
-						<div className="space-y-3 sm:space-y-4">
-							<p className="text-center text-gray-300 text-sm sm:text-base md:text-lg font-medium px-2">
-								How did the AI do? Drop your reaction 👇
-							</p>
-							<div className="flex justify-center gap-2 sm:gap-3 md:gap-5 flex-wrap px-1">
-								{[
-									{
-										emoji: '💩',
-										label: 'Trash',
-										color: 'from-yellow-600 to-orange-600',
-									},
-									{
-										emoji: '🔥',
-										label: 'Fire',
-										color: 'from-red-500 to-orange-500',
-									},
-									{
-										emoji: '🤡',
-										label: 'Clown',
-										color: 'from-pink-500 to-purple-500',
-									},
-									{
-										emoji: '💀',
-										label: 'Dead',
-										color: 'from-gray-500 to-black',
-									},
-									{
-										emoji: '😂',
-										label: 'LMAO',
-										color: 'from-yellow-400 to-yellow-600',
-									},
-								].map((reaction, index) => (
+						<div className="flex justify-center gap-2 sm:gap-3 md:gap-5 flex-wrap px-1">
+							{reactionButtons.map((reaction, index) => {
+								const hasReacted = userReactions.has(reaction.emoji);
+
+								return (
 									<motion.button
 										key={reaction.emoji}
 										onClick={() => handleReaction(reaction.emoji)}
+										disabled={isSubmitting || hasReacted}
 										className={`relative group text-2xl sm:text-3xl md:text-4xl p-2 sm:p-3 md:p-4 rounded-xl transition-all ${
-											selectedReaction === reaction.emoji
-												? `bg-gradient-to-br ${reaction.color} shadow-2xl shadow-purple-500/50`
-												: 'bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 hover:border-white/40'
+											hasReacted
+												? `bg-gradient-to-br ${reaction.color} shadow-2xl shadow-purple-500/50 cursor-not-allowed`
+												: isSubmitting
+												? 'opacity-50 cursor-not-allowed bg-white/10'
+												: 'bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 hover:border-white/40 hover:scale-110'
 										}`}
-										whileHover={{ scale: 1.2 }}
-										whileTap={{ scale: 0.9 }}
+										whileHover={
+											!isSubmitting && !hasReacted ? { scale: 1.2 } : {}
+										}
+										whileTap={
+											!isSubmitting && !hasReacted ? { scale: 0.9 } : {}
+										}
 										initial={{ opacity: 0, y: 20 }}
 										animate={{ opacity: 1, y: 0 }}
 										transition={{ delay: 1.0 + index * 0.1 }}
 									>
-										<span>{reaction.emoji}</span>
+										<span className={hasReacted ? 'filter brightness-110' : ''}>
+											{reaction.emoji}
+										</span>
 										<motion.div
 											className="absolute -top-1 sm:-top-2 -right-1 sm:-right-2 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center shadow-lg"
 											animate={{ scale: [1, 1.1, 1] }}
 											transition={{ duration: 2, repeat: Infinity }}
 										>
-											{Math.abs(analysis.reactions[reaction.emoji] || 0)}
+											{analysis?.reactions?.[reaction.emoji] || 0}
 										</motion.div>
 										<div className="absolute -bottom-8 sm:-bottom-10 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 text-xs bg-black/90 text-white px-2 sm:px-3 py-1 rounded-lg transition-opacity duration-200 whitespace-nowrap">
-											{reaction.label}
+											{hasReacted
+												? `You voted ${reaction.label}`
+												: reaction.label}
 										</div>
 									</motion.button>
-								))}
-							</div>
+								);
+							})}
 						</div>
 					</motion.div>
 

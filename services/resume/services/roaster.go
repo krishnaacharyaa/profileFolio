@@ -148,13 +148,6 @@ func (r *ResumeRoaster) saveAnalysis(ctx context.Context, result *analysis.Roast
 	return id, nil
 }
 
-func (s *ResumeRoaster) UpdateReaction(ctx context.Context, id int64, reaction string, prevReaction string) error {
-
-	err := s.analysisRepo.UpdateReactions(ctx, id, reaction, prevReaction)
-	if err != nil {
-		fmt.Printf("Error %+v", err.Error())
-		return fmt.Errorf("repository error: %w", err)
-	}
-
-	return nil
+func (s *ResumeRoaster) AddReaction(ctx context.Context, id uuid.UUID, reaction string) error {
+	return s.analysisRepo.AddReaction(ctx, id, reaction)
 }

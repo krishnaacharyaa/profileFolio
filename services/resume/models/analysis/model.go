@@ -18,17 +18,42 @@ type RoastAnalysis struct {
 	Roast            string    `json:"roast"`              // Snarky summary
 }
 
-type ResumeAnalysisRecord struct {
-	Id           uuid.UUID        `json:"id"`
-	Name         string           `json:"name"`
-	AIRisk       int              `json:"ai_risk"`
-	Roast        string           `json:"roast"`
-	AnalysisDate time.Time        `json:"analysis_date"`
-	ViewCount    int64            `json:"view_count"`
-	Reactions    map[string]int64 `json:"reactions"`
+// Constants for reaction types
+const (
+	TRASH = 0 // 💩
+	FIRE  = 1 // 🔥
+	CLOWN = 2 // 🤡
+	DEAD  = 3 // 💀
+	LMAO  = 4 // 😂
+)
+
+// Reaction emoji to index mapping
+var ReactionToIndex = map[string]int{
+	"💩": TRASH,
+	"🔥": FIRE,
+	"🤡": CLOWN,
+	"💀": DEAD,
+	"😂": LMAO,
 }
 
-type ReactionRequest struct {
-	Reaction     string `json:"reaction"`
-	PrevReaction string `json:"prevReaction,omitempty"`
+// Updated struct
+type ResumeAnalysisRecord struct {
+	Id           uuid.UUID `json:"id"`
+	Name         string    `json:"name"`
+	AIRisk       int       `json:"ai_risk"`
+	Roast        string    `json:"roast"`
+	AnalysisDate time.Time `json:"analysis_date"`
+	ViewCount    int64     `json:"view_count"`
+	Reactions    [5]int8   `json:"reactions"` // [trash, fire, clown, dead, lmao]
+}
+
+// Convert reactions array to map for frontend compatibility
+func (r *ResumeAnalysisRecord) ReactionsMap() map[string]int {
+	return map[string]int{
+		"💩": int(r.Reactions[TRASH]),
+		"🔥": int(r.Reactions[FIRE]),
+		"🤡": int(r.Reactions[CLOWN]),
+		"💀": int(r.Reactions[DEAD]),
+		"😂": int(r.Reactions[LMAO]),
+	}
 }

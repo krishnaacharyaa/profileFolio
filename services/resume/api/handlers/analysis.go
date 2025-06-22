@@ -8,10 +8,10 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"profilefolio/models/analysis"
 	"profilefolio/pkg"
 	services "profilefolio/services"
 	"profilefolio/utils"
-	"strconv"
 	"strings"
 	"time"
 
@@ -143,25 +143,29 @@ func (h *ResumeRoasterHandler) GetAllAnalyses(c *gin.Context) {
 func (h *ResumeRoasterHandler) ReactToAnalysis(c *gin.Context) {
 	// Extract and validate ID
 	idStr := c.Param("id")
-	id, err := strconv.ParseInt(idStr, 10, 64)
+	id, err := uuid.Parse(idStr) // Fixed: use uuid.Parse instead of strconv
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
 		return
 	}
 
-	// Parse request body
 	var req struct {
-		Reaction     string `json:"reaction" binding:"required"`
-		PrevReaction string `json:"prevReaction,omitempty"`
+		Reaction string `json:"reaction" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 		return
 	}
 
+	// Validate reaction type
+	if _, exists := analysis.ReactionToIndex[req.Reaction]; !exists {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid reaction type"})
+		return
+	}
+
 	// Process reaction
 	ctx := c.Request.Context()
-	err = h.service.UpdateReaction(ctx, id, req.Reaction, req.PrevReaction)
+	err = h.service.AddReaction(ctx, id, req.Reaction)
 	if err != nil {
 		switch {
 		case errors.Is(err, pkg.ErrItemNotFound):
@@ -172,7 +176,7 @@ func (h *ResumeRoasterHandler) ReactToAnalysis(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Reaction updated successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "Reaction added successfully"})
 }
 
 func (h *ResumeRoasterHandler) GetAnalysis(c *gin.Context) {

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"profilefolio/pkg"
+	"strconv"
 
 	"github.com/google/uuid"
 )
@@ -15,7 +16,7 @@ type AnalysisRepository interface {
 	Create(ctx context.Context, analysis *RoastAnalysis) (uuid.UUID, error)
 	GetByID(ctx context.Context, id uuid.UUID) (*ResumeAnalysisRecord, error)
 	IncrementViewCount(ctx context.Context, id uuid.UUID) error
-	UpdateReactions(ctx context.Context, id int64, reaction string, prevReaction string) error
+	AddReaction(ctx context.Context, id uuid.UUID, reaction string) error
 }
 
 type analysisRepo struct {
@@ -29,12 +30,13 @@ func NewAnalysisRepository(db pkg.Database) AnalysisRepository {
 func (r *analysisRepo) Create(ctx context.Context, analysis *RoastAnalysis) (uuid.UUID, error) {
 	var id uuid.UUID
 	err := r.db.QueryRowContext(ctx,
-		`INSERT INTO resume_analyses (name, ai_risk, roast) 
-		VALUES ($1, $2, $3) 
+		`INSERT INTO resume_analyses (name, ai_risk, roast, reactions) 
+		VALUES ($1, $2, $3, $4) 
 		RETURNING id`,
 		analysis.Name,
 		analysis.AIRisk,
 		analysis.Roast,
+		`[0,0,0,0,0]`, // Initialize with zero reactions
 	).Scan(&id)
 
 	if err != nil {
@@ -68,9 +70,15 @@ func (r *analysisRepo) GetByID(ctx context.Context, id uuid.UUID) (*ResumeAnalys
 		return nil, fmt.Errorf("failed to get analysis: %w", err)
 	}
 
+	// Parse reactions JSON array
 	if len(reactionsJSON) > 0 {
-		if err := json.Unmarshal(reactionsJSON, &analysis.Reactions); err != nil {
+		var tempReactions []int8
+		if err := json.Unmarshal(reactionsJSON, &tempReactions); err != nil {
 			return nil, fmt.Errorf("failed to unmarshal reactions: %w", err)
+		}
+		// Copy to fixed array
+		for i := 0; i < 5 && i < len(tempReactions); i++ {
+			analysis.Reactions[i] = tempReactions[i]
 		}
 	}
 
@@ -100,67 +108,38 @@ func (r *analysisRepo) IncrementViewCount(ctx context.Context, id uuid.UUID) err
 	return nil
 }
 
-func (r *analysisRepo) UpdateReactions(ctx context.Context, id int64, reaction, prevReaction string) error {
-	fmt.Printf("Id %d, reaction %s, prevReaction %s\n", id, reaction, prevReaction)
-	if reaction == "" {
-		return errors.New("reaction cannot be empty")
+func (r *analysisRepo) AddReaction(ctx context.Context, id uuid.UUID, reaction string) error {
+	reactionIndex, exists := ReactionToIndex[reaction]
+	if !exists {
+		return errors.New("invalid reaction type")
 	}
 
-	tx, err := r.db.BeginTx(ctx, nil)
+	// Simple SQL to increment the reaction at specific array index
+	query := `
+		UPDATE resume_analyses 
+		SET reactions = jsonb_set(
+			reactions, 
+			$1::text[], 
+			((reactions->>$2)::int + 1)::text::jsonb
+		)
+		WHERE id = $3
+	`
+
+	indexPath := fmt.Sprintf("{%d}", reactionIndex)
+	indexStr := strconv.Itoa(reactionIndex)
+
+	result, err := r.db.ExecContext(ctx, query, indexPath, indexStr, id)
 	if err != nil {
-		return fmt.Errorf("begin tx: %w", err)
-	}
-	defer tx.Rollback()
-
-	var query string
-	var args []interface{}
-
-	// Format as PostgreSQL text[] literal for jsonb_set path
-	reactionPath := fmt.Sprintf("{%s}", reaction)
-	if prevReaction == "" {
-		query = `
-			UPDATE resume_analyses
-			SET reactions = jsonb_set(
-				COALESCE(reactions, '{}'::jsonb),
-				$1::text[],
-				COALESCE((reactions->>$2)::int + 1, 1)::text::jsonb
-			)
-			WHERE id = $3
-		`
-		args = []interface{}{reactionPath, reaction, id}
-	} else {
-		prevReactionPath := fmt.Sprintf("{%s}", prevReaction)
-		query = `
-			UPDATE resume_analyses
-			SET reactions = jsonb_set(
-				jsonb_set(
-					COALESCE(reactions, '{}'::jsonb),
-					$1::text[],
-					COALESCE((reactions->>$2)::int + 1, 1)::text::jsonb
-				),
-				$3::text[],
-				GREATEST(COALESCE((reactions->>$4)::int, 1) - 1, 0)::text::jsonb
-			)
-			WHERE id = $5
-		`
-		args = []interface{}{reactionPath, reaction, prevReactionPath, prevReaction, id}
+		return fmt.Errorf("failed to update reaction: %w", err)
 	}
 
-	res, err := tx.ExecContext(ctx, query, args...)
+	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return fmt.Errorf("exec update: %w", err)
+		return fmt.Errorf("failed to check rows affected: %w", err)
 	}
 
-	rowsAffected, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected check: %w", err)
-	}
 	if rowsAffected == 0 {
 		return pkg.ErrItemNotFound
-	}
-
-	if err := tx.Commit(); err != nil {
-		return fmt.Errorf("commit tx: %w", err)
 	}
 
 	return nil
