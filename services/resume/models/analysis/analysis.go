@@ -107,7 +107,6 @@ func (r *analysisRepo) IncrementViewCount(ctx context.Context, id uuid.UUID) err
 
 	return nil
 }
-
 func (r *analysisRepo) AddReaction(ctx context.Context, id uuid.UUID, reaction string) error {
 	reactionIndex, exists := ReactionToIndex[reaction]
 	if !exists {
@@ -118,15 +117,16 @@ func (r *analysisRepo) AddReaction(ctx context.Context, id uuid.UUID, reaction s
 	pkg.ContextLog(ctx, "Attempting to update reaction for analysis %s with %s (index %d)",
 		id, reaction, reactionIndex)
 
+	// Modified query to handle NULL reactions
 	query := `
-		UPDATE resume_analyses 
-		SET reactions = jsonb_set(
-			reactions, 
-			$1::text[], 
-			((reactions->>$2)::int + 1)::text::jsonb
-		)
-		WHERE id = $3
-	`
+        UPDATE resume_analyses 
+        SET reactions = jsonb_set(
+            COALESCE(reactions, '{}'::jsonb), 
+            $1::text[], 
+            ((COALESCE(reactions->>$2, '0')::int + 1)::text::jsonb
+        )
+        WHERE id = $3
+    `
 
 	indexPath := fmt.Sprintf("{%d}", reactionIndex)
 	indexStr := strconv.Itoa(reactionIndex)
@@ -151,6 +151,15 @@ func (r *analysisRepo) AddReaction(ctx context.Context, id uuid.UUID, reaction s
 	if rowsAffected == 0 {
 		pkg.Error("No analysis found with ID: %s", id)
 		return pkg.ErrItemNotFound
+	}
+
+	// Verify the update actually worked
+	var updatedReactions string
+	err = r.db.QueryRowContext(ctx, "SELECT reactions::text FROM resume_analyses WHERE id = $1", id).Scan(&updatedReactions)
+	if err != nil {
+		pkg.Error("Failed to verify reactions update for %s: %v", id, err)
+	} else {
+		pkg.ContextLog(ctx, "Verified reactions after update: %s", updatedReactions)
 	}
 
 	pkg.ContextLog(ctx, "Successfully updated reaction %s for analysis %s", reaction, id)
