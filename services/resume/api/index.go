@@ -38,6 +38,7 @@ import (
 	services "profilefolio/services"
 	"profilefolio/utils"
 	"profilefolio/worker"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -99,6 +100,28 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	// Register routes
 	routes.RegisterAnalysisRoutes(apiGroup, roasterHandler)
 
+	// Initialize the database schema
+	if err := AlterDatabase(db); err != nil {
+		log.Fatal("Failed to initialize database:", err)
+	}
 	// Serve the request
 	router.ServeHTTP(w, r)
+}
+
+func AlterDatabase(db pkg.Database) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Create new table with UUID
+	_, err := db.ExecContext(ctx, `
+		ALTER TABLE resume_analyses 
+ALTER COLUMN reactions TYPE jsonb USING reactions::jsonb,
+ALTER COLUMN reactions SET DEFAULT '[0,0,0,0,0]'::jsonb;
+	`)
+	if err != nil {
+		return fmt.Errorf("failed to create table: %w", err)
+	}
+
+	log.Println("Database initialized with new schema")
+	return nil
 }
