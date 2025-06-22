@@ -5,9 +5,11 @@ import { Metadata } from 'next';
 export async function generateMetadata({
 	params,
 }: {
-	params: { shareId: string };
+	params: Promise<{ shareId: string }>;
 }): Promise<Metadata> {
-	const analysis = await getAnalysisById(params.shareId);
+	// Await the params since they're now a Promise in Next.js 15
+	const { shareId } = await params;
+	const analysis = await getAnalysisById(shareId);
 
 	// Generate dynamic titles and descriptions based on risk level
 	const getTitle = (risk: number, name?: string) => {
@@ -48,7 +50,7 @@ export async function generateMetadata({
 					alt: title,
 				},
 			],
-			url: `https://profilefolio-eosin.vercel.app/roast/${params.shareId}`,
+			url: `https://profilefolio-eosin.vercel.app/roast/${shareId}`,
 			type: 'website',
 		},
 		twitter: {
@@ -63,7 +65,9 @@ export async function generateMetadata({
 export default async function Page({
 	params,
 }: {
-	params: { shareId: string };
+	params: Promise<{ shareId: string }>;
 }) {
-	return <ReactionPage shareId={params.shareId} />;
+	// Await the params since they're now a Promise in Next.js 15
+	const { shareId } = await params;
+	return <ReactionPage shareId={shareId} />;
 }
